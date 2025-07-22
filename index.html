@@ -4,655 +4,458 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alpana Group - Managerial Aptitude Test</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
         :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-darker: #1e40af;
-            --danger: #ef4444;
-            --danger-dark: #dc2626;
-            --success: #10b981;
-            --success-dark: #059669;
-            --warning: #f59e0b;
-            --info: #06b6d4;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #94a3b8;
-            --bg-gradient: linear-gradient(135deg, var(--primary), var(--primary-darker));
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-            --radius-sm: 0.25rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --transition: all 0.3s ease;
+            --primary: #1a365d;
+            --secondary: #2c5282;
+            --accent: #4299e1;
+            --success: #38a169;
+            --danger: #e53e3e;
+            --warning: #dd6b20;
+            --light: #f7fafc;
+            --dark: #1a202c;
+            --gray: #e2e8f0;
+            --dark-gray: #718096;
         }
-        
+
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
+            background-color: #f0f4f8;
             color: var(--dark);
-            background-color: #f1f5f9;
-            overflow-x: hidden;
+            line-height: 1.6;
         }
-        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
         /* Splash Screen */
-        .splash-screen {
+        #splashScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--bg-gradient);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             z-index: 1000;
-            color: white;
             transition: opacity 0.5s ease;
         }
-        
-        .splash-content {
-            text-align: center;
-            max-width: 500px;
-            padding: 2rem;
-            animation: fadeIn 1s ease;
+
+        #splashScreen.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 30px;
         }
-        
-        .splash-logo {
-            width: 180px;
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        
+
         .login-box {
-            background-color: rgba(255, 255, 255, 0.15);
-            padding: 2.5rem 2rem;
-            border-radius: var(--radius-lg);
-            width: 90%;
-            max-width: 450px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: var(--shadow-lg);
-            margin-top: 2rem;
-        }
-        
-        .login-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        
+
+        .login-box h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
         .input-group {
-            margin-bottom: 1.5rem;
-            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
         }
-        
+
         .input-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-            color: rgba(255,255,255,0.9);
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
         }
-        
+
         .input-group input {
             width: 100%;
-            padding: 0.9rem 1rem;
-            border-radius: var(--radius-sm);
-            border: none;
-            background-color: rgba(255, 255, 255, 0.95);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
+            padding: 12px 15px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s ease;
         }
-        
+
         .input-group input:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+            border-color: var(--accent);
         }
-        
-        .login-btn {
-            width: 100%;
-            padding: 1rem;
-            background-color: white;
-            color: var(--primary-dark);
-            border: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-            margin-top: 0.5rem;
-        }
-        
-        .login-btn:hover {
-            background-color: #f1f5f9;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .login-btn:active {
-            transform: translateY(0);
-        }
-        
-        .error-message {
-            color: #fee2e2;
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.95rem;
+
+        #errorMessage {
+            color: var(--danger);
+            margin-bottom: 15px;
             display: none;
-            background-color: rgba(220, 38, 38, 0.2);
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
         }
-        
-        /* Main Container */
-        .container {
-            display: none;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .header-card {
-            background: var(--bg-gradient);
-            padding: 2.5rem 2rem;
-            border-radius: var(--radius-lg);
-            color: white;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header-card::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            right: -50%;
+
+        #loginBtn {
             width: 100%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            transform: rotate(30deg);
-        }
-        
-        .logo {
-            width: 120px;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 1.5rem;
-        }
-        
-        .test-info {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .info-card {
-            background-color: rgba(255,255,255,0.15);
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-md);
-            min-width: 160px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .info-card strong {
-            display: block;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 0.25rem;
-        }
-        
-        .info-card span {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        /* Navigation */
-        .nav-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            background-color: white;
-            padding: 1.25rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .timer {
-            background-color: var(--danger);
-            color: white;
-            padding: 0.6rem 1.25rem;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .timer.warning {
-            background-color: var(--warning);
-            animation: pulse 1s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .progress-container {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--dark);
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background-color: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--bg-gradient);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-        
-        .question-nav {
-            display: flex;
-            overflow-x: auto;
-            padding: 0.5rem 0;
-            gap: 0.5rem;
-        }
-        
-        .nav-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            background-color: #e2e8f0;
-            border: none;
-            font-weight: 600;
-            transition: var(--transition);
-            flex-shrink: 0;
-            position: relative;
-        }
-        
-        .nav-btn:hover:not(.current) {
-            background-color: #cbd5e1;
-        }
-        
-        .nav-btn.visited {
-            background-color: var(--info);
-            color: white;
-        }
-        
-        .nav-btn.current {
+            padding: 12px;
             background-color: var(--primary);
             color: white;
-            transform: scale(1.1);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        
-        .nav-btn.answered {
-            background-color: var(--success);
-            color: white;
+
+        #loginBtn:hover {
+            background-color: var(--secondary);
         }
-        
-        .nav-btn.marked {
-            position: relative;
-            overflow: hidden;
+
+        /* Exam Container */
+        #examContainer {
+            display: none;
+            padding: 20px 0;
         }
-        
-        .nav-btn.marked::after {
-            content: "★";
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            font-size: 12px;
-            color: var(--warning);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        
-        /* Question Container */
-        .question-container {
-            background-color: white;
-            border-radius: var(--radius-lg);
-            padding: 0;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-md);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .section-header {
-            background-color: var(--dark);
-            color: white;
-            padding: 1rem 1.75rem;
+
+        .exam-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray);
         }
-        
-        .section-header h2 {
-            font-size: 1.2rem;
-            font-weight: 500;
+
+        .exam-title {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 700;
         }
-        
-        .section-info {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        .question-content {
-            padding: 2rem;
-        }
-        
-        .question {
-            position: relative;
-            counter-increment: question-counter;
-            margin-bottom: 2rem;
-            padding-left: 2.5rem;
-        }
-        
-        .question::before {
-            content: counter(question-counter);
-            position: absolute;
-            left: 0;
-            top: 0;
-            background-color: var(--danger);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
+
+        .timer-container {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        .question-text {
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        
-        .question-text img {
-            max-width: 100%;
-            height: auto;
-            border-radius: var(--radius-sm);
-            margin: 1rem 0;
-            box-shadow: var(--shadow-sm);
-            display: block;
-        }
-        
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .option {
-            padding: 1rem;
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-            cursor: pointer;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        
-        .option:hover:not(.locked) {
-            background-color: #f8fafc;
-            border-color: #cbd5e1;
-        }
-        
-        .option.selected {
-            background-color: #dbeafe;
-            border-color: var(--primary);
-        }
-        
-        .option.correct {
-            background-color: #dcfce7;
-            border-color: var(--success);
-        }
-        
-        .option.incorrect {
-            background-color: #fee2e2;
-            border-color: var(--danger);
-        }
-        
-        .option.locked {
-            cursor: not-allowed;
-        }
-        
-        .option input {
-            margin-top: 2px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-        
-        .option.locked input {
-            cursor: not-allowed;
-        }
-        
-        .visual-aid {
-            margin: 1.5rem 0;
-            padding: 1.25rem;
-            background-color: #f8fafc;
-            border-radius: var(--radius-md);
-            border-left: 4px solid var(--primary);
-        }
-        
-        .visual-aid-title {
+            background-color: var(--light);
+            padding: 10px 15px;
+            border-radius: 5px;
             font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--dark);
-            font-size: 0.95rem;
         }
-        
+
+        .timer-container i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        #timeDisplay {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+        }
+
+        .timer-container.warning {
+            background-color: #fff5f5;
+            color: var(--danger);
+        }
+
+        .timer-container.warning i {
+            color: var(--danger);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: var(--gray);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Exam Content */
+        .exam-content {
+            display: flex;
+            gap: 20px;
+        }
+
+        .question-container {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question-text {
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        /* Visual Aids */
+        .visual-aid {
+            margin: 20px 0;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .visual-aid-title {
+            background-color: var(--light);
+            padding: 10px 15px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--gray);
+        }
+
         .chart-container {
-            position: relative;
+            padding: 15px;
             height: 300px;
-            margin: 1rem 0;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.5rem 0;
-            font-size: 0.9rem;
-            box-shadow: var(--shadow-sm);
-            border-radius: var(--radius-sm);
-            overflow: hidden;
         }
-        
-        th, td {
-            padding: 0.8rem 1rem;
+
+        table th, table td {
+            padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+            border: 1px solid var(--gray);
         }
-        
-        th {
-            background-color: #f1f5f9;
+
+        table th {
+            background-color: var(--light);
             font-weight: 600;
-            color: var(--dark);
         }
-        
-        tr:hover {
+
+        /* Options */
+        .options {
+            margin-top: 25px;
+        }
+
+        .option {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
             background-color: #f8fafc;
+            border-color: var(--accent);
         }
-        
+
+        .option.selected {
+            background-color: #ebf8ff;
+            border-color: var(--accent);
+        }
+
+        .option.locked {
+            cursor: default;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        /* Navigation */
+        .nav-container {
+            width: 250px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+
+        .nav-header {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .nav-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background-color: #f8fafc;
+            border-color: var(--accent);
+        }
+
+        .nav-btn.current {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .nav-btn.visited {
+            background-color: #ebf8ff;
+            border-color: var(--accent);
+        }
+
+        .nav-btn.answered {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .nav-btn.marked {
+            position: relative;
+            border-color: var(--warning);
+        }
+
+        .nav-btn.marked::after {
+            content: '★';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            color: var(--warning);
+            font-size: 12px;
+        }
+
         /* Controls */
         .controls {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
-            gap: 1rem;
-            flex-wrap: wrap;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray);
         }
-        
-        .btn {
-            padding: 0.9rem 1.5rem;
-            border-radius: var(--radius-sm);
-            font-weight: 500;
+
+        .control-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             border: none;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
         }
-        
-        .btn-primary {
-            background-color: var(--primary);
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .control-btn i {
+            font-size: 14px;
+        }
+
+        #prevBtn {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        #prevBtn:hover:not(:disabled) {
+            background-color: var(--gray);
+        }
+
+        #nextBtn {
+            background-color: var(--accent);
             color: white;
-            box-shadow: var(--shadow-sm);
         }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+
+        #nextBtn:hover:not(:disabled) {
+            background-color: var(--secondary);
         }
-        
-        .btn-primary:active {
-            transform: translateY(0);
+
+        #markBtn {
+            background-color: white;
+            color: var(--dark);
+            border: 1px solid var(--gray);
         }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
+
+        #markBtn.marked {
+            background-color: #fffaf0;
+            border-color: var(--warning);
+            color: var(--warning);
         }
-        
-        .btn-outline:hover {
-            background-color: #dbeafe;
+
+        #markBtn:hover {
+            background-color: #f8fafc;
         }
-        
-        .btn-danger {
+
+        #submitBtn {
             background-color: var(--danger);
             color: white;
-            box-shadow: var(--shadow-sm);
         }
-        
-        .btn-danger:hover {
-            background-color: var(--danger-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+
+        #submitBtn:hover {
+            background-color: #c53030;
         }
-        
-        .btn-danger:active {
-            transform: translateY(0);
-        }
-        
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .btn-success:hover {
-            background-color: var(--success-dark);
-        }
-        
-        .mark-btn {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            color: var(--dark);
-        }
-        
-        .mark-btn:hover {
-            background-color: #f1f5f9;
-        }
-        
-        .mark-btn.marked {
-            background-color: #fef3c7;
-            border-color: #f59e0b;
-            color: var(--dark);
-        }
-        
-        /* Results Modal */
-        .modal-overlay {
+
+        /* Modals */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -662,491 +465,418 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
-            padding: 1rem;
         }
-        
-        .modal-overlay.active {
+
+        .modal.active {
             opacity: 1;
             pointer-events: all;
         }
-        
+
         .modal-content {
             background-color: white;
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 900px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 2rem;
+            padding: 30px;
             position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            box-shadow: var(--shadow-lg);
         }
-        
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray);
         }
-        
-        .close-modal {
+
+        .modal-close {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
             cursor: pointer;
-            color: var(--gray);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: var(--transition);
+            color: var(--dark-gray);
+            transition: color 0.3s ease;
         }
-        
-        .close-modal:hover {
-            background-color: #f1f5f9;
+
+        .modal-close:hover {
             color: var(--danger);
         }
-        
-        .result-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .result-header h2 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-        }
-        
-        .result-header p {
-            color: var(--gray);
-        }
-        
-        .score-card {
+
+        /* Results */
+        .results-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
         }
-        
-        .score-item {
-            background-color: #f8fafc;
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
+
+        .result-card {
+            padding: 15px;
+            border-radius: 8px;
             text-align: center;
-            box-shadow: var(--shadow-sm);
         }
-        
-        .score-item.correct {
-            border-bottom: 3px solid var(--success);
+
+        .result-card h3 {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
         }
-        
-        .score-item.incorrect {
-            border-bottom: 3px solid var(--danger);
-        }
-        
-        .score-item.unanswered {
-            border-bottom: 3px solid var(--gray);
-        }
-        
-        .score-item.percentage {
-            border-bottom: 3px solid var(--primary);
-        }
-        
-        .score-item h3 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
+
+        .result-card .value {
+            font-size: 24px;
             font-weight: 700;
         }
-        
-        .score-item.correct h3 {
+
+        .correct-card {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+        }
+
+        .incorrect-card {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+        }
+
+        .unanswered-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .percentage-card {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+        }
+
+        .verdict {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .verdict.pass {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
             color: var(--success);
         }
-        
-        .score-item.incorrect h3 {
+
+        .verdict.fail {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
             color: var(--danger);
         }
-        
-        .score-item.unanswered h3 {
-            color: var(--gray);
+
+        /* Answersheet */
+        .answersheet {
+            margin-top: 30px;
         }
-        
-        .score-item.percentage h3 {
+
+        .answersheet-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
             color: var(--primary);
         }
-        
-        .score-item p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .verdict {
-            text-align: center;
-            margin: 2rem 0;
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            font-weight: 500;
-            font-size: 1.1rem;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .verdict.pass {
-            background-color: #dcfce7;
-            color: var(--success-dark);
-            border-left: 4px solid var(--success);
-        }
-        
-        .verdict.fail {
-            background-color: #fee2e2;
-            color: var(--danger-dark);
-            border-left: 4px solid var(--danger);
-        }
-        
-        .answersheet {
-            margin-top: 2rem;
-        }
-        
-        .answersheet h3 {
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 1.3rem;
-            color: var(--dark);
-        }
-        
+
         .answer-item {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--gray);
         }
-        
-        .answer-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
+
         .answer-status {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed var(--gray);
         }
-        
+
         .answer-status.correct {
-            background-color: #dcfce7;
-            color: var(--success-dark);
+            color: var(--success);
         }
-        
+
         .answer-status.incorrect {
-            background-color: #fee2e2;
-            color: var(--danger-dark);
+            color: var(--danger);
         }
-        
+
         .answer-status.unanswered {
-            background-color: #f1f5f9;
-            color: var(--gray);
+            color: var(--dark-gray);
         }
-        
+
         .answer-question {
+            margin-bottom: 10px;
             font-weight: 500;
-            margin-bottom: 0.75rem;
-            line-height: 1.6;
         }
-        
+
         .answer-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
-        
+
         .answer-detail {
-            background-color: #f8fafc;
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
+            padding: 10px;
+            border-radius: 5px;
         }
-        
+
         .answer-detail strong {
             display: block;
-            margin-bottom: 0.25rem;
-            font-size: 0.85rem;
-            color: var(--gray);
+            margin-bottom: 5px;
+            color: var(--dark-gray);
+            font-size: 14px;
         }
-        
-        .answer-detail span {
-            font-weight: 500;
-            color: var(--dark);
+
+        /* Admin Modal */
+        .admin-form {
+            margin-bottom: 20px;
         }
-        
-        /* No Copy Protection */
-        .no-copy {
-            position: fixed;
-            top: 0;
-            left: 0;
+
+        .admin-form input {
             width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 49px,
-                rgba(0,0,0,0.02) 49px,
-                rgba(0,0,0,0.02) 50px
-            );
+            padding: 10px 15px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            margin-bottom: 15px;
         }
-        
+
+        .admin-form button {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .admin-form button:hover {
+            background-color: var(--secondary);
+        }
+
+        .log-content {
+            display: none;
+        }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .log-table th, .log-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .log-table th {
+            background-color: var(--light);
+            font-weight: 600;
+        }
+
+        .pass-status {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .fail-status {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* Fatigue Notice */
+        #fatigueNotice {
+            display: none;
+            padding: 15px;
+            background-color: #fffaf0;
+            border: 1px solid #feebc8;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: var(--warning);
+            font-weight: 500;
+        }
+
         /* Responsive */
-        @media (max-width: 768px) {
-            .question {
-                padding-left: 2rem;
-            }
-            
-            .question::before {
-                width: 26px;
-                height: 26px;
-                font-size: 0.8rem;
-            }
-            
-            .nav-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 0.9rem;
-            }
-            
-            .question-content {
-                padding: 1.5rem;
-            }
-            
-            .section-header {
-                padding: 1rem;
+        @media (max-width: 992px) {
+            .exam-content {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 0.75rem;
             }
-            
-            .score-card {
-                grid-template-columns: 1fr 1fr;
+
+            .nav-container {
+                width: 100%;
+                order: -1;
+                margin-bottom: 20px;
+            }
+
+            .results-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .answer-details {
+                grid-template-columns: 1fr;
             }
         }
-        
-        @media (max-width: 480px) {
+
+        @media (max-width: 576px) {
             .login-box {
-                padding: 1.75rem 1.25rem;
+                padding: 20px;
             }
-            
-            .header-card {
-                padding: 1.75rem 1.25rem;
-            }
-            
-            h1 {
-                font-size: 1.7rem;
-            }
-            
-            .info-card {
-                min-width: 100%;
-            }
-            
-            .question {
-                padding-left: 0;
-            }
-            
-            .question::before {
-                position: static;
-                display: inline-flex;
-                margin-right: 0.75rem;
-                margin-bottom: 0.75rem;
-                vertical-align: middle;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .controls .btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .score-card {
+
+            .results-summary {
                 grid-template-columns: 1fr;
+            }
+
+            .nav-buttons {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Splash Screen with Login -->
-    <div class="splash-screen" id="splashScreen">
-        <div class="splash-content">
-            <img src="new.png" alt="Alpana Group Logo" class="splash-logo">
-            <div class="login-box">
-                <h2 class="login-title">Managerial Aptitude Test</h2>
-                <div class="input-group">
-                    <label for="username">User ID</label>
-                    <input type="text" id="username" placeholder="Enter your user ID">
+    <!-- Splash Screen -->
+    <div id="splashScreen">
+        <img src="https://via.placeholder.com/150x50?text=Alpana+Group" alt="Alpana Group Logo" class="logo">
+        <div class="login-box">
+            <h2>Managerial Aptitude Test</h2>
+            <div id="errorMessage">Invalid username or password</div>
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter your username">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+            <button id="loginBtn">Login</button>
+        </div>
+    </div>
+
+    <!-- Exam Container -->
+    <div id="examContainer" class="container">
+        <div class="exam-header">
+            <div class="exam-title">Alpana Group - Managerial Aptitude Test</div>
+            <div id="timer" class="timer-container">
+                <i class="fas fa-clock"></i>
+                <span id="timeDisplay">90:00</span>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-header">
+                <div>Progress: <span id="answeredCount">0</span>/100 answered</div>
+                <div id="progressPercent">0%</div>
+            </div>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div id="fatigueNotice">
+            <i class="fas fa-exclamation-triangle"></i> Warning: You have less than 5 minutes remaining. Please review your answers and submit.
+        </div>
+
+        <div class="exam-content">
+            <div class="question-container">
+                <div class="section-header">
+                    Section: <span id="currentSection">Hotel Management</span> | Question: <span id="currentQuestion">1</span>/100
                 </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password">
+                <div id="questionDisplay"></div>
+                <div class="controls">
+                    <button id="prevBtn" class="control-btn"><i class="fas fa-arrow-left"></i> Previous</button>
+                    <button id="markBtn" class="control-btn"><i class="far fa-star"></i> Mark</button>
+                    <button id="nextBtn" class="control-btn">Next <i class="fas fa-arrow-right"></i></button>
                 </div>
-                <button class="login-btn" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Enter Exam Portal
-                </button>
-                <div class="error-message" id="errorMessage">
-                    <i class="fas fa-exclamation-circle"></i> Invalid credentials. Please try again.
+                <div class="submit-container">
+                    <button id="submitBtn" class="control-btn"><i class="fas fa-paper-plane"></i> Submit Exam</button>
                 </div>
+            </div>
+            <div class="nav-container">
+                <div class="nav-header">Question Navigation</div>
+                <div id="questionNav" class="nav-buttons"></div>
+                <button id="adminBtn" style="margin-top: 15px; width: 100%; padding: 8px; background: #2d3748; color: white; border: none; border-radius: 5px;">Admin</button>
             </div>
         </div>
     </div>
-    
-    <!-- No Copy Protection Layer -->
-    <div class="no-copy"></div>
-    
-    <!-- Main Exam Container -->
-    <div class="container" id="examContainer">
-        <header>
-            <div class="header-card">
-                <img src="new.png" alt="Alpana Group Logo" class="logo">
-                <h1>Alpana Homestay & Travels</h1>
-                <p class="subtitle">Managerial Aptitude Test - August 14, 2025</p>
-                <div class="test-info">
-                    <div class="info-card">
-                        <strong>Position</strong>
-                        <span>Manager</span>
-                    </div>
-                    <div class="info-card">
-                        <strong>Total Questions</strong>
-                        <span>100</span>
-                    </div>
-                    <div class="info-card">
-                        <strong>Time Allotted</strong>
-                        <span>120 Minutes</span>
-                    </div>
-                    <div class="info-card">
-                        <strong>Passing Score</strong>
-                        <span>55/100</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-        
-        <div class="nav-container">
-            <div class="top-nav">
-                <div class="timer" id="timer">
-                    <i class="fas fa-clock"></i>
-                    <span id="timeDisplay">120:00</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-text">
-                        <span>Progress: <span id="answeredCount">0</span>/100</span>
-                        <span id="progressPercent">0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="question-nav" id="questionNav">
-                <!-- Navigation buttons will be added dynamically -->
-            </div>
-        </div>
-        
-        <div class="question-container">
-            <div class="section-header">
-                <h2 id="currentSection">Section 1: Tourist Management (Questions 1-20)</h2>
-                <div class="section-info">
-                    <span>Question <span id="currentQuestion">1</span> of 100</span>
-                </div>
-            </div>
-            
-            <div class="question-content" id="questionDisplay">
-                <!-- Questions will be loaded here dynamically -->
-            </div>
-            
-            <div class="controls">
-                <button class="btn btn-outline" id="prevBtn">
-                    <i class="fas fa-arrow-left"></i> Previous
-                </button>
-                <div class="controls-group">
-                    <button class="btn mark-btn" id="markBtn">
-                        <i class="far fa-star"></i> Mark
-                    </button>
-                    <button class="btn btn-primary" id="nextBtn">
-                        Next <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="controls" style="justify-content: flex-end;">
-            <button class="btn btn-danger" id="submitBtn">
-                <i class="fas fa-paper-plane"></i> Submit Exam
-            </button>
-        </div>
-    </div>
-    
-    <!-- Results Modal -->
-    <div class="modal-overlay" id="resultModal">
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="modal">
         <div class="modal-content">
-            <button class="close-modal" id="closeModal">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="result-header">
-                <h2>Exam Results</h2>
-                <p>Managerial Aptitude Test - August 14, 2025</p>
-            </div>
+            <span id="closeModal" class="modal-close">&times;</span>
+            <div class="modal-header">Exam Results</div>
             
-            <div class="score-card">
-                <div class="score-item correct">
-                    <h3 id="correctAnswers">0</h3>
-                    <p>Correct Answers</p>
+            <div class="results-summary">
+                <div class="result-card correct-card">
+                    <h3>Correct Answers</h3>
+                    <div class="value" id="correctAnswers">0</div>
                 </div>
-                <div class="score-item incorrect">
-                    <h3 id="incorrectAnswers">0</h3>
-                    <p>Incorrect Answers</p>
+                <div class="result-card incorrect-card">
+                    <h3>Incorrect Answers</h3>
+                    <div class="value" id="incorrectAnswers">0</div>
                 </div>
-                <div class="score-item unanswered">
-                    <h3 id="unanswered">0</h3>
-                    <p>Unanswered</p>
+                <div class="result-card unanswered-card">
+                    <h3>Unanswered</h3>
+                    <div class="value" id="unanswered">0</div>
                 </div>
-                <div class="score-item percentage">
-                    <h3 id="percentage">0%</h3>
-                    <p>Score Percentage</p>
+                <div class="result-card percentage-card">
+                    <h3>Percentage</h3>
+                    <div class="value" id="percentage">0%</div>
                 </div>
             </div>
             
-            <div class="verdict" id="verdict">
-                <!-- Pass/Fail verdict will be shown here -->
+            <div id="verdict" class="verdict">
+                Your exam results will appear here.
             </div>
             
             <div class="answersheet">
-                <h3>Detailed Answer Sheet</h3>
-                <div id="answersheetContent">
-                    <!-- Answersheet will be generated here -->
-                </div>
+                <div class="answersheet-header">Detailed Answersheet</div>
+                <div id="answersheetContent"></div>
             </div>
             
-            <div class="controls" style="justify-content: center; margin-top: 2rem;">
-                <button class="btn btn-success" id="downloadBtn">
-                    <i class="fas fa-download"></i> Download Results
-                </button>
+            <button id="downloadBtn" class="control-btn" style="margin-top: 20px;">
+                <i class="fas fa-download"></i> Download Results
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Log Modal -->
+    <div id="adminLogModal" class="modal">
+        <div class="modal-content">
+            <span id="closeAdminModal" class="modal-close">&times;</span>
+            <div class="modal-header">Admin Panel</div>
+            
+            <div class="admin-form">
+                <input type="password" id="adminPassword" placeholder="Enter admin password">
+                <button id="viewLogBtn">View Exam Logs</button>
+            </div>
+            
+            <div id="logContent" class="log-content">
+                <h3>Exam Attempts Log</h3>
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Candidate ID</th>
+                            <th>Score</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
-    
+
     <script>
-        // Correct answers key (not visible to user)
+        // Correct answers key (extremely difficult questions)
         const answerKey = {
             1: "b", 2: "c", 3: "d", 4: "a", 5: "b", 6: "c", 7: "d", 8: "a", 9: "b", 10: "c",
             11: "d", 12: "a", 13: "b", 14: "c", 15: "d", 16: "a", 17: "b", 18: "c", 19: "d", 20: "a",
@@ -1159,319 +889,42 @@
             81: "b", 82: "c", 83: "d", 84: "a", 85: "b", 86: "c", 87: "d", 88: "a", 89: "b", 90: "c",
             91: "d", 92: "a", 93: "b", 94: "c", 95: "d", 96: "a", 97: "b", 98: "c", 99: "d", 100: "a"
         };
-        
-        // Exam questions data (100 new questions)
+
+        // Exam questions data (100 extremely difficult questions)
         const examQuestions = [
-            // Section 1: Tourist Management (20 questions)
+            // Section 1: Hotel Management (20 questions)
             {
-                section: "Tourist Management",
-                question: "Which of the following best describes the concept of 'overtourism' in the hospitality industry?",
+                section: "Hotel Management",
+                question: "Given the following hotel performance data, calculate the GOPPAR (Gross Operating Profit Per Available Room) for Q3 2024 if the hotel has 150 rooms:",
                 options: [
-                    "When a destination becomes too popular leading to negative impacts on quality of life and environment",
-                    "When tourists stay beyond their visa limits",
-                    "When hotels are fully booked for consecutive months",
-                    "When tourism revenue exceeds local GDP"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The 'Butler Model' of tourist area evolution suggests that destinations go through several stages. Which stage comes immediately after 'exploration'?",
-                options: [
-                    "Involvement",
-                    "Development",
-                    "Consolidation",
-                    "Stagnation"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Based on the tourism growth chart below, which year showed the highest percentage increase in international arrivals?",
-                options: [
-                    "2018",
-                    "2019",
-                    "2020",
-                    "2021"
+                    "$45.67",
+                    "$52.83",
+                    "$48.91",
+                    "$56.42"
                 ],
                 hasChart: true,
                 chartData: {
-                    labels: ["2017", "2018", "2019", "2020", "2021"],
-                    datasets: [{
-                        label: "International Tourist Arrivals (millions)",
-                        data: [120, 135, 150, 80, 95],
-                        backgroundColor: "rgba(59, 130, 246, 0.5)",
-                        borderColor: "rgba(59, 130, 246, 1)",
-                        borderWidth: 1
-                    }]
-                },
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "According to the table below, which region had the highest average daily expenditure per tourist in 2023?",
-                options: [
-                    "Middle East",
-                    "Asia Pacific",
-                    "Europe",
-                    "Americas"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Region", "Arrivals (millions)", "Avg. Daily Spend ($)", "Avg. Stay (nights)"],
-                    rows: [
-                        ["Asia Pacific", "350", "185", "7.2"],
-                        ["Europe", "710", "210", "5.8"],
-                        ["Americas", "220", "195", "6.5"],
-                        ["Middle East", "90", "245", "4.3"]
-                    ]
-                }
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following is NOT a characteristic of sustainable tourism development?",
-                options: [
-                    "Maximizing short-term profits without regard to environmental impact",
-                    "Ensuring economic benefits to local communities",
-                    "Preserving cultural heritage and traditions",
-                    "Minimizing environmental footprint of tourism activities"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The concept of 'carrying capacity' in tourism refers to:",
-                options: [
-                    "The maximum number of tourists a destination can accommodate without negative impacts",
-                    "The weight limit for tourist luggage on flights",
-                    "The capacity of tourist buses in a given region",
-                    "The maximum number of hotel rooms that can be built in an area"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which international organization is primarily responsible for promoting responsible, sustainable and universally accessible tourism?",
-                options: [
-                    "United Nations World Tourism Organization (UNWTO)",
-                    "World Travel and Tourism Council (WTTC)",
-                    "International Air Transport Association (IATA)",
-                    "International Civil Aviation Organization (ICAO)"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "In the context of tourism marketing, what does the 'AIDA' model stand for?",
-                options: [
-                    "Attention, Interest, Desire, Action",
-                    "Awareness, Intention, Decision, Action",
-                    "Attraction, Information, Decision, Arrival",
-                    "Analysis, Implementation, Development, Assessment"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following best describes the 'experience economy' in tourism?",
-                options: [
-                    "Creating memorable events that engage individuals in personal ways",
-                    "Economy based on experiential learning programs",
-                    "Tourism focused on volunteer experiences",
-                    "Economic model based on customer reviews and ratings"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The 'Plog's model' of tourist behavior categorizes travelers based on:",
-                options: [
-                    "Their personality and how it affects their travel choices",
-                    "Their budget and spending patterns",
-                    "Their preferred mode of transportation",
-                    "Their loyalty to specific hotel chains"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "What is the primary purpose of a 'visitor management plan' at a tourist destination?",
-                options: [
-                    "To balance visitor needs with conservation and community objectives",
-                    "To track all tourist movements using GPS technology",
-                    "To maximize revenue from visitor spending",
-                    "To restrict access to sensitive cultural sites"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following is NOT a typical characteristic of a 'mass tourism' destination?",
-                options: [
-                    "Exclusive, high-end accommodations with limited capacity",
-                    "Standardized products and services",
-                    "Large-scale transportation infrastructure",
-                    "High volume of visitors concentrated in specific areas"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The concept of 'perishability' in tourism services refers to:",
-                options: [
-                    "The inability to store unsold tourism products for future sale",
-                    "The limited shelf life of food served to tourists",
-                    "The degradation of tourist attractions over time",
-                    "The seasonal nature of tourism demand"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which tourism market segment is characterized by independent travel arrangements, preference for authentic experiences, and longer stays?",
-                options: [
-                    "Backpackers",
-                    "Package tourists",
-                    "Business travelers",
-                    "Cruise passengers"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "What is the primary objective of 'yield management' in hotel operations?",
-                options: [
-                    "Maximizing revenue through strategic pricing and inventory control",
-                    "Increasing employee productivity through better training",
-                    "Reducing operational costs through energy efficiency",
-                    "Improving customer satisfaction through personalized services"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following best describes 'dark tourism'?",
-                options: [
-                    "Travel to sites associated with death and tragedy",
-                    "Tourism activities that take place at night",
-                    "Travel to destinations during off-peak seasons",
-                    "Tourism focused on astronomy and stargazing"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The 'Tourism Area Life Cycle (TALC) model' was developed by:",
-                options: [
-                    "Richard Butler",
-                    "Stanley Plog",
-                    "John Urry",
-                    "Dean MacCannell"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following is NOT a benefit of tourism satellite accounts?",
-                options: [
-                    "They provide real-time tracking of individual tourist movements",
-                    "They measure tourism's contribution to GDP",
-                    "They provide data on tourism employment",
-                    "They track tourism's impact on balance of payments"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "What does 'DMO' stand for in tourism management?",
-                options: [
-                    "Destination Marketing Organization",
-                    "Department of Marine Operations",
-                    "Digital Media Outreach",
-                    "Domestic Market Operations"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following is a key characteristic of 'ecotourism'?",
-                options: [
-                    "Minimizes environmental impact and supports conservation efforts",
-                    "Focuses exclusively on natural environments",
-                    "Is always more expensive than conventional tourism",
-                    "Requires participants to engage in physical labor"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            
-            // Section 2: Hospitality Management (20 questions)
-            {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT one of the '5 Ps' of hospitality marketing?",
-                options: [
-                    "Policy",
-                    "Product",
-                    "Price",
-                    "Place"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'ARR' metric in hotel management stands for:",
-                options: [
-                    "Average Room Rate",
-                    "Annual Revenue Return",
-                    "Accommodation Reservation Ratio",
-                    "Average Restaurant Revenue"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Based on the chart below showing hotel performance metrics, which month had the highest RevPAR?",
-                options: [
-                    "July",
-                    "August",
-                    "September",
-                    "October"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["June", "July", "August", "September", "October"],
+                    labels: ["Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024"],
                     datasets: [
                         {
-                            label: "Occupancy Rate (%)",
-                            data: [72, 85, 82, 78, 65],
+                            label: "Total Revenue ($)",
+                            data: [1250000, 1320000, 1450000, 1580000],
                             backgroundColor: "rgba(59, 130, 246, 0.5)",
                             borderColor: "rgba(59, 130, 246, 1)",
                             borderWidth: 1,
                             yAxisID: 'y'
                         },
                         {
-                            label: "ADR ($)",
-                            data: [150, 180, 175, 160, 140],
+                            label: "Operating Expenses ($)",
+                            data: [950000, 1010000, 1080000, 1150000],
+                            backgroundColor: "rgba(239, 68, 68, 0.5)",
+                            borderColor: "rgba(239, 68, 68, 1)",
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: "Occupancy Rate (%)",
+                            data: [72, 76, 82, 85],
                             backgroundColor: "rgba(16, 185, 129, 0.5)",
                             borderColor: "rgba(16, 185, 129, 1)",
                             borderWidth: 1,
@@ -1485,12 +938,21 @@
                             type: 'linear',
                             display: true,
                             position: 'left',
-                            max: 100
+                            title: {
+                                display: true,
+                                text: 'Dollars ($)'
+                            }
                         },
                         y1: {
                             type: 'linear',
                             display: true,
                             position: 'right',
+                            min: 0,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)'
+                            },
                             grid: {
                                 drawOnChartArea: false
                             }
@@ -1500,352 +962,704 @@
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "According to the table below, which department typically has the highest payroll costs as a percentage of revenue?",
+                section: "Hotel Management",
+                question: "A hotel has 200 rooms with an ADR of $180 and occupancy of 78%. If the variable cost per occupied room is $45 and fixed costs are $12,500 per day, what is the daily net profit?",
                 options: [
-                    "Rooms",
-                    "Food & Beverage",
-                    "Administration",
-                    "Marketing"
+                    "$18,460",
+                    "$20,980",
+                    "$22,340",
+                    "$24,760"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Hotel Management",
+                question: "Calculate the RevPAR (Revenue Per Available Room) for a hotel with 150 rooms that sold 120 rooms at an average rate of $220, with additional revenue of $8,500 from other services.",
+                options: [
+                    "$185.33",
+                    "$176.00",
+                    "$192.67",
+                    "$168.50"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Hotel Management",
+                question: "A hotel's food cost percentage is 28% and beverage cost percentage is 22%. If total F&B revenue is $85,000, with food accounting for 60% of revenue, what is the total cost of goods sold?",
+                options: [
+                    "$22,440",
+                    "$23,800",
+                    "$21,080",
+                    "$24,360"
                 ],
                 hasChart: false,
                 hasTable: true,
                 tableData: {
-                    headers: ["Department", "Revenue (%)", "Payroll Costs (%)", "Profit Margin (%)"],
+                    headers: ["Department", "Cost Percentage", "Revenue Percentage"],
                     rows: [
-                        ["Rooms", "65", "20", "75"],
-                        ["Food & Beverage", "25", "35", "15"],
-                        ["Administration", "5", "15", "-10"],
-                        ["Marketing", "5", "10", "-5"]
+                        ["Food", "28%", "60%"],
+                        ["Beverage", "22%", "40%"]
                     ]
                 }
             },
             {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a key principle of the 'Lean Hospitality' approach?",
+                section: "Hotel Management",
+                question: "Using the Hubbart Formula, calculate the required average room rate for a 200-room hotel with 70% occupancy, operating expenses of $4.2 million, desired ROI of 12% on $30 million investment, and other departmental income of $1.8 million. The hotel operates 365 days a year.",
                 options: [
-                    "Maximizing inventory levels to prevent stockouts",
-                    "Eliminating waste in all processes",
-                    "Continuous improvement through employee involvement",
-                    "Creating value from the customer's perspective"
+                    "$189.45",
+                    "$203.75",
+                    "$215.60",
+                    "$227.90"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "The 'Upselling' technique in hospitality refers to:",
+                section: "Hotel Management",
+                question: "A hotel's room division contributes 65% of total revenue with a 75% profit margin. If the total property profit is $4.5 million, what is the hotel's total revenue?",
                 options: [
-                    "Encouraging guests to purchase higher-value products or services",
-                    "Selling additional products to existing customers",
-                    "Increasing prices during peak seasons",
-                    "Promoting products through upward communication channels"
+                    "$7.82 million",
+                    "$8.28 million",
+                    "$8.76 million",
+                    "$9.23 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "Which of the following best describes the 'Moments of Truth' concept in hospitality?",
+                section: "Hotel Management",
+                question: "Calculate the breakeven occupancy percentage for a 150-room hotel with fixed costs of $3.2 million, variable costs of $45 per occupied room, and an ADR of $195. The hotel operates 365 days a year.",
                 options: [
-                    "Critical interactions between staff and guests that shape perceptions",
-                    "Times when operational failures must be disclosed to guests",
-                    "Periods when customer feedback is collected",
-                    "Instances when revenue targets are achieved"
+                    "52.8%",
+                    "48.3%",
+                    "56.2%",
+                    "44.7%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "The 'Hub and Spoke' model in hospitality distribution refers to:",
+                section: "Hotel Management",
+                question: "A hotel's GOP is $2.4 million on $8 million revenue. If rooms revenue is $5.2 million with 80% profit margin, what is the profit margin for other departments?",
                 options: [
-                    "A central reservation system with multiple distribution channels",
-                    "A hotel located at an airport with shuttle services",
-                    "A loyalty program with tiered benefits",
-                    "A food service operation with centralized production"
+                    "22.5%",
+                    "25.0%",
+                    "27.5%",
+                    "30.0%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a typical key performance indicator (KPI) for housekeeping departments?",
+                section: "Hotel Management",
+                question: "A hotel's occupancy increased from 72% to 78% while ADR decreased from $220 to $210. What is the percentage change in RevPAR?",
                 options: [
-                    "RevPAR (Revenue per Available Room)",
-                    "Room cleaning time per occupied room",
-                    "Guest satisfaction scores for room cleanliness",
-                    "Linens replacement rate"
+                    "+2.3%",
+                    "+1.8%",
+                    "-1.2%",
+                    "+0.5%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "The 'Last Room Value' concept in hotel revenue management refers to:",
+                section: "Hotel Management",
+                question: "A 300-room hotel has 85% occupancy in June with ADR of $275. If July's occupancy is expected to be 12% higher with a 5% rate increase, what is the projected rooms revenue for July?",
                 options: [
-                    "The minimum acceptable rate for selling the last available room",
-                    "The perceived value of a room booked at the last minute",
-                    "The upgrade value offered to loyal customers",
-                    "The depreciation value of unsold rooms"
+                    "$2.68 million",
+                    "$2.83 million",
+                    "$2.95 million",
+                    "$3.12 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a characteristic of a 'boutique hotel'?",
+                section: "Hotel Management",
+                question: "A hotel's payroll costs are 38% of revenue. If salaries are $1.2 million and wages are $800,000, what is the hotel's total revenue?",
                 options: [
-                    "Standardized design across all properties",
-                    "Unique, distinctive character",
-                    "Small to medium size",
-                    "High level of personalized service"
+                    "$5.00 million",
+                    "$5.26 million",
+                    "$5.52 million",
+                    "$5.78 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "The '10-5 Rule' in hospitality service refers to:",
+                section: "Hotel Management",
+                question: "A hotel's net income is 15% of revenue after paying 28% in taxes. What is the GOP percentage if fixed charges are $1.2 million on $10 million revenue?",
                 options: [
-                    "Making eye contact at 10 feet and smiling at 5 feet",
-                    "Responding to guest requests within 10 minutes and resolving within 5",
-                    "Checking on guests 10 minutes after arrival and again after 5 minutes",
-                    "Offering 10% discount for 5-star reviews"
+                    "34.6%",
+                    "36.8%",
+                    "38.2%",
+                    "40.4%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "Which of the following best describes 'dynamic pricing' in hospitality?",
+                section: "Hotel Management",
+                question: "A hotel's rooms department has a 75% profit margin. If undistributed operating expenses are $1.8 million and the GOP is $4.2 million, what is the rooms department revenue?",
                 options: [
-                    "Adjusting prices in real-time based on demand and other factors",
-                    "Offering different prices to different customer segments",
-                    "Varying prices based on the time of booking",
-                    "Charging premium prices during special events"
+                    "$7.20 million",
+                    "$7.80 million",
+                    "$8.00 million",
+                    "$8.40 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "The 'Guest Cycle' in hotel operations consists of four main stages. Which of the following is NOT one of them?",
+                section: "Hotel Management",
+                question: "A hotel's RevPAR index is 1.15 when its RevPAR is $185 and the competitive set's RevPAR is $160. If the hotel's occupancy is 82%, what is the competitive set's occupancy if their ADR is $200?",
                 options: [
-                    "Renovation",
-                    "Pre-arrival",
-                    "Arrival",
-                    "Departure"
+                    "76.5%",
+                    "78.0%",
+                    "74.2%",
+                    "72.8%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a typical responsibility of a concierge in luxury hotels?",
+                section: "Hotel Management",
+                question: "A hotel's food cost is 28% and labor cost is 35% in the restaurant. If the restaurant's revenue is $1.5 million, what is the department's profit if other costs are 15% of revenue?",
                 options: [
-                    "Preparing financial statements for management",
-                    "Making restaurant reservations",
-                    "Arranging transportation",
-                    "Providing local information and recommendations"
+                    "$330,000",
+                    "$345,000",
+                    "$360,000",
+                    "$375,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "The 'Porter's Five Forces' model is used in hospitality to analyze:",
+                section: "Hotel Management",
+                question: "A hotel's room revenue was $3.6 million last year with 72% occupancy. This year, with 5% higher occupancy and 8% higher ADR, what is the room revenue?",
                 options: [
-                    "Competitive intensity and profitability of an industry",
-                    "Guest satisfaction levels across five dimensions",
-                    "The five key operational areas of a hotel",
-                    "Five stages of employee career development"
+                    "$4.12 million",
+                    "$4.28 million",
+                    "$4.37 million",
+                    "$4.45 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "Which of the following best describes 'bleisure' travel?",
+                section: "Hotel Management",
+                question: "A 250-room hotel has 70% annual occupancy. If the average stay is 2.5 nights, how many individual guests stayed at the hotel in a year?",
                 options: [
-                    "Combining business and leisure travel",
-                    "Budget leisure travel during off-peak seasons",
-                    "Leisure travel focused on wellness activities",
-                    "Business travel with minimal leisure components"
+                    "25,550",
+                    "26,600",
+                    "27,300",
+                    "28,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "The 'Hubbart Formula' is used in hospitality for:",
+                section: "Hotel Management",
+                question: "A hotel's GOP is 42% of revenue. If fixed charges are $1.5 million and net income is $2.1 million with a 30% tax rate, what is the hotel's total revenue?",
                 options: [
-                    "Determining room rates based on desired profit",
-                    "Calculating food and beverage costs",
-                    "Estimating staffing requirements",
-                    "Forecasting occupancy rates"
+                    "$12.00 million",
+                    "$12.86 million",
+                    "$13.33 million",
+                    "$14.00 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a common type of hotel ownership structure?",
+                section: "Hotel Management",
+                question: "A hotel's current ratio is 1.5 with current assets of $750,000. If accounts payable is $200,000, what is the amount of other current liabilities?",
                 options: [
-                    "Fiduciary ownership",
-                    "Franchise",
-                    "Management contract",
-                    "Timeshare"
+                    "$300,000",
+                    "$350,000",
+                    "$400,000",
+                    "$450,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Hospitality Management",
-                question: "The 'Service Profit Chain' model demonstrates the relationship between:",
+                section: "Hotel Management",
+                question: "A hotel's asset turnover ratio is 1.2 with total assets of $25 million. If net income is 8% of revenue, what is the return on assets?",
                 options: [
-                    "Employee satisfaction, customer satisfaction, and profitability",
-                    "Service quality, pricing strategy, and market share",
-                    "Property location, amenities, and occupancy rates",
-                    "Brand recognition, advertising spend, and revenue"
+                    "9.6%",
+                    "10.2%",
+                    "10.8%",
+                    "11.4%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
-            
-            // Section 3: Travel Management (20 questions)
+            // Section 2: Financial Management (20 questions)
             {
-                section: "Travel Management",
-                question: "Which of the following is NOT a typical component of a 'Grand Tour' package?",
+                section: "Financial Management",
+                question: "A hotel is considering a $5 million renovation with projected annual cash flows of $1.2 million for 6 years. What is the payback period?",
                 options: [
-                    "Extreme sports activities",
-                    "Cultural experiences",
-                    "Historical site visits",
-                    "Language immersion"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'Open Jaw' ticket in airline travel refers to:",
-                options: [
-                    "A ticket where the return flight leaves from a different city than the arrival",
-                    "A ticket that allows unlimited stopovers",
-                    "A last-minute discounted ticket",
-                    "A ticket with flexible dates"
+                    "4.17 years",
+                    "4.33 years",
+                    "4.50 years",
+                    "4.67 years"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Based on the chart below showing travel booking channels, which channel showed the highest growth from 2020 to 2023?",
+                section: "Financial Management",
+                question: "Calculate the NPV of a project with initial investment of $2.5 million and cash flows of $800,000 for 5 years with a 12% discount rate.",
                 options: [
-                    "Mobile Apps",
-                    "Online Travel Agencies",
-                    "Direct Hotel Websites",
-                    "Traditional Travel Agents"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["2020", "2021", "2022", "2023"],
-                    datasets: [
-                        {
-                            label: "Mobile Apps",
-                            data: [15, 25, 35, 48],
-                            backgroundColor: "rgba(59, 130, 246, 0.5)",
-                            borderColor: "rgba(59, 130, 246, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Online Travel Agencies",
-                            data: [40, 38, 42, 45],
-                            backgroundColor: "rgba(16, 185, 129, 0.5)",
-                            borderColor: "rgba(16, 185, 129, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Direct Hotel Websites",
-                            data: [30, 28, 32, 35],
-                            backgroundColor: "rgba(239, 68, 68, 0.5)",
-                            borderColor: "rgba(239, 68, 68, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Traditional Travel Agents",
-                            data: [15, 9, 7, 5],
-                            backgroundColor: "rgba(245, 158, 11, 0.5)",
-                            borderColor: "rgba(245, 158, 11, 1)",
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "According to the table below showing baggage handling performance, which airline had the highest mishandled baggage rate?",
-                options: [
-                    "Airline D",
-                    "Airline C",
-                    "Airline B",
-                    "Airline A"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Airline", "Total Baggage", "Mishandled", "Rate (%)"],
-                    rows: [
-                        ["Airline A", "1,250,000", "12,500", "1.0"],
-                        ["Airline B", "980,000", "11,760", "1.2"],
-                        ["Airline C", "1,100,000", "14,300", "1.3"],
-                        ["Airline D", "850,000", "12,750", "1.5"]
-                    ]
-                }
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following is NOT a common type of travel insurance coverage?",
-                options: [
-                    "Professional liability coverage",
-                    "Trip cancellation/interruption",
-                    "Medical expenses",
-                    "Lost or delayed baggage"
+                    "$384,000",
+                    "$425,000",
+                    "$463,000",
+                    "$502,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "The 'BSP' system in travel management stands for:",
+                section: "Financial Management",
+                question: "A hotel's DSCR is 1.25 with annual net operating income of $3 million. What is the annual debt service?",
                 options: [
-                    "Billing and Settlement Plan",
-                    "Business Service Provider",
-                    "Booking and Sales Platform",
-                    "Brand Standardization Program"
+                    "$2.40 million",
+                    "$2.50 million",
+                    "$2.60 million",
+                    "$2.75 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Which of the following best describes the 'Global Distribution System' (GDS) in travel?",
+                section: "Financial Management",
+                question: "A hotel's equity is $15 million with debt of $25 million. If the after-tax cost of debt is 5% and cost of equity is 12%, what is the WACC?",
                 options: [
-                    "A network that enables transactions between travel service providers and agencies",
-                    "A worldwide system for distributing travel brochures",
-                    "An international travel regulatory body",
-                    "A global network of tourist information centers"
+                    "7.50%",
+                    "7.88%",
+                    "8.25%",
+                    "8.63%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "The 'IATA' airport code system uses how many letters for airport identification?",
+                section: "Financial Management",
+                question: "A hotel's current ratio is 1.8 with current liabilities of $1.2 million. If inventory is $400,000, what is the quick ratio?",
                 options: [
-                    "3",
+                    "1.42",
+                    "1.50",
+                    "1.58",
+                    "1.67"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's fixed charge coverage ratio is 1.3 with EBITDA of $2.6 million. If interest expense is $1 million, what are the total fixed charges?",
+                options: [
+                    "$2.00 million",
+                    "$2.15 million",
+                    "$2.30 million",
+                    "$2.45 million"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's net income increased from $1.5 million to $1.8 million while revenue increased from $10 million to $12 million. What is the degree of operating leverage?",
+                options: [
+                    "1.67",
+                    "2.00",
+                    "2.33",
+                    "2.67"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's asset turnover improved from 1.2 to 1.5 while profit margin remained at 8%. What is the percentage change in ROA?",
+                options: [
+                    "+20%",
+                    "+25%",
+                    "+30%",
+                    "+35%"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's days sales outstanding decreased from 45 to 36 days while annual credit sales increased from $8 million to $9 million. What is the change in accounts receivable?",
+                options: [
+                    "-$120,000",
+                    "-$80,000",
+                    "$0",
+                    "+$80,000"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's inventory turnover improved from 12 to 15 times while COGS increased from $3.6 million to $4.2 million. What is the change in average inventory?",
+                options: [
+                    "-$100,000",
+                    "-$80,000",
+                    "-$60,000",
+                    "-$40,000"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's debt-to-equity ratio is 1.5. If total assets are $25 million, what is the amount of equity?",
+                options: [
+                    "$10.00 million",
+                    "$12.50 million",
+                    "$15.00 million",
+                    "$17.50 million"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's times interest earned ratio is 4.5 with EBIT of $2.25 million. What is the interest expense?",
+                options: [
+                    "$500,000",
+                    "$550,000",
+                    "$600,000",
+                    "$650,000"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's gross profit margin is 65% and operating margin is 28%. If revenue is $8 million, what are the fixed operating expenses?",
+                options: [
+                    "$2.96 million",
+                    "$3.04 million",
+                    "$3.12 million",
+                    "$3.20 million"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's ROE is 15% with net income of $1.8 million. If debt is $12 million, what is the return on assets?",
+                options: [
+                    "8.18%",
+                    "8.57%",
+                    "9.00%",
+                    "9.47%"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's cash conversion cycle is 45 days with days inventory outstanding of 30 and days sales outstanding of 25. What is the days payable outstanding?",
+                options: [
+                    "10 days",
+                    "15 days",
+                    "20 days",
+                    "25 days"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's EBITDA margin is 35% with depreciation of $800,000 and amortization of $200,000. If EBIT is $3 million, what is the revenue?",
+                options: [
+                    "$10.00 million",
+                    "$10.86 million",
+                    "$11.43 million",
+                    "$12.00 million"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's net profit margin increased from 10% to 12% while asset turnover decreased from 1.5 to 1.4. What is the change in ROA?",
+                options: [
+                    "-0.2%",
+                    "+0.2%",
+                    "+0.8%",
+                    "+1.2%"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's current assets are $3 million with inventory turnover of 12. If current ratio is 2 and quick ratio is 1.5, what are current liabilities?",
+                options: [
+                    "$1.00 million",
+                    "$1.25 million",
+                    "$1.50 million",
+                    "$1.75 million"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's fixed asset turnover is 1.8 with net fixed assets of $15 million. If total assets are $25 million, what is the total asset turnover?",
+                options: [
+                    "1.08",
+                    "1.12",
+                    "1.16",
+                    "1.20"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's earnings yield is 8% with EPS of $2.40. What is the current stock price?",
+                options: [
+                    "$30.00",
+                    "$32.50",
+                    "$35.00",
+                    "$37.50"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Financial Management",
+                question: "A hotel's P/E ratio decreased from 20 to 18 while EPS increased from $1.50 to $1.80. What is the percentage change in stock price?",
+                options: [
+                    "+8.0%",
+                    "+6.5%",
+                    "+5.0%",
+                    "+3.5%"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            // Section 3: Human Resources (20 questions)
+            {
+                section: "Human Resources",
+                question: "A hotel has 120 employees with a turnover rate of 28%. If 15 new employees were hired last year, how many employees left?",
+                options: [
+                    "29",
+                    "31",
+                    "33",
+                    "35"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's labor cost is 38% of revenue. If benefits are 25% of wages and total payroll is $1.9 million, what is the hotel's revenue?",
+                options: [
+                    "$5.00 million",
+                    "$5.26 million",
+                    "$5.52 million",
+                    "$5.78 million"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel department has 18 employees with an absenteeism rate of 8%. How many person-days are lost annually if each employee works 240 days a year?",
+                options: [
+                    "345.6",
+                    "364.8",
+                    "384.0",
+                    "403.2"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's training program reduced errors by 40%. If pre-training errors were 15 per 100 transactions at a cost of $25 per error, and the hotel has 50,000 transactions annually, what is the annual savings?",
+                options: [
+                    "$75,000",
+                    "$82,500",
+                    "$90,000",
+                    "$97,500"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's employee satisfaction improved from 68% to 75%. If turnover was previously 32% with 150 employees, how many fewer employees will leave assuming turnover decreases proportionally?",
+                options: [
+                    "9",
+                    "11",
+                    "13",
+                    "15"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's productivity improved from 12 rooms cleaned per shift to 14. If labor cost was $22 per room and wages are unchanged, what is the percentage change in labor cost per room?",
+                options: [
+                    "-14.3%",
+                    "-12.5%",
+                    "-10.7%",
+                    "-8.9%"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's cross-training program reduced overtime by 35%. If overtime was previously 12% of payroll at $1.2 million, what is the annual savings?",
+                options: [
+                    "$42,000",
+                    "$50,400",
+                    "$58,800",
+                    "$67,200"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's incentive program increased sales by 15%. If average check was $45 with 50,000 covers annually and the incentive cost is 3% of incremental revenue, what is the net gain?",
+                options: [
+                    "$146,250",
+                    "$153,563",
+                    "$160,875",
+                    "$168,188"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's health insurance costs increased by 12% to $1,120 per employee monthly. If the hotel covers 80% of the cost for 125 employees, what is the annual increase in expense?",
+                options: [
+                    "$168,000",
+                    "$172,800",
+                    "$177,600",
+                    "$182,400"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel reduced staff from 150 to 135 while maintaining output. If average salary was $35,000 with 30% benefits, what is the annual savings?",
+                options: [
+                    "$682,500",
+                    "$717,750",
+                    "$753,000",
+                    "$788,250"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's recruitment cost is $3,500 per hire with 45 hires annually. If a new onboarding program reduces turnover from 28% to 22%, how much is saved if the program costs $50,000?",
+                options: [
+                    "$18,900",
+                    "$23,100",
+                    "$27,300",
+                    "$31,500"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's training program costs $75,000 and improves productivity by 8%. If labor cost was $2.4 million annually, what is the ROI in the first year?",
+                options: [
+                    "156%",
+                    "168%",
+                    "180%",
+                    "192%"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's employee engagement survey scores improved from 68% to 74%. If a 1% increase correlates with 0.5% higher customer satisfaction, and each 1% in customer satisfaction increases revenue by $25,000, what is the projected revenue increase?",
+                options: [
+                    "$75,000",
+                    "$82,500",
+                    "$90,000",
+                    "$97,500"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's workforce is 60% full-time and 40% part-time. Full-time employees work 40 hours/week at $18/hour, part-time work 20 hours/week at $16/hour. What is the average hourly wage?",
+                options: [
+                    "$17.20",
+                    "$17.40",
+                    "$17.60",
+                    "$17.80"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's workers' compensation premium is $2.50 per $100 of payroll. If safety training reduces claims by 30% and payroll is $3.6 million, what is the annual savings?",
+                options: [
+                    "$27,000",
+                    "$29,700",
+                    "$32,400",
+                    "$35,100"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's staff scheduling software reduced labor hours by 8%. If labor was 35% of revenue at $4.2 million, and the software costs $25,000 annually, what is the net savings?",
+                options: [
+                    "$91,400",
+                    "$94,600",
+                    "$97,800",
+                    "$101,000"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's employee referral program yields 25 hires annually with 20% better retention. If regular hires cost $3,500 and stay 2.5 years on average, what is the annual savings if referred hires stay 3 years?",
+                options: [
+                    "$14,000",
+                    "$17,500",
+                    "$21,000",
+                    "$24,500"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            {
+                section: "Human Resources",
+                question: "A hotel's diversity initiative increased minority hires from 15% to 25% of 120 employees. If turnover is 10% lower in minority groups, how many fewer employees will leave annually if overall turnover was 30%?",
+                options: [
                     "2",
+                    "3",
                     "4",
                     "5"
                 ],
@@ -1853,739 +1667,559 @@
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Which of the following is NOT a typical component of a 'MICE' event?",
+                section: "Human Resources",
+                question: "A hotel's leadership program promoted 15 internal candidates last year, saving $12,000 per external hire in recruitment costs. If external hires typically cost 20% more in salary, and average salary is $45,000, what is the total first-year savings?",
                 options: [
-                    "Leisure vacation",
-                    "Meetings",
-                    "Incentives",
-                    "Exhibitions"
+                    "$243,000",
+                    "$256,500",
+                    "$270,000",
+                    "$283,500"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "The 'Schengen Agreement' in European travel allows for:",
+                section: "Human Resources",
+                question: "A hotel's flexible scheduling reduced turnover from 28% to 22% among 75 hourly employees. If replacement costs average $3,500 per employee, what is the annual savings?",
                 options: [
-                    "Borderless travel between member countries",
-                    "Discounted airfares for EU residents",
-                    "Standardized hotel ratings across Europe",
-                    "Harmonized visa policies for non-EU visitors"
+                    "$15,750",
+                    "$17,850",
+                    "$19,950",
+                    "$22,050"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Which of the following best describes 'ancillary revenue' in the airline industry?",
+                section: "Human Resources",
+                question: "A hotel's performance pay increased productivity by 12% with a 5% payroll increase. If original payroll was $2.4 million, what is the productivity gain per dollar of additional payroll?",
                 options: [
-                    "Revenue from non-ticket sources like baggage fees and onboard sales",
-                    "Revenue from code-share agreements",
-                    "Revenue from government subsidies",
-                    "Revenue from frequent flyer program partnerships"
+                    "$2.40",
+                    "$2.60",
+                    "$2.80",
+                    "$3.00"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            // Section 4: Marketing (20 questions)
+            {
+                section: "Marketing",
+                question: "A hotel's direct booking percentage increased from 25% to 35% of 50,000 room nights. If commission is 15% on $200 average rate for indirect bookings, what is the annual savings?",
+                options: [
+                    "$450,000",
+                    "$525,000",
+                    "$600,000",
+                    "$675,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "The 'hub-and-spoke' system in airline operations refers to:",
+                section: "Marketing",
+                question: "A hotel's loyalty program members spend 25% more than non-members. If members account for 30% of 60,000 annual guests with average spend of $150, what is the incremental revenue?",
                 options: [
-                    "Routing passengers through central hub airports",
-                    "A loyalty program structure",
-                    "An aircraft maintenance system",
-                    "A flight crew scheduling method"
+                    "$675,000",
+                    "$720,000",
+                    "$765,000",
+                    "$810,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Which of the following is NOT a typical responsibility of a tour operator?",
+                section: "Marketing",
+                question: "A hotel's website conversion rate improved from 3% to 4% with 500,000 annual visitors. If average booking value is $800, what is the incremental revenue?",
                 options: [
-                    "Operating airport security checkpoints",
-                    "Designing tour packages",
-                    "Negotiating with suppliers",
-                    "Handling customer service for tours"
+                    "$4.0 million",
+                    "$4.5 million",
+                    "$5.0 million",
+                    "$5.5 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "The 'APEX' fare in airline ticketing stands for:",
+                section: "Marketing",
+                question: "A hotel's paid search CPA is $45 with a 20% conversion rate. If average stay value is $900, what is the ROAS?",
                 options: [
-                    "Advance Purchase Excursion",
-                    "Airline Passenger Exchange",
-                    "Approved Price Excursion",
-                    "Advanced Premium Experience"
+                    "400%",
+                    "450%",
+                    "500%",
+                    "550%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Which of the following best describes 'bleisure' travel?",
+                section: "Marketing",
+                question: "A hotel's email campaign has 25% open rate and 5% click-through rate. If sent to 50,000 subscribers with 2% conversion and $800 average booking, what is the revenue?",
                 options: [
-                    "Combining business and leisure travel",
-                    "Budget travel during off-peak seasons",
-                    "Group travel with colleagues",
-                    "Last-minute travel deals"
+                    "$100,000",
+                    "$120,000",
+                    "$140,000",
+                    "$160,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "The 'WTTC' in travel industry stands for:",
+                section: "Marketing",
+                question: "A hotel's social media campaign generated 500 bookings from 2 million impressions. If the campaign cost $50,000 and average stay is $750, what is the ROAS?",
                 options: [
-                    "World Travel and Tourism Council",
-                    "Worldwide Travel and Transport Committee",
-                    "World Tourism and Trade Commission",
-                    "Worldwide Travel Technology Consortium"
+                    "650%",
+                    "700%",
+                    "750%",
+                    "800%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Which of the following is NOT a common type of cruise itinerary?",
+                section: "Marketing",
+                question: "A hotel's reputation score improved from 4.2 to 4.5 on OTAs. If each 0.1 increase typically yields 5% more bookings, and baseline is 10,000 bookings at $200 average rate, what is the incremental revenue?",
                 options: [
-                    "Freestyle cruising with no set itinerary",
-                    "Round-trip cruising",
-                    "One-way cruising",
-                    "Open-jaw cruising"
+                    "$300,000",
+                    "$330,000",
+                    "$360,000",
+                    "$390,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "The 'Duty of Care' obligation for travel managers refers to:",
+                section: "Marketing",
+                question: "A hotel's metasearch campaign has 5% conversion rate with $15 CPA. If average booking value is $600, what is the profit margin if other costs are 30% of revenue?",
                 options: [
-                    "Legal responsibility for traveler safety and well-being",
-                    "Overseeing customs declarations for travelers",
-                    "Ensuring travelers have adequate insurance",
-                    "Monitoring traveler expense reports"
+                    "55%",
+                    "57.5%",
+                    "60%",
+                    "62.5%"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Which of the following is NOT a typical feature of a 'low-cost carrier' business model?",
+                section: "Marketing",
+                question: "A hotel's package sales increased from 15% to 25% of 40,000 room nights. If packages generate $50 more revenue per night, what is the incremental revenue?",
                 options: [
-                    "Complimentary multi-course meals on all flights",
-                    "Point-to-point routes",
-                    "Single aircraft type",
-                    "High aircraft utilization"
+                    "$200,000",
+                    "$220,000",
+                    "$240,000",
+                    "$260,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "The 'CRS' in travel technology stands for:",
+                section: "Marketing",
+                question: "A hotel's upselling program increased ancillary revenue from $15 to $25 per room night. If the hotel has 50,000 occupied room nights, what is the incremental revenue?",
                 options: [
-                    "Computer Reservation System",
-                    "Customer Relationship Software",
-                    "Centralized Reservation Service",
-                    "Corporate Rate System"
+                    "$500,000",
+                    "$550,000",
+                    "$600,000",
+                    "$650,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Travel Management",
-                question: "Which of the following best describes 'dynamic packaging' in travel?",
+                section: "Marketing",
+                question: "A hotel's segmentation strategy increased ADR by 12% without affecting occupancy. If baseline RevPAR was $120 with 75,000 room nights, what is the incremental revenue?",
                 options: [
-                    "Combining separate travel components into customized packages",
-                    "Last-minute packaging of unsold inventory",
-                    "Seasonal variations in tour packages",
-                    "Packages that change based on weather conditions"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            
-            // Section 4: Managerial Aptitude (20 questions)
-            {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT one of the five functions of management identified by Henri Fayol?",
-                options: [
-                    "Staffing",
-                    "Planning",
-                    "Organizing",
-                    "Commanding"
+                    "$1.08 million",
+                    "$1.18 million",
+                    "$1.28 million",
+                    "$1.38 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The 'SMART' criteria for goal setting stands for:",
+                section: "Marketing",
+                question: "A hotel's dynamic pricing increased occupancy from 72% to 78% while maintaining RevPAR. If the hotel has 200 rooms, what is the annual incremental revenue if ADR decreased by 5%?",
                 options: [
-                    "Specific, Measurable, Achievable, Relevant, Time-bound",
-                    "Strategic, Manageable, Actionable, Realistic, Timely",
-                    "Standardized, Meaningful, Attainable, Responsible, Targeted",
-                    "Systematic, Motivating, Accountable, Reliable, Trackable"
+                    "$394,200",
+                    "$413,100",
+                    "$432,000",
+                    "$450,900"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Based on the chart below showing employee satisfaction scores across departments, which department had the lowest satisfaction in Q3?",
+                section: "Marketing",
+                question: "A hotel's CRM program increased repeat guests from 25% to 35% of 60,000 annual guests. If repeat guests spend 20% more with $150 average spend, what is the incremental revenue?",
                 options: [
-                    "Housekeeping",
-                    "Front Office",
-                    "Food & Beverage",
-                    "Maintenance"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["Q1", "Q2", "Q3", "Q4"],
-                    datasets: [
-                        {
-                            label: "Housekeeping",
-                            data: [78, 82, 75, 85],
-                            backgroundColor: "rgba(59, 130, 246, 0.5)",
-                            borderColor: "rgba(59, 130, 246, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Front Office",
-                            data: [85, 88, 84, 90],
-                            backgroundColor: "rgba(16, 185, 129, 0.5)",
-                            borderColor: "rgba(16, 185, 129, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Food & Beverage",
-                            data: [80, 83, 82, 88],
-                            backgroundColor: "rgba(239, 68, 68, 0.5)",
-                            borderColor: "rgba(239, 68, 68, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Maintenance",
-                            data: [88, 85, 86, 92],
-                            backgroundColor: "rgba(245, 158, 11, 0.5)",
-                            borderColor: "rgba(245, 158, 11, 1)",
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "According to the table below showing project completion data, which team had the highest percentage of projects completed on time?",
-                options: [
-                    "Team D",
-                    "Team C",
-                    "Team B",
-                    "Team A"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Team", "Projects Completed", "On Time", "Percentage"],
-                    rows: [
-                        ["Team A", "25", "18", "72%"],
-                        ["Team B", "30", "23", "77%"],
-                        ["Team C", "28", "22", "79%"],
-                        ["Team D", "32", "27", "84%"]
-                    ]
-                }
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which leadership style is characterized by making decisions without consulting subordinates?",
-                options: [
-                    "Autocratic",
-                    "Democratic",
-                    "Laissez-faire",
-                    "Transformational"
+                    "$1.08 million",
+                    "$1.26 million",
+                    "$1.44 million",
+                    "$1.62 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The 'PDCA' cycle in quality management stands for:",
+                section: "Marketing",
+                question: "A hotel's content marketing increased organic traffic by 40% to 350,000 visitors with 3% conversion. If average booking value is $750, what is the incremental revenue?",
                 options: [
-                    "Plan, Do, Check, Act",
-                    "Prepare, Develop, Control, Adjust",
-                    "Process, Deliver, Correct, Assess",
-                    "Project, Design, Create, Analyze"
+                    "$3.15 million",
+                    "$3.50 million",
+                    "$3.85 million",
+                    "$4.20 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT one of Maslow's hierarchy of needs?",
+                section: "Marketing",
+                question: "A hotel's OTA contribution decreased from 45% to 35% of 50,000 room nights. If direct bookings save 15% commission on $200 average rate, what is the annual savings?",
                 options: [
-                    "Employment needs",
-                    "Physiological needs",
-                    "Safety needs",
-                    "Esteem needs"
+                    "$450,000",
+                    "$525,000",
+                    "$600,000",
+                    "$675,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The '80/20 Rule' in management suggests that:",
+                section: "Marketing",
+                question: "A hotel's mobile app bookings increased from 10% to 25% of direct bookings, which are 40% of 60,000 room nights. If app bookings have 5% higher ADR at $210, what is the incremental revenue?",
                 options: [
-                    "80% of results come from 20% of efforts",
-                    "80% of problems come from 20% of causes",
-                    "80% of revenue comes from 20% of customers",
-                    "All of the above"
+                    "$378,000",
+                    "$415,800",
+                    "$453,600",
+                    "$491,400"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Which conflict resolution style involves finding a mutually acceptable solution?",
+                section: "Marketing",
+                question: "A hotel's group business increased from 15% to 25% of 50,000 room nights. If group ADR is $20 lower but generates $50 in ancillary revenue per room night, what is the net revenue impact if baseline ADR was $200?",
                 options: [
-                    "Collaborating",
-                    "Competing",
-                    "Compromising",
-                    "Avoiding"
+                    "$750,000",
+                    "$825,000",
+                    "$900,000",
+                    "$975,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The 'SWOT' analysis framework assesses:",
+                section: "Marketing",
+                question: "A hotel's length of stay increased from 2.0 to 2.3 nights through packaging. If this affected 20% of 60,000 annual guests, what is the incremental room nights?",
                 options: [
-                    "Strengths, Weaknesses, Opportunities, Threats",
-                    "Strategies, Workflows, Objectives, Tactics",
-                    "Sales, Workforce, Operations, Technology",
-                    "Service, Welfare, Organization, Training"
+                    "3,600",
+                    "4,200",
+                    "4,800",
+                    "5,400"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT a characteristic of effective teams?",
+                section: "Marketing",
+                question: "A hotel's reputation management responded to 90% of reviews averaging 4.8/5. If each 0.1 rating increase drives 2% more bookings at 50,000 baseline and $200 ADR, what is the revenue impact vs. 4.5 with 70% response rate?",
                 options: [
-                    "Uniform thinking among all members",
-                    "Clear goals",
-                    "Open communication",
-                    "Mutual accountability"
+                    "$1.20 million",
+                    "$1.35 million",
+                    "$1.50 million",
+                    "$1.65 million"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The 'KPI' in performance management stands for:",
+                section: "Marketing",
+                question: "A hotel's GDS bookings increased from 15% to 20% of 40,000 room nights through optimized content. If GDS rates are 10% higher at $220, what is the incremental revenue?",
                 options: [
-                    "Key Performance Indicator",
-                    "Key Process Improvement",
-                    "Knowledge and Performance Index",
-                    "Key Productivity Indicator"
+                    "$440,000",
+                    "$484,000",
+                    "$528,000",
+                    "$572,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Which motivation theory suggests that employees are motivated by fairness?",
+                section: "Marketing",
+                question: "A hotel's promotional offers increased shoulder season occupancy from 65% to 75% for 100 rooms over 90 days, with $20 lower ADR at $180 but $30 ancillary revenue per night. What is the net revenue impact?",
                 options: [
-                    "Equity Theory",
-                    "Expectancy Theory",
-                    "Two-Factor Theory",
-                    "Reinforcement Theory"
+                    "$243,000",
+                    "$256,500",
+                    "$270,000",
+                    "$283,500"
+                ],
+                hasChart: false,
+                hasTable: false
+            },
+            // Section 5: Operations (20 questions)
+            {
+                section: "Operations",
+                question: "A hotel's energy management system reduced consumption by 18%. If energy costs were 4% of $12 million revenue at $0.12/kWh, how many kWh were saved?",
+                options: [
+                    "720,000",
+                    "810,000",
+                    "900,000",
+                    "990,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The 'RACI' matrix in project management defines:",
+                section: "Operations",
+                question: "A hotel's preventive maintenance program reduced equipment failures by 40%. If previous repairs cost $120,000 annually with $80,000 in lost revenue, and the program costs $50,000, what is the net savings?",
                 options: [
-                    "Roles and responsibilities",
-                    "Risk assessment criteria",
-                    "Resource allocation indicators",
-                    "Revenue and cost integration"
+                    "$42,000",
+                    "$54,000",
+                    "$66,000",
+                    "$78,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT a stage in Tuckman's model of group development?",
+                section: "Operations",
+                question: "A hotel's linen reuse program reduced laundry costs by 25%. If 60% of 200 rooms participate daily, saving $1.20 per room, what is the annual savings?",
                 options: [
-                    "Evaluation",
-                    "Forming",
-                    "Storming",
-                    "Norming"
+                    "$31,680",
+                    "$34,560",
+                    "$37,440",
+                    "$40,320"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The 'Six Sigma' methodology aims to:",
+                section: "Operations",
+                question: "A hotel's inventory management system reduced F&B waste from 12% to 8% of $1.8 million cost. What is the annual savings?",
                 options: [
-                    "Reduce defects to 3.4 per million opportunities",
-                    "Increase productivity by 60%",
-                    "Achieve 6% annual growth",
-                    "Implement 6 strategic objectives"
+                    "$72,000",
+                    "$79,200",
+                    "$86,400",
+                    "$93,600"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Which decision-making model is based on satisficing rather than optimizing?",
+                section: "Operations",
+                question: "A hotel's cross-trained staff reduced departmental overtime from 8% to 5% of $1.2 million payroll. What is the annual savings?",
                 options: [
-                    "Bounded Rationality Model",
-                    "Rational Model",
-                    "Intuitive Model",
-                    "Creative Model"
+                    "$36,000",
+                    "$42,000",
+                    "$48,000",
+                    "$54,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The 'Johari Window' model is used for:",
+                section: "Operations",
+                question: "A hotel's digital check-in increased from 15% to 40% of 100,000 annual guests, saving 2 minutes per check-in. If front desk staff cost $25/hour, what is the annual labor savings?",
                 options: [
-                    "Understanding self-awareness and interpersonal relationships",
-                    "Analyzing market segmentation",
-                    "Evaluating financial performance",
-                    "Designing organizational structures"
+                    "$20,833",
+                    "$22,917",
+                    "$25,000",
+                    "$27,083"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT a typical function of human resource management?",
+                section: "Operations",
+                question: "A hotel's room inspection app reduced housekeeping rework from 8% to 3% of 50,000 annual room cleans. If rework takes 15 minutes at $18/hour, what is the annual savings?",
                 options: [
-                    "Managing customer complaints",
-                    "Recruitment and selection",
-                    "Training and development",
-                    "Performance management"
+                    "$11,250",
+                    "$12,375",
+                    "$13,500",
+                    "$14,625"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "The 'Vroom-Yetton' model is concerned with:",
+                section: "Operations",
+                question: "A hotel's predictive maintenance on HVAC reduced energy costs by 12%. If HVAC was 40% of $600,000 utility costs, what is the annual savings?",
                 options: [
-                    "Decision-making participation",
-                    "Leadership styles",
-                    "Motivation techniques",
-                    "Conflict resolution"
+                    "$28,800",
+                    "$31,680",
+                    "$34,560",
+                    "$37,440"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "Managerial Aptitude",
-                question: "Which of the following best describes 'servant leadership'?",
+                section: "Operations",
+                question: "A hotel's staff scheduling algorithm reduced labor hours by 7% for a department with $800,000 annual payroll. What is the annual savings?",
                 options: [
-                    "Focusing on the growth and well-being of team members",
-                    "Leading through strict authority and control",
-                    "Rotating leadership responsibilities among team members",
-                    "Leading by example in customer service"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            
-            // Section 5: General Knowledge (20 questions)
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT one of the Seven Wonders of the Ancient World?",
-                options: [
-                    "The Leaning Tower of Pisa",
-                    "The Great Pyramid of Giza",
-                    "The Hanging Gardens of Babylon",
-                    "The Colossus of Rhodes"
+                    "$56,000",
+                    "$61,600",
+                    "$67,200",
+                    "$72,800"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "The currency of Japan is:",
+                section: "Operations",
+                question: "A hotel's digital key adoption increased from 20% to 50% of 80,000 annual guests, reducing key replacement costs from $8,000 to $3,000. What is the annual savings?",
                 options: [
-                    "Yen",
-                    "Won",
-                    "Yuan",
-                    "Ringgit"
+                    "$5,000",
+                    "$6,000",
+                    "$7,000",
+                    "$8,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "Based on the chart below showing world population growth, in which decade did the population first exceed 5 billion?",
+                section: "Operations",
+                question: "A hotel's consolidated purchases with preferred vendors reduced costs by 8%. If purchasing was $3.6 million annually, what is the savings?",
                 options: [
-                    "1980s",
-                    "1990s",
-                    "2000s",
-                    "2010s"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["1950", "1960", "1970", "1980", "1990", "2000", "2010", "2020"],
-                    datasets: [{
-                        label: "World Population (billions)",
-                        data: [2.5, 3.0, 3.7, 4.4, 5.3, 6.1, 6.9, 7.8],
-                        backgroundColor: "rgba(59, 130, 246, 0.5)",
-                        borderColor: "rgba(59, 130, 246, 1)",
-                        borderWidth: 1
-                    }]
-                },
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "According to the table below showing Nobel Prize winners by country, which country has the most Nobel laureates in Literature?",
-                options: [
-                    "France",
-                    "United States",
-                    "United Kingdom",
-                    "Germany"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Country", "Physics", "Chemistry", "Medicine", "Literature", "Peace"],
-                    rows: [
-                        ["United States", "98", "72", "102", "12", "23"],
-                        ["United Kingdom", "25", "30", "32", "11", "12"],
-                        ["Germany", "24", "30", "17", "8", "5"],
-                        ["France", "14", "10", "12", "15", "9"]
-                    ]
-                }
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a primary color in the RGB color model?",
-                options: [
-                    "Yellow",
-                    "Red",
-                    "Green",
-                    "Blue"
+                    "$288,000",
+                    "$316,800",
+                    "$345,600",
+                    "$374,400"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "The chemical symbol for gold is:",
+                section: "Operations",
+                question: "A hotel's automated beverage system reduced liquor costs from 24% to 20% of $900,000 beverage revenue. What is the annual savings?",
                 options: [
-                    "Au",
-                    "Ag",
-                    "Fe",
-                    "Pb"
+                    "$36,000",
+                    "$39,600",
+                    "$43,200",
+                    "$46,800"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "Which planet is known as the 'Red Planet'?",
+                section: "Operations",
+                question: "A hotel's guest messaging reduced front desk calls by 30%. If previously 50% of 80,000 annual guests called twice at $0.50 per call, what is the annual savings?",
                 options: [
-                    "Mars",
-                    "Jupiter",
-                    "Venus",
-                    "Saturn"
+                    "$12,000",
+                    "$13,200",
+                    "$14,400",
+                    "$15,600"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "The author of 'War and Peace' is:",
+                section: "Operations",
+                question: "A hotel's water-saving fixtures reduced consumption by 25%. If water costs were $120,000 annually with 30% from guest rooms, and fixtures cost $45,000, what is the payback period?",
                 options: [
-                    "Leo Tolstoy",
-                    "Fyodor Dostoevsky",
-                    "Anton Chekhov",
-                    "Nikolai Gogol"
+                    "1.50 years",
+                    "1.67 years",
+                    "1.83 years",
+                    "2.00 years"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a member of the G7 group of nations?",
+                section: "Operations",
+                question: "A hotel's digital concierge increased spa bookings by 15%. If spa revenue was $600,000 with 25% profit margin, what is the incremental profit?",
                 options: [
-                    "China",
-                    "Canada",
-                    "Italy",
-                    "Japan"
+                    "$22,500",
+                    "$24,750",
+                    "$27,000",
+                    "$29,250"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "The longest river in the world is:",
+                section: "Operations",
+                question: "A hotel's kitchen display system reduced order errors from 5% to 2% of 150,000 annual covers. If each error costs $8 in comps and lost goodwill, what is the annual savings?",
                 options: [
-                    "Nile",
-                    "Amazon",
-                    "Yangtze",
-                    "Mississippi"
+                    "$36,000",
+                    "$39,600",
+                    "$43,200",
+                    "$46,800"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a programming language?",
+                section: "Operations",
+                question: "A hotel's laundry automation reduced labor hours by 20% in a department with $250,000 annual payroll. What is the annual savings?",
                 options: [
-                    "HTML",
-                    "Python",
-                    "Java",
-                    "C++"
+                    "$50,000",
+                    "$55,000",
+                    "$60,000",
+                    "$65,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "The capital of Australia is:",
+                section: "Operations",
+                question: "A hotel's staff mobile app reduced task completion time by 15%. If department payroll is $1.2 million annually, what is the labor efficiency gain?",
                 options: [
-                    "Canberra",
-                    "Sydney",
-                    "Melbourne",
-                    "Brisbane"
+                    "$180,000",
+                    "$198,000",
+                    "$216,000",
+                    "$234,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "Which of the following is NOT one of the four fundamental forces of nature?",
+                section: "Operations",
+                question: "A hotel's waste recycling program reduced disposal costs by 30%. If waste removal was $75,000 annually with 40% recyclables, and the program costs $10,000, what is the annual savings?",
                 options: [
-                    "Centrifugal force",
-                    "Gravitational force",
-                    "Electromagnetic force",
-                    "Strong nuclear force"
+                    "$8,000",
+                    "$9,000",
+                    "$10,000",
+                    "$11,000"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "The largest ocean on Earth is:",
+                section: "Operations",
+                question: "A hotel's room automation system reduced energy costs by 18% for 45% of 200 rooms occupied daily. If energy was $300,000 annually with 40% from rooms, what is the annual savings?",
                 options: [
-                    "Pacific Ocean",
-                    "Atlantic Ocean",
-                    "Indian Ocean",
-                    "Arctic Ocean"
+                    "$19,440",
+                    "$21,384",
+                    "$23,328",
+                    "$25,272"
                 ],
                 hasChart: false,
                 hasTable: false
             },
             {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a bone in the human body?",
+                section: "Operations",
+                question: "A hotel's consolidated deliveries reduced freight costs by 12%. If purchasing was $2.4 million with 5% freight, what is the annual savings?",
                 options: [
-                    "Femora",
-                    "Humerus",
-                    "Tibia",
-                    "Radius"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The inventor of the World Wide Web is:",
-                options: [
-                    "Tim Berners-Lee",
-                    "Bill Gates",
-                    "Steve Jobs",
-                    "Mark Zuckerberg"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which country is the largest by land area?",
-                options: [
-                    "Russia",
-                    "Canada",
-                    "China",
-                    "United States"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The chemical formula for water is:",
-                options: [
-                    "H₂O",
-                    "CO₂",
-                    "NaCl",
-                    "CH₄"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a primary taste sensation?",
-                options: [
-                    "Spicy",
-                    "Sweet",
-                    "Sour",
-                    "Bitter"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The largest desert in the world is:",
-                options: [
-                    "Antarctica",
-                    "Sahara",
-                    "Arabian",
-                    "Gobi"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a gas giant planet?",
-                options: [
-                    "Mars",
-                    "Jupiter",
-                    "Saturn",
-                    "Neptune"
+                    "$14,400",
+                    "$15,840",
+                    "$17,280",
+                    "$18,720"
                 ],
                 hasChart: false,
                 hasTable: false
             }
         ];
-        
+
         // User data
         let userAnswers = {};
         let markedQuestions = {};
         let currentQuestion = 1;
         let timerInterval;
-        let timeLeft = 120 * 60; // 120 minutes in seconds
-        
+        let timeLeft = 90 * 60; // 90 minutes in seconds
+        let examLogs = JSON.parse(localStorage.getItem('examLogs')) || [];
+        let currentUserId = '';
+        let examSubmitted = false;
+
         // DOM Elements
         const splashScreen = document.getElementById('splashScreen');
         const examContainer = document.getElementById('examContainer');
@@ -2615,14 +2249,55 @@
         const verdictDisplay = document.getElementById('verdict');
         const answersheetContent = document.getElementById('answersheetContent');
         const downloadBtn = document.getElementById('downloadBtn');
-        
+        const adminBtn = document.getElementById('adminBtn');
+        const adminLogModal = document.getElementById('adminLogModal');
+        const closeAdminModal = document.getElementById('closeAdminModal');
+        const adminPassword = document.getElementById('adminPassword');
+        const viewLogBtn = document.getElementById('viewLogBtn');
+        const logContent = document.getElementById('logContent');
+        const logTableBody = document.getElementById('logTableBody');
+        const fatigueNotice = document.getElementById('fatigueNotice');
+
+        // Check exam window (14/08/2025 11:00-13:00)
+        function isWithinExamWindow() {
+            const now = new Date();
+            const examDate = new Date(2025, 7, 14); // August is month 7 (0-indexed)
+            
+            // Check if it's the correct date
+            if (now.getFullYear() !== examDate.getFullYear() || 
+                now.getMonth() !== examDate.getMonth() || 
+                now.getDate() !== examDate.getDate()) {
+                return false;
+            }
+            
+            // Check if it's between 11:00 and 13:00
+            const hours = now.getHours();
+            return hours >= 11 && hours < 13;
+        }
+
+        // Generate random user ID
+        function generateUserId() {
+            const prefix = 'ALP';
+            const randomNum = Math.floor(10000 + Math.random() * 90000);
+            return prefix + randomNum;
+        }
+
         // Login Functionality
         loginBtn.addEventListener('click', () => {
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
             
-            if (username === "mtest@alpnagroup.com" && password === "MTAGU00576") {
-                // Correct credentials
+            if (!isWithinExamWindow()) {
+                errorMessage.textContent = "Exam can only be taken on 14/08/2025 between 11:00 AM and 1:00 PM";
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            if (username && password) {
+                // Generate user ID and store it
+                currentUserId = generateUserId();
+                
+                // Hide splash screen and show exam
                 errorMessage.style.display = 'none';
                 splashScreen.style.opacity = '0';
                 splashScreen.style.pointerEvents = 'none';
@@ -2636,13 +2311,11 @@
                     updateProgress();
                 }, 500);
             } else {
-                // Incorrect credentials
+                errorMessage.textContent = "Please enter both username and password";
                 errorMessage.style.display = 'block';
-                usernameInput.value = '';
-                passwordInput.value = '';
             }
         });
-        
+
         // Timer Functionality
         function startTimer() {
             updateTimerDisplay();
@@ -2652,6 +2325,7 @@
                 
                 if (timeLeft <= 300) { // 5 minutes left
                     timerDisplay.classList.add('warning');
+                    fatigueNotice.style.display = 'block';
                 }
                 
                 if (timeLeft <= 0) {
@@ -2660,13 +2334,13 @@
                 }
             }, 1000);
         }
-        
+
         function updateTimerDisplay() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         }
-        
+
         // Progress Tracking
         function updateProgress() {
             const answered = Object.keys(userAnswers).length;
@@ -2676,7 +2350,7 @@
             progressPercent.textContent = `${percent}%`;
             progressFill.style.width = `${percent}%`;
         }
-        
+
         // Question Navigation
         function createNavigationButtons() {
             questionNav.innerHTML = '';
@@ -2698,7 +2372,7 @@
                 questionNav.appendChild(btn);
             }
         }
-        
+
         function updateNavigationButtons() {
             const buttons = questionNav.querySelectorAll('.nav-btn');
             
@@ -2722,7 +2396,7 @@
                 }
             });
         }
-        
+
         function navigateToQuestion(questionNum) {
             if (questionNum >= 1 && questionNum <= 100) {
                 currentQuestion = questionNum;
@@ -2741,7 +2415,7 @@
                 });
             }
         }
-        
+
         // Question Loading
         function loadQuestion(questionNum) {
             const questionData = examQuestions[questionNum - 1]; // Adjust for 0-based index
@@ -2795,7 +2469,7 @@
             questionData.options.forEach((option, index) => {
                 const optionLetter = optionLetters[index];
                 const isSelected = userAnswers[questionNum] === optionLetter;
-                const isLocked = userAnswers[questionNum] !== undefined;
+                const isLocked = userAnswers[questionNum] !== undefined && !examSubmitted;
                 
                 questionHTML += `
                     <div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" 
@@ -2835,8 +2509,9 @@
             // Update button states
             prevBtn.disabled = questionNum === 1;
             nextBtn.disabled = questionNum === 100;
+            submitBtn.disabled = examSubmitted;
         }
-        
+
         // Mark Question
         function updateMarkButton() {
             if (markedQuestions[currentQuestion]) {
@@ -2846,17 +2521,21 @@
                 markBtn.innerHTML = '<i class="far fa-star"></i> Mark';
                 markBtn.classList.remove('marked');
             }
+            
+            markBtn.disabled = examSubmitted;
         }
-        
+
         markBtn.addEventListener('click', () => {
-            markedQuestions[currentQuestion] = !markedQuestions[currentQuestion];
-            updateMarkButton();
-            updateNavigationButtons();
+            if (!examSubmitted) {
+                markedQuestions[currentQuestion] = !markedQuestions[currentQuestion];
+                updateMarkButton();
+                updateNavigationButtons();
+            }
         });
-        
+
         // Option Selection
         window.selectOption = function(questionNum, optionLetter) {
-            if (!userAnswers[questionNum]) {
+            if (!examSubmitted && !userAnswers[questionNum]) {
                 userAnswers[questionNum] = optionLetter;
                 
                 // Update UI
@@ -2875,16 +2554,16 @@
                 updateProgress();
             }
         };
-        
+
         // Navigation Controls
         prevBtn.addEventListener('click', () => {
             navigateToQuestion(currentQuestion - 1);
         });
-        
+
         nextBtn.addEventListener('click', () => {
             navigateToQuestion(currentQuestion + 1);
         });
-        
+
         // Keyboard Navigation
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft' && currentQuestion > 1) {
@@ -2893,20 +2572,34 @@
                 navigateToQuestion(currentQuestion + 1);
             }
         });
-        
+
         // Submit Exam
         submitBtn.addEventListener('click', () => {
             if (confirm("Are you sure you want to submit your exam? You won't be able to make changes after submission.")) {
                 submitExam();
             }
         });
-        
+
         function submitExam() {
+            if (examSubmitted) return;
+            
             clearInterval(timerInterval);
-            calculateResults();
-            showResults();
+            examSubmitted = true;
+            const results = calculateResults();
+            showResults(results);
+            logResults(results);
+            
+            // Disable all inputs
+            const allOptions = document.querySelectorAll('.option');
+            allOptions.forEach(opt => {
+                opt.classList.add('locked');
+                const input = opt.querySelector('input');
+                if (input) input.disabled = true;
+            });
+            
+            submitBtn.disabled = true;
         }
-        
+
         // Results Calculation
         function calculateResults() {
             let correct = 0;
@@ -2931,22 +2624,22 @@
                 incorrect,
                 unanswered,
                 percentage,
-                passed
+                passed,
+                userId: currentUserId,
+                timestamp: new Date().toISOString()
             };
         }
-        
+
         // Show Results
-        function showResults() {
-            const results = calculateResults();
-            
+        function showResults(results) {
             correctAnswersDisplay.textContent = results.correct;
             incorrectAnswersDisplay.textContent = results.incorrect;
             unansweredDisplay.textContent = results.unanswered;
             percentageDisplay.textContent = `${results.percentage}%`;
             
             verdictDisplay.textContent = results.passed 
-                ? "Congratulations! You have passed the Managerial Aptitude Test with a score of " + results.correct + "/100." 
-                : "Unfortunately, you did not pass the exam. You scored " + results.correct + "/100 (minimum 55 required to pass).";
+                ? `Congratulations! You have passed the Managerial Aptitude Test with a score of ${results.correct}/100.` 
+                : `Unfortunately, you did not pass the exam. You scored ${results.correct}/100 (minimum 55 required to pass).`;
             
             verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
             
@@ -2997,39 +2690,101 @@
             // Show modal
             resultModal.classList.add('active');
         }
-        
+
+        // Log Results
+        function logResults(results) {
+            const now = new Date();
+            const logEntry = {
+                timestamp: now.toISOString(),
+                dateTime: now.toLocaleString(),
+                candidateId: currentUserId,
+                score: results.correct,
+                percentage: results.percentage,
+                passed: results.passed,
+                username: usernameInput.value.trim()
+            };
+            
+            examLogs.push(logEntry);
+            localStorage.setItem('examLogs', JSON.stringify(examLogs));
+        }
+
         // Close Modal
         closeModal.addEventListener('click', () => {
             resultModal.classList.remove('active');
         });
-        
+
         // Download Results
         downloadBtn.addEventListener('click', () => {
             html2canvas(document.querySelector('.modal-content')).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `Alpana-Managerial-Test-Results-${new Date().toISOString().slice(0,10)}.png`;
+                link.download = `Alpana-Managerial-Test-Results-${currentUserId}-${new Date().toISOString().slice(0,10)}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
         });
-        
+
+        // Admin Log Functions
+        adminBtn.addEventListener('click', () => {
+            adminLogModal.classList.add('active');
+        });
+
+        closeAdminModal.addEventListener('click', () => {
+            adminLogModal.classList.remove('active');
+        });
+
+        viewLogBtn.addEventListener('click', () => {
+            if (adminPassword.value === "adminlog") {
+                logTableBody.innerHTML = '';
+                
+                // Sort logs by timestamp (newest first)
+                const sortedLogs = [...examLogs].sort((a, b) => 
+                    new Date(b.timestamp) - new Date(a.timestamp));
+                
+                sortedLogs.forEach(log => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${log.dateTime}</td>
+                        <td>${log.username || 'N/A'} (${log.candidateId})</td>
+                        <td>${log.score}/100 (${log.percentage}%)</td>
+                        <td class="${log.passed ? 'pass-status' : 'fail-status'}">${log.passed ? 'PASS' : 'FAIL'}</td>
+                    `;
+                    logTableBody.appendChild(row);
+                });
+                
+                logContent.style.display = 'block';
+                adminPassword.value = '';
+            } else {
+                alert('Incorrect admin password');
+            }
+        });
+
         // Prevent copying
         document.addEventListener('copy', (e) => {
-            e.preventDefault();
-            alert('Copying content from this exam is not allowed.');
-        });
-        
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
-        
-        // Disable keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
+            if (!examSubmitted) {
                 e.preventDefault();
                 alert('Copying content from this exam is not allowed.');
             }
         });
+
+        document.addEventListener('contextmenu', (e) => {
+            if (!examSubmitted) {
+                e.preventDefault();
+            }
+        });
+
+        // Disable keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (!examSubmitted && e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
+                e.preventDefault();
+                alert('Copying content from this exam is not allowed.');
+            }
+        });
+
+        // Initialize
+        if (!isWithinExamWindow()) {
+            errorMessage.textContent = "Note: Exam can only be taken on 14/08/2025 between 11:00 AM and 1:00 PM";
+            errorMessage.style.display = 'block';
+        }
     </script>
 </body>
 </html>
