@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checking Availability | Alpana Homestay</title>
+    <title>Alpana Homestay - Service Availability</title>
     <style>
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
             --error: #e74c3c;
+            --success: #10b981;
+            --warning: #f59e0b;
             --text: #333;
             --light-bg: #f8f9fa;
             --white: #ffffff;
+            --dark: #1e293b;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
@@ -25,10 +28,11 @@
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             color: var(--text);
             overflow: hidden;
+            background-color: var(--light-bg);
         }
         
-        /* Loading Screen */
-        .loading-screen {
+        /* Permission Screen */
+        .permission-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -40,32 +44,148 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            transition: opacity 0.5s ease;
-        }
-        
-        .loading-content {
+            padding: 2rem;
             text-align: center;
             color: var(--white);
+        }
+        
+        .permission-content {
             max-width: 600px;
-            padding: 2rem;
+            background-color: rgba(255,255,255,0.1);
+            padding: 2.5rem;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
         
         .logo {
             width: 180px;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
         
-        .loading-title {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
+        .permission-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
             font-weight: 600;
         }
         
-        .loading-subtitle {
+        .permission-text {
             font-size: 1.1rem;
-            opacity: 0.9;
+            line-height: 1.6;
             margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--white);
+            color: var(--primary-dark);
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--white);
+            color: var(--white);
+        }
+        
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 2rem;
+            text-align: center;
+            color: var(--white);
+        }
+        
+        .login-box {
+            background-color: rgba(255,255,255,0.15);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background-color: rgba(255,255,255,0.95);
+            font-size: 0.95rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .error-message {
+            color: #fee2e2;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.95rem;
+            display: none;
+            background-color: rgba(220, 38, 38, 0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+        
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 998;
+            padding: 2rem;
+            text-align: center;
+            color: var(--white);
+        }
+        
+        .loading-content {
+            max-width: 600px;
         }
         
         .progress-container {
@@ -96,16 +216,11 @@
             transition: width 0.1s linear;
         }
         
-        .loading-animation {
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-        
         .location-icon {
             font-size: 3rem;
             color: var(--white);
             animation: pulse 2s infinite;
+            margin-bottom: 1.5rem;
         }
         
         @keyframes pulse {
@@ -114,118 +229,144 @@
             100% { transform: scale(1); opacity: 1; }
         }
         
-        /* Service Unavailable Screen */
-        .service-container {
-            display: none;
+        /* Result Screen */
+        .result-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: var(--light-bg);
+            display: none;
             justify-content: center;
             align-items: center;
             padding: 2rem;
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            z-index: 997;
         }
         
-        .service-content {
+        .result-content {
             background-color: var(--white);
             padding: 3rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             max-width: 600px;
             width: 100%;
             text-align: center;
-            transform: translateY(20px);
-            transition: transform 0.5s ease;
         }
         
-        .service-title {
-            color: var(--error);
-            font-size: 2rem;
+        .result-title {
+            font-size: 1.8rem;
             margin-bottom: 1.5rem;
             font-weight: 600;
+            color: var(--error);
         }
         
-        .service-message {
+        .result-message {
             font-size: 1.1rem;
             line-height: 1.6;
             margin-bottom: 2rem;
         }
         
-        .btn {
-            display: inline-block;
-            background-color: var(--primary);
-            color: var(--white);
-            padding: 0.8rem 1.8rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            margin: 0.5rem;
-        }
-        
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        .btn-outline:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-        }
-        
         .location-details {
             margin-top: 2rem;
-            padding: 1rem;
+            padding: 1.5rem;
             background-color: rgba(0,0,0,0.03);
+            border-radius: 12px;
+            text-align: left;
+        }
+        
+        .location-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        
+        .location-info i {
+            margin-right: 0.8rem;
+            color: var(--primary);
+            width: 24px;
+            text-align: center;
+        }
+        
+        .map-container {
+            height: 200px;
+            width: 100%;
+            margin-top: 1.5rem;
             border-radius: 8px;
-            font-size: 0.9rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
         }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .loading-title {
-                font-size: 1.5rem;
+            .permission-content, .login-box, .result-content {
+                padding: 1.5rem;
             }
             
-            .service-title {
+            .permission-title, .result-title {
                 font-size: 1.5rem;
-            }
-            
-            .service-content {
-                padding: 2rem;
             }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
+    <!-- Permission Screen -->
+    <div class="permission-screen" id="permissionScreen">
+        <div class="permission-content">
+            <img src="https://via.placeholder.com/180x60?text=Alpana+Homestay" alt="Alpana Homestay" class="logo">
+            <h1 class="permission-title">Location Access Required</h1>
+            <p class="permission-text">
+                To check service availability in your area, we need to access your device's location. 
+                This helps us provide accurate information about Alpana Homestay services near you.
+            </p>
+            <button class="btn" id="grantPermissionBtn">
+                <i class="fas fa-location-arrow"></i> Allow Location Access
+            </button>
+            <button class="btn btn-outline" id="denyPermissionBtn">
+                Continue Without Location
+            </button>
+        </div>
+    </div>
+    
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <img src="https://via.placeholder.com/180x60?text=Alpana+Homestay" alt="Alpana Homestay" class="logo">
+            <h2 class="permission-title">Manager Login</h2>
+            <div class="input-group">
+                <label for="username">User ID</label>
+                <input type="text" id="username" placeholder="Enter your user ID">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+            <button class="btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Continue
+            </button>
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i> Invalid credentials. Please try again.
+            </div>
+        </div>
+    </div>
+    
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
-            <img src="new.png" alt="Alpana Homestay" class="logo">
-            <h1 class="loading-title">Checking Your Location</h1>
-            <p class="loading-subtitle">We're detecting your location to provide personalized service availability</p>
-            
-            <div class="loading-animation">
-                <i class="fas fa-map-marker-alt location-icon"></i>
+            <img src="https://via.placeholder.com/180x60?text=Alpana+Homestay" alt="Alpana Homestay" class="logo">
+            <div class="location-icon">
+                <i class="fas fa-map-marker-alt"></i>
             </div>
+            <h1 class="permission-title">Detecting Your Location</h1>
+            <p class="permission-text">
+                Please wait while we verify service availability in your area...
+            </p>
             
             <div class="progress-container">
                 <div class="progress-text">
-                    <span>Detecting location</span>
+                    <span>Checking location</span>
                     <span id="progressPercent">0%</span>
                 </div>
                 <div class="progress-bar">
@@ -235,100 +376,261 @@
         </div>
     </div>
     
-    <!-- Service Unavailable Screen -->
-    <div class="service-container" id="serviceContainer">
-        <div class="service-content">
-            <img src="new.png" alt="Alpana Homestay" class="logo">
-            <h1 class="service-title">Service Currently Unavailable</h1>
-            <p class="service-message">
+    <!-- Result Screen -->
+    <div class="result-screen" id="resultScreen">
+        <div class="result-content">
+            <img src="https://via.placeholder.com/180x60?text=Alpana+Homestay" alt="Alpana Homestay" class="logo">
+            <h1 class="result-title">Service Not Available</h1>
+            <p class="result-message">
                 We regret to inform you that Alpana Homestay services are not currently supported in your area. 
                 Our team is working hard to expand our services to your location soon.
             </p>
             
             <div class="location-details">
-                <p><i class="fas fa-map-marker-alt"></i> Detected Location: <span id="detectedLocation">UNW54347-756</span></p>
-                <p><i class="fas fa-clock"></i> Last checked: <span id="checkTime"></span></p>
+                <div class="location-info">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <strong>Detected Location:</strong>
+                        <span id="detectedLocation">Locating...</span>
+                    </div>
+                </div>
+                <div class="location-info">
+                    <i class="fas fa-map-pin"></i>
+                    <div>
+                        <strong>Coordinates:</strong>
+                        <span id="locationCoordinates">Loading...</span>
+                    </div>
+                </div>
+                <div class="location-info">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <strong>Last checked:</strong>
+                        <span id="checkTime"></span>
+                    </div>
+                </div>
+                
+                <div class="map-container" id="map"></div>
             </div>
             
-            <div class="action-buttons">
-                <button class="btn" onclick="window.location.reload()">
-                    <i class="fas fa-sync-alt"></i> Try Again
-                </button>
-                <button class="btn btn-outline" onclick="window.history.back()">
-                    <i class="fas fa-arrow-left"></i> Go Back
-                </button>
-            </div>
+            <button class="btn" onclick="window.location.reload()" style="margin-top: 1.5rem;">
+                <i class="fas fa-sync-alt"></i> Check Again
+            </button>
         </div>
     </div>
     
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // DOM Elements
+        const permissionScreen = document.getElementById('permissionScreen');
+        const loginScreen = document.getElementById('loginScreen');
         const loadingScreen = document.getElementById('loadingScreen');
-        const serviceContainer = document.getElementById('serviceContainer');
+        const resultScreen = document.getElementById('resultScreen');
+        const grantPermissionBtn = document.getElementById('grantPermissionBtn');
+        const denyPermissionBtn = document.getElementById('denyPermissionBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('errorMessage');
         const progressFill = document.getElementById('progressFill');
         const progressPercent = document.getElementById('progressPercent');
         const detectedLocation = document.getElementById('detectedLocation');
+        const locationCoordinates = document.getElementById('locationCoordinates');
         const checkTime = document.getElementById('checkTime');
+        const mapContainer = document.getElementById('map');
         
-        // Simulate location detection for 10 seconds
-        let progress = 0;
-        const totalTime = 10000; // 10 seconds
-        const intervalTime = 100; // Update every 100ms
-        const steps = totalTime / intervalTime;
-        const increment = 100 / steps;
+        // Credentials
+        const validUsername = "mtest@alpnagroup.com";
+        const validPassword = "MTAGU00576";
         
-        // Start the loading animation
-        const loadingInterval = setInterval(() => {
-            progress += increment;
-            progressFill.style.width = `${progress}%`;
-            progressPercent.textContent = `${Math.min(Math.round(progress), 100)}%`;
-            
-            if (progress >= 100) {
-                clearInterval(loadingInterval);
-                showServiceUnavailable();
-            }
-        }, intervalTime);
+        // Location variables
+        let userLocation = null;
+        let map = null;
+        let marker = null;
         
-        // Function to show service unavailable screen
-        function showServiceUnavailable() {
-            // Get current time for display
-            const now = new Date();
-            checkTime.textContent = now.toLocaleTimeString() + ', ' + now.toLocaleDateString();
-            
-            // Try to get actual location (will fallback to "Unknown" if denied)
-            if (navigator.geolocation) {
+        // Event Listeners
+        grantPermissionBtn.addEventListener('click', requestLocationPermission);
+        denyPermissionBtn.addEventListener('click', proceedWithoutLocation);
+        loginBtn.addEventListener('click', attemptLogin);
+        
+        // Request location permission
+        function requestLocationPermission() {
+            if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        // Reverse geocoding would go here in a real implementation
-                        detectedLocation.textContent = "Approximate area detected";
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                        showLoginScreen();
                     },
                     (error) => {
-                        detectedLocation.textContent = "Location access denied";
+                        console.error("Error getting location:", error);
+                        userLocation = null;
+                        showLoginScreen();
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
                     }
                 );
             } else {
-                detectedLocation.textContent = "Location services not available";
+                alert("Geolocation is not supported by your browser.");
+                userLocation = null;
+                showLoginScreen();
             }
-            
-            // Hide loading screen and show service message
-            loadingScreen.style.opacity = '0';
-            
+        }
+        
+        // Proceed without location
+        function proceedWithoutLocation() {
+            userLocation = null;
+            showLoginScreen();
+        }
+        
+        // Show login screen
+        function showLoginScreen() {
+            permissionScreen.style.opacity = '0';
             setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                serviceContainer.style.display = 'flex';
-                
+                permissionScreen.style.display = 'none';
+                loginScreen.style.display = 'flex';
                 setTimeout(() => {
-                    serviceContainer.style.opacity = '1';
-                    document.querySelector('.service-content').style.transform = 'translateY(0)';
+                    loginScreen.style.opacity = '1';
                 }, 50);
             }, 500);
         }
         
-        // In a real implementation, you would add:
-        // 1. Actual geolocation API calls
-        // 2. Reverse geocoding to get city/region
-        // 3. Service availability check against your database
-        // 4. Proper error handling for location services
+        // Attempt login
+        function attemptLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (username === validUsername && password === validPassword) {
+                errorMessage.style.display = 'none';
+                proceedToLocationCheck();
+            } else {
+                errorMessage.style.display = 'block';
+                usernameInput.value = '';
+                passwordInput.value = '';
+            }
+        }
+        
+        // Proceed to location check
+        function proceedToLocationCheck() {
+            loginScreen.style.opacity = '0';
+            setTimeout(() => {
+                loginScreen.style.display = 'none';
+                loadingScreen.style.display = 'flex';
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '1';
+                    startLocationCheck();
+                }, 50);
+            }, 500);
+        }
+        
+        // Start location check process
+        function startLocationCheck() {
+            let progress = 0;
+            const totalTime = 8000; // 8 seconds
+            const intervalTime = 100; // Update every 100ms
+            const steps = totalTime / intervalTime;
+            const increment = 100 / steps;
+            
+            const progressInterval = setInterval(() => {
+                progress += increment;
+                progressFill.style.width = `${progress}%`;
+                progressPercent.textContent = `${Math.min(Math.round(progress), 100)}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    showResultScreen();
+                }
+            }, intervalTime);
+        }
+        
+        // Show result screen
+        function showResultScreen() {
+            // Update time
+            const now = new Date();
+            checkTime.textContent = now.toLocaleTimeString() + ', ' + now.toLocaleDateString();
+            
+            // Update location info
+            if (userLocation) {
+                locationCoordinates.textContent = `${userLocation.lat.toFixed(6)}, ${userLocation.lng.toFixed(6)}`;
+                
+                // Try to get address (reverse geocoding)
+                getAddressFromCoordinates(userLocation.lat, userLocation.lng)
+                    .then(address => {
+                        detectedLocation.textContent = address || "Your current location";
+                    })
+                    .catch(() => {
+                        detectedLocation.textContent = "Your current location";
+                    });
+                
+                // Initialize map
+                initMap(userLocation.lat, userLocation.lng);
+            } else {
+                detectedLocation.textContent = "Location not available";
+                locationCoordinates.textContent = "Not available";
+                mapContainer.innerHTML = "<p style='padding: 2rem; text-align: center; color: #666;'>Map unavailable without location access</p>";
+            }
+            
+            // Show result screen
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                resultScreen.style.display = 'flex';
+                setTimeout(() => {
+                    resultScreen.style.opacity = '1';
+                }, 50);
+            }, 500);
+        }
+        
+        // Get address from coordinates (using Nominatim)
+        async function getAddressFromCoordinates(lat, lng) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                const data = await response.json();
+                
+                if (data.address) {
+                    // Construct a readable address
+                    const addressParts = [];
+                    if (data.address.road) addressParts.push(data.address.road);
+                    if (data.address.city) addressParts.push(data.address.city);
+                    if (data.address.state) addressParts.push(data.address.state);
+                    if (data.address.country) addressParts.push(data.address.country);
+                    
+                    return addressParts.join(', ');
+                }
+                return null;
+            } catch (error) {
+                console.error("Error getting address:", error);
+                return null;
+            }
+        }
+        
+        // Initialize map
+        function initMap(lat, lng) {
+            map = L.map('map').setView([lat, lng], 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup('Your Location')
+                .openPopup();
+            
+            // Add accuracy circle if available
+            if (userLocation.accuracy) {
+                L.circle([lat, lng], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.2,
+                    radius: userLocation.accuracy
+                }).addTo(map);
+            }
+        }
     </script>
 </body>
 </html>
