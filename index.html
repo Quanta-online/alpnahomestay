@@ -3,2788 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpana Group - Managerial Aptitude Test</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <title>Checking Availability | Alpana Homestay</title>
     <style>
         :root {
-            --primary: #1a365d;
-            --secondary: #2c5282;
-            --accent: #4299e1;
-            --success: #38a169;
-            --danger: #e53e3e;
-            --warning: #dd6b20;
-            --light: #f7fafc;
-            --dark: #1a202c;
-            --gray: #e2e8f0;
-            --dark-gray: #718096;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --error: #e74c3c;
+            --text: #333;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background-color: #f0f4f8;
-            color: var(--dark);
-            line-height: 1.6;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            overflow: hidden;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Splash Screen */
-        #splashScreen {
+        
+        /* Loading Screen */
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             z-index: 1000;
             transition: opacity 0.5s ease;
         }
-
-        #splashScreen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .logo {
-            width: 150px;
-            margin-bottom: 30px;
-        }
-
-        .login-box {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
+        
+        .loading-content {
             text-align: center;
+            color: var(--white);
+            max-width: 600px;
+            padding: 2rem;
         }
-
-        .login-box h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
+        
+        .logo {
+            width: 180px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--dark);
-            font-weight: 500;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--gray);
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border 0.3s ease;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        #errorMessage {
-            color: var(--danger);
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        #loginBtn {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #loginBtn:hover {
-            background-color: var(--secondary);
-        }
-
-        /* Exam Container */
-        #examContainer {
-            display: none;
-            padding: 20px 0;
-        }
-
-        .exam-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--gray);
-        }
-
-        .exam-title {
-            color: var(--primary);
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .timer-container {
-            display: flex;
-            align-items: center;
-            background-color: var(--light);
-            padding: 10px 15px;
-            border-radius: 5px;
+        
+        .loading-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
             font-weight: 600;
         }
-
-        .timer-container i {
-            margin-right: 10px;
-            color: var(--primary);
+        
+        .loading-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
         }
-
-        #timeDisplay {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 18px;
-        }
-
-        .timer-container.warning {
-            background-color: #fff5f5;
-            color: var(--danger);
-        }
-
-        .timer-container.warning i {
-            color: var(--danger);
-        }
-
-        /* Progress Bar */
+        
         .progress-container {
-            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+            margin: 2rem auto;
         }
-
-        .progress-header {
+        
+        .progress-text {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
+            color: rgba(255,255,255,0.8);
         }
-
+        
         .progress-bar {
-            height: 10px;
-            background-color: var(--gray);
-            border-radius: 5px;
+            height: 8px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 4px;
             overflow: hidden;
         }
-
+        
         .progress-fill {
             height: 100%;
-            background-color: var(--success);
+            background-color: var(--white);
+            border-radius: 4px;
             width: 0%;
-            transition: width 0.5s ease;
+            transition: width 0.1s linear;
         }
-
-        /* Exam Content */
-        .exam-content {
-            display: flex;
-            gap: 20px;
-        }
-
-        .question-container {
-            flex: 1;
-            background-color: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .section-header {
-            color: var(--primary);
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--gray);
-        }
-
-        .question {
-            margin-bottom: 30px;
-        }
-
-        .question-text {
-            font-size: 17px;
-            font-weight: 500;
-            margin-bottom: 20px;
-            line-height: 1.7;
-        }
-
-        /* Visual Aids */
-        .visual-aid {
-            margin: 20px 0;
-            border: 1px solid var(--gray);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .visual-aid-title {
-            background-color: var(--light);
-            padding: 10px 15px;
-            font-weight: 600;
-            border-bottom: 1px solid var(--gray);
-        }
-
-        .chart-container {
-            padding: 15px;
-            height: 300px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table th, table td {
-            padding: 12px 15px;
-            text-align: left;
-            border: 1px solid var(--gray);
-        }
-
-        table th {
-            background-color: var(--light);
-            font-weight: 600;
-        }
-
-        /* Options */
-        .options {
-            margin-top: 25px;
-        }
-
-        .option {
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 1px solid var(--gray);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        .option:hover {
-            background-color: #f8fafc;
-            border-color: var(--accent);
-        }
-
-        .option.selected {
-            background-color: #ebf8ff;
-            border-color: var(--accent);
-        }
-
-        .option.locked {
-            cursor: default;
-        }
-
-        .option input[type="radio"] {
-            margin-right: 15px;
-            cursor: pointer;
-        }
-
-        /* Navigation */
-        .nav-container {
-            width: 250px;
-            background-color: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            height: fit-content;
-        }
-
-        .nav-header {
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-
-        .nav-buttons {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-        }
-
-        .nav-btn {
-            width: 100%;
-            aspect-ratio: 1;
-            border: 1px solid var(--gray);
-            border-radius: 5px;
-            background-color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        
+        .loading-animation {
             display: flex;
             justify-content: center;
-            align-items: center;
-            font-weight: 500;
+            margin: 2rem 0;
         }
-
-        .nav-btn:hover {
-            background-color: #f8fafc;
-            border-color: var(--accent);
+        
+        .location-icon {
+            font-size: 3rem;
+            color: var(--white);
+            animation: pulse 2s infinite;
         }
-
-        .nav-btn.current {
-            background-color: var(--accent);
-            color: white;
-            border-color: var(--accent);
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
-
-        .nav-btn.visited {
-            background-color: #ebf8ff;
-            border-color: var(--accent);
-        }
-
-        .nav-btn.answered {
-            background-color: var(--success);
-            color: white;
-            border-color: var(--success);
-        }
-
-        .nav-btn.marked {
-            position: relative;
-            border-color: var(--warning);
-        }
-
-        .nav-btn.marked::after {
-            content: '★';
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            color: var(--warning);
-            font-size: 12px;
-        }
-
-        /* Controls */
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--gray);
-        }
-
-        .control-btn {
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .control-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .control-btn i {
-            font-size: 14px;
-        }
-
-        #prevBtn {
-            background-color: var(--light);
-            color: var(--dark);
-        }
-
-        #prevBtn:hover:not(:disabled) {
-            background-color: var(--gray);
-        }
-
-        #nextBtn {
-            background-color: var(--accent);
-            color: white;
-        }
-
-        #nextBtn:hover:not(:disabled) {
-            background-color: var(--secondary);
-        }
-
-        #markBtn {
-            background-color: white;
-            color: var(--dark);
-            border: 1px solid var(--gray);
-        }
-
-        #markBtn.marked {
-            background-color: #fffaf0;
-            border-color: var(--warning);
-            color: var(--warning);
-        }
-
-        #markBtn:hover {
-            background-color: #f8fafc;
-        }
-
-        #submitBtn {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        #submitBtn:hover {
-            background-color: #c53030;
-        }
-
-        /* Modals */
-        .modal {
+        
+        /* Service Unavailable Screen */
+        .service-container {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
+            background-color: var(--light-bg);
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            padding: 2rem;
             opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s ease;
         }
-
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 30px;
-            position: relative;
-        }
-
-        .modal-header {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--gray);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--dark-gray);
-            transition: color 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: var(--danger);
-        }
-
-        /* Results */
-        .results-summary {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .result-card {
-            padding: 15px;
-            border-radius: 8px;
+        
+        .service-content {
+            background-color: var(--white);
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            max-width: 600px;
+            width: 100%;
             text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.5s ease;
         }
-
-        .result-card h3 {
-            font-size: 14px;
-            color: var(--dark-gray);
-            margin-bottom: 10px;
-        }
-
-        .result-card .value {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .correct-card {
-            background-color: #f0fff4;
-            border: 1px solid #c6f6d5;
-        }
-
-        .incorrect-card {
-            background-color: #fff5f5;
-            border: 1px solid #fed7d7;
-        }
-
-        .unanswered-card {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-        }
-
-        .percentage-card {
-            background-color: #ebf8ff;
-            border: 1px solid #bee3f8;
-        }
-
-        .verdict {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
+        
+        .service-title {
+            color: var(--error);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
             font-weight: 600;
         }
-
-        .verdict.pass {
-            background-color: #f0fff4;
-            border: 1px solid #c6f6d5;
-            color: var(--success);
+        
+        .service-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
         }
-
-        .verdict.fail {
-            background-color: #fff5f5;
-            border: 1px solid #fed7d7;
-            color: var(--danger);
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 0.8rem 1.8rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
         }
-
-        /* Answersheet */
-        .answersheet {
-            margin-top: 30px;
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-
-        .answersheet-header {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
             color: var(--primary);
         }
-
-        .answer-item {
-            padding: 15px;
-            margin-bottom: 15px;
+        
+        .btn-outline:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        .location-details {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: rgba(0,0,0,0.03);
             border-radius: 8px;
-            border: 1px solid var(--gray);
+            font-size: 0.9rem;
         }
-
-        .answer-status {
-            font-weight: 600;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            border-bottom: 1px dashed var(--gray);
-        }
-
-        .answer-status.correct {
-            color: var(--success);
-        }
-
-        .answer-status.incorrect {
-            color: var(--danger);
-        }
-
-        .answer-status.unanswered {
-            color: var(--dark-gray);
-        }
-
-        .answer-question {
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .answer-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .answer-detail {
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .answer-detail strong {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--dark-gray);
-            font-size: 14px;
-        }
-
-        /* Admin Modal */
-        .admin-form {
-            margin-bottom: 20px;
-        }
-
-        .admin-form input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid var(--gray);
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .admin-form button {
-            padding: 10px 20px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .admin-form button:hover {
-            background-color: var(--secondary);
-        }
-
-        .log-content {
-            display: none;
-        }
-
-        .log-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .log-table th, .log-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--gray);
-        }
-
-        .log-table th {
-            background-color: var(--light);
-            font-weight: 600;
-        }
-
-        .pass-status {
-            color: var(--success);
-            font-weight: 600;
-        }
-
-        .fail-status {
-            color: var(--danger);
-            font-weight: 600;
-        }
-
-        /* Fatigue Notice */
-        #fatigueNotice {
-            display: none;
-            padding: 15px;
-            background-color: #fffaf0;
-            border: 1px solid #feebc8;
-            border-radius: 5px;
-            margin-top: 20px;
-            color: var(--warning);
-            font-weight: 500;
-        }
-
+        
         /* Responsive */
-        @media (max-width: 992px) {
-            .exam-content {
-                flex-direction: column;
+        @media (max-width: 768px) {
+            .loading-title {
+                font-size: 1.5rem;
             }
-
-            .nav-container {
-                width: 100%;
-                order: -1;
-                margin-bottom: 20px;
+            
+            .service-title {
+                font-size: 1.5rem;
             }
-
-            .results-summary {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .answer-details {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .login-box {
-                padding: 20px;
-            }
-
-            .results-summary {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-buttons {
-                grid-template-columns: repeat(4, 1fr);
+            
+            .service-content {
+                padding: 2rem;
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Splash Screen -->
-    <div id="splashScreen">
-        <img src="new.png" alt="Alpana Group Logo" class="logo">
-        <div class="login-box">
-            <h2>Managerial Aptitude Test</h2>
-            <div id="errorMessage">Invalid username or password</div>
-            <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" placeholder="Enter your username">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <img src="https://via.placeholder.com/180x60?text=Alpana+Homestay" alt="Alpana Homestay" class="logo">
+            <h1 class="loading-title">Checking Your Location</h1>
+            <p class="loading-subtitle">We're detecting your location to provide personalized service availability</p>
+            
+            <div class="loading-animation">
+                <i class="fas fa-map-marker-alt location-icon"></i>
             </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password">
-            </div>
-            <button id="loginBtn">Login</button>
-        </div>
-    </div>
-
-    <!-- Exam Container -->
-    <div id="examContainer" class="container">
-        <div class="exam-header">
-            <div class="exam-title">Alpana Group - Managerial Aptitude Test</div>
-            <div id="timer" class="timer-container">
-                <i class="fas fa-clock"></i>
-                <span id="timeDisplay">90:00</span>
-            </div>
-        </div>
-
-        <div class="progress-container">
-            <div class="progress-header">
-                <div>Progress: <span id="answeredCount">0</span>/100 answered</div>
-                <div id="progressPercent">0%</div>
-            </div>
-            <div class="progress-bar">
-                <div id="progressFill" class="progress-fill"></div>
-            </div>
-        </div>
-
-        <div id="fatigueNotice">
-            <i class="fas fa-exclamation-triangle"></i> Warning: You have less than 5 minutes remaining. Please review your answers and submit.
-        </div>
-
-        <div class="exam-content">
-            <div class="question-container">
-                <div class="section-header">
-                    Section: <span id="currentSection">Hotel Management</span> | Question: <span id="currentQuestion">1</span>/100
+            
+            <div class="progress-container">
+                <div class="progress-text">
+                    <span>Detecting location</span>
+                    <span id="progressPercent">0%</span>
                 </div>
-                <div id="questionDisplay"></div>
-                <div class="controls">
-                    <button id="prevBtn" class="control-btn"><i class="fas fa-arrow-left"></i> Previous</button>
-                    <button id="markBtn" class="control-btn"><i class="far fa-star"></i> Mark</button>
-                    <button id="nextBtn" class="control-btn">Next <i class="fas fa-arrow-right"></i></button>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
                 </div>
-                <div class="submit-container">
-                    <button id="submitBtn" class="control-btn"><i class="fas fa-paper-plane"></i> Submit Exam</button>
-                </div>
-            </div>
-            <div class="nav-container">
-                <div class="nav-header">Question Navigation</div>
-                <div id="questionNav" class="nav-buttons"></div>
-                <button id="adminBtn" style="margin-top: 15px; width: 100%; padding: 8px; background: #2d3748; color: white; border: none; border-radius: 5px;">Admin</button>
             </div>
         </div>
     </div>
-
-    <!-- Result Modal -->
-    <div id="resultModal" class="modal">
-        <div class="modal-content">
-            <span id="closeModal" class="modal-close">&times;</span>
-            <div class="modal-header">Exam Results</div>
+    
+    <!-- Service Unavailable Screen -->
+    <div class="service-container" id="serviceContainer">
+        <div class="service-content">
+            <img src="https://via.placeholder.com/150x50?text=Alpana+Homestay" alt="Alpana Homestay" class="logo">
+            <h1 class="service-title">Service Currently Unavailable</h1>
+            <p class="service-message">
+                We regret to inform you that Alpana Homestay services are not currently supported in your area. 
+                Our team is working hard to expand our services to your location soon.
+            </p>
             
-            <div class="results-summary">
-                <div class="result-card correct-card">
-                    <h3>Correct Answers</h3>
-                    <div class="value" id="correctAnswers">0</div>
-                </div>
-                <div class="result-card incorrect-card">
-                    <h3>Incorrect Answers</h3>
-                    <div class="value" id="incorrectAnswers">0</div>
-                </div>
-                <div class="result-card unanswered-card">
-                    <h3>Unanswered</h3>
-                    <div class="value" id="unanswered">0</div>
-                </div>
-                <div class="result-card percentage-card">
-                    <h3>Percentage</h3>
-                    <div class="value" id="percentage">0%</div>
-                </div>
+            <div class="location-details">
+                <p><i class="fas fa-map-marker-alt"></i> Detected Location: <span id="detectedLocation">UNW54347-756</span></p>
+                <p><i class="fas fa-clock"></i> Last checked: <span id="checkTime"></span></p>
             </div>
             
-            <div id="verdict" class="verdict">
-                Your exam results will appear here.
-            </div>
-            
-            <div class="answersheet">
-                <div class="answersheet-header">Detailed Answersheet</div>
-                <div id="answersheetContent"></div>
-            </div>
-            
-            <button id="downloadBtn" class="control-btn" style="margin-top: 20px;">
-                <i class="fas fa-download"></i> Download Results
-            </button>
-        </div>
-    </div>
-
-    <!-- Admin Log Modal -->
-    <div id="adminLogModal" class="modal">
-        <div class="modal-content">
-            <span id="closeAdminModal" class="modal-close">&times;</span>
-            <div class="modal-header">Admin Panel</div>
-            
-            <div class="admin-form">
-                <input type="password" id="adminPassword" placeholder="Enter admin password">
-                <button id="viewLogBtn">View Exam Logs</button>
-            </div>
-            
-            <div id="logContent" class="log-content">
-                <h3>Exam Attempts Log</h3>
-                <table class="log-table">
-                    <thead>
-                        <tr>
-                            <th>Date & Time</th>
-                            <th>Candidate ID</th>
-                            <th>Score</th>
-                            <th>Result</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTableBody"></tbody>
-                </table>
+            <div class="action-buttons">
+                <button class="btn" onclick="window.location.reload()">
+                    <i class="fas fa-sync-alt"></i> Try Again
+                </button>
+                <button class="btn btn-outline" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i> Go Back
+                </button>
             </div>
         </div>
     </div>
-
+    
     <script>
-        // Correct answers key (extremely difficult questions)
-        const answerKey = {
-            1: "b", 2: "c", 3: "d", 4: "a", 5: "b", 6: "c", 7: "d", 8: "a", 9: "b", 10: "c",
-            11: "d", 12: "a", 13: "b", 14: "c", 15: "d", 16: "a", 17: "b", 18: "c", 19: "d", 20: "a",
-            21: "b", 22: "c", 23: "d", 24: "a", 25: "b", 26: "c", 27: "d", 28: "a", 29: "b", 30: "c",
-            31: "d", 32: "a", 33: "b", 34: "c", 35: "d", 36: "a", 37: "b", 38: "c", 39: "d", 40: "a",
-            41: "b", 42: "c", 43: "d", 44: "a", 45: "b", 46: "c", 47: "d", 48: "a", 49: "b", 50: "c",
-            51: "d", 52: "a", 53: "b", 54: "c", 55: "d", 56: "a", 57: "b", 58: "c", 59: "d", 60: "a",
-            61: "b", 62: "c", 63: "d", 64: "a", 65: "b", 66: "c", 67: "d", 68: "a", 69: "b", 70: "c",
-            71: "d", 72: "a", 73: "b", 74: "c", 75: "d", 76: "a", 77: "b", 78: "c", 79: "d", 80: "a",
-            81: "b", 82: "c", 83: "d", 84: "a", 85: "b", 86: "c", 87: "d", 88: "a", 89: "b", 90: "c",
-            91: "d", 92: "a", 93: "b", 94: "c", 95: "d", 96: "a", 97: "b", 98: "c", 99: "d", 100: "a"
-        };
-
-        // Exam questions data (100 extremely difficult questions)
-        const examQuestions = [
-            // Section 1: Hotel Management (20 questions)
-            {
-                section: "Hotel Management",
-                question: "Given the following hotel performance data, calculate the GOPPAR (Gross Operating Profit Per Available Room) for Q3 2024 if the hotel has 150 rooms:",
-                options: [
-                    "$45.67",
-                    "$52.83",
-                    "$48.91",
-                    "$56.42"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024"],
-                    datasets: [
-                        {
-                            label: "Total Revenue ($)",
-                            data: [1250000, 1320000, 1450000, 1580000],
-                            backgroundColor: "rgba(59, 130, 246, 0.5)",
-                            borderColor: "rgba(59, 130, 246, 1)",
-                            borderWidth: 1,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: "Operating Expenses ($)",
-                            data: [950000, 1010000, 1080000, 1150000],
-                            backgroundColor: "rgba(239, 68, 68, 0.5)",
-                            borderColor: "rgba(239, 68, 68, 1)",
-                            borderWidth: 1,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: "Occupancy Rate (%)",
-                            data: [72, 76, 82, 85],
-                            backgroundColor: "rgba(16, 185, 129, 0.5)",
-                            borderColor: "rgba(16, 185, 129, 1)",
-                            borderWidth: 1,
-                            yAxisID: 'y1'
-                        }
-                    ]
-                },
-                chartOptions: {
-                    scales: {
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Dollars ($)'
-                            }
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            min: 0,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Percentage (%)'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        }
-                    }
-                },
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel has 200 rooms with an ADR of $180 and occupancy of 78%. If the variable cost per occupied room is $45 and fixed costs are $12,500 per day, what is the daily net profit?",
-                options: [
-                    "$18,460",
-                    "$20,980",
-                    "$22,340",
-                    "$24,760"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "Calculate the RevPAR (Revenue Per Available Room) for a hotel with 150 rooms that sold 120 rooms at an average rate of $220, with additional revenue of $8,500 from other services.",
-                options: [
-                    "$185.33",
-                    "$176.00",
-                    "$192.67",
-                    "$168.50"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's food cost percentage is 28% and beverage cost percentage is 22%. If total F&B revenue is $85,000, with food accounting for 60% of revenue, what is the total cost of goods sold?",
-                options: [
-                    "$22,440",
-                    "$23,800",
-                    "$21,080",
-                    "$24,360"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Department", "Cost Percentage", "Revenue Percentage"],
-                    rows: [
-                        ["Food", "28%", "60%"],
-                        ["Beverage", "22%", "40%"]
-                    ]
-                }
-            },
-            {
-                section: "Hotel Management",
-                question: "Using the Hubbart Formula, calculate the required average room rate for a 200-room hotel with 70% occupancy, operating expenses of $4.2 million, desired ROI of 12% on $30 million investment, and other departmental income of $1.8 million. The hotel operates 365 days a year.",
-                options: [
-                    "$189.45",
-                    "$203.75",
-                    "$215.60",
-                    "$227.90"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's room division contributes 65% of total revenue with a 75% profit margin. If the total property profit is $4.5 million, what is the hotel's total revenue?",
-                options: [
-                    "$7.82 million",
-                    "$8.28 million",
-                    "$8.76 million",
-                    "$9.23 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "Calculate the breakeven occupancy percentage for a 150-room hotel with fixed costs of $3.2 million, variable costs of $45 per occupied room, and an ADR of $195. The hotel operates 365 days a year.",
-                options: [
-                    "52.8%",
-                    "48.3%",
-                    "56.2%",
-                    "44.7%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's GOP is $2.4 million on $8 million revenue. If rooms revenue is $5.2 million with 80% profit margin, what is the profit margin for other departments?",
-                options: [
-                    "22.5%",
-                    "25.0%",
-                    "27.5%",
-                    "30.0%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's occupancy increased from 72% to 78% while ADR decreased from $220 to $210. What is the percentage change in RevPAR?",
-                options: [
-                    "+2.3%",
-                    "+1.8%",
-                    "-1.2%",
-                    "+0.5%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A 300-room hotel has 85% occupancy in June with ADR of $275. If July's occupancy is expected to be 12% higher with a 5% rate increase, what is the projected rooms revenue for July?",
-                options: [
-                    "$2.68 million",
-                    "$2.83 million",
-                    "$2.95 million",
-                    "$3.12 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's payroll costs are 38% of revenue. If salaries are $1.2 million and wages are $800,000, what is the hotel's total revenue?",
-                options: [
-                    "$5.00 million",
-                    "$5.26 million",
-                    "$5.52 million",
-                    "$5.78 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's net income is 15% of revenue after paying 28% in taxes. What is the GOP percentage if fixed charges are $1.2 million on $10 million revenue?",
-                options: [
-                    "34.6%",
-                    "36.8%",
-                    "38.2%",
-                    "40.4%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's rooms department has a 75% profit margin. If undistributed operating expenses are $1.8 million and the GOP is $4.2 million, what is the rooms department revenue?",
-                options: [
-                    "$7.20 million",
-                    "$7.80 million",
-                    "$8.00 million",
-                    "$8.40 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's RevPAR index is 1.15 when its RevPAR is $185 and the competitive set's RevPAR is $160. If the hotel's occupancy is 82%, what is the competitive set's occupancy if their ADR is $200?",
-                options: [
-                    "76.5%",
-                    "78.0%",
-                    "74.2%",
-                    "72.8%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's food cost is 28% and labor cost is 35% in the restaurant. If the restaurant's revenue is $1.5 million, what is the department's profit if other costs are 15% of revenue?",
-                options: [
-                    "$330,000",
-                    "$345,000",
-                    "$360,000",
-                    "$375,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's room revenue was $3.6 million last year with 72% occupancy. This year, with 5% higher occupancy and 8% higher ADR, what is the room revenue?",
-                options: [
-                    "$4.12 million",
-                    "$4.28 million",
-                    "$4.37 million",
-                    "$4.45 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A 250-room hotel has 70% annual occupancy. If the average stay is 2.5 nights, how many individual guests stayed at the hotel in a year?",
-                options: [
-                    "25,550",
-                    "26,600",
-                    "27,300",
-                    "28,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's GOP is 42% of revenue. If fixed charges are $1.5 million and net income is $2.1 million with a 30% tax rate, what is the hotel's total revenue?",
-                options: [
-                    "$12.00 million",
-                    "$12.86 million",
-                    "$13.33 million",
-                    "$14.00 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's current ratio is 1.5 with current assets of $750,000. If accounts payable is $200,000, what is the amount of other current liabilities?",
-                options: [
-                    "$300,000",
-                    "$350,000",
-                    "$400,000",
-                    "$450,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hotel Management",
-                question: "A hotel's asset turnover ratio is 1.2 with total assets of $25 million. If net income is 8% of revenue, what is the return on assets?",
-                options: [
-                    "9.6%",
-                    "10.2%",
-                    "10.8%",
-                    "11.4%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            // Section 2: Financial Management (20 questions)
-            {
-                section: "Financial Management",
-                question: "A hotel is considering a $5 million renovation with projected annual cash flows of $1.2 million for 6 years. What is the payback period?",
-                options: [
-                    "4.17 years",
-                    "4.33 years",
-                    "4.50 years",
-                    "4.67 years"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "Calculate the NPV of a project with initial investment of $2.5 million and cash flows of $800,000 for 5 years with a 12% discount rate.",
-                options: [
-                    "$384,000",
-                    "$425,000",
-                    "$463,000",
-                    "$502,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's DSCR is 1.25 with annual net operating income of $3 million. What is the annual debt service?",
-                options: [
-                    "$2.40 million",
-                    "$2.50 million",
-                    "$2.60 million",
-                    "$2.75 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's equity is $15 million with debt of $25 million. If the after-tax cost of debt is 5% and cost of equity is 12%, what is the WACC?",
-                options: [
-                    "7.50%",
-                    "7.88%",
-                    "8.25%",
-                    "8.63%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's current ratio is 1.8 with current liabilities of $1.2 million. If inventory is $400,000, what is the quick ratio?",
-                options: [
-                    "1.42",
-                    "1.50",
-                    "1.58",
-                    "1.67"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's fixed charge coverage ratio is 1.3 with EBITDA of $2.6 million. If interest expense is $1 million, what are the total fixed charges?",
-                options: [
-                    "$2.00 million",
-                    "$2.15 million",
-                    "$2.30 million",
-                    "$2.45 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's net income increased from $1.5 million to $1.8 million while revenue increased from $10 million to $12 million. What is the degree of operating leverage?",
-                options: [
-                    "1.67",
-                    "2.00",
-                    "2.33",
-                    "2.67"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's asset turnover improved from 1.2 to 1.5 while profit margin remained at 8%. What is the percentage change in ROA?",
-                options: [
-                    "+20%",
-                    "+25%",
-                    "+30%",
-                    "+35%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's days sales outstanding decreased from 45 to 36 days while annual credit sales increased from $8 million to $9 million. What is the change in accounts receivable?",
-                options: [
-                    "-$120,000",
-                    "-$80,000",
-                    "$0",
-                    "+$80,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's inventory turnover improved from 12 to 15 times while COGS increased from $3.6 million to $4.2 million. What is the change in average inventory?",
-                options: [
-                    "-$100,000",
-                    "-$80,000",
-                    "-$60,000",
-                    "-$40,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's debt-to-equity ratio is 1.5. If total assets are $25 million, what is the amount of equity?",
-                options: [
-                    "$10.00 million",
-                    "$12.50 million",
-                    "$15.00 million",
-                    "$17.50 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's times interest earned ratio is 4.5 with EBIT of $2.25 million. What is the interest expense?",
-                options: [
-                    "$500,000",
-                    "$550,000",
-                    "$600,000",
-                    "$650,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's gross profit margin is 65% and operating margin is 28%. If revenue is $8 million, what are the fixed operating expenses?",
-                options: [
-                    "$2.96 million",
-                    "$3.04 million",
-                    "$3.12 million",
-                    "$3.20 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's ROE is 15% with net income of $1.8 million. If debt is $12 million, what is the return on assets?",
-                options: [
-                    "8.18%",
-                    "8.57%",
-                    "9.00%",
-                    "9.47%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's cash conversion cycle is 45 days with days inventory outstanding of 30 and days sales outstanding of 25. What is the days payable outstanding?",
-                options: [
-                    "10 days",
-                    "15 days",
-                    "20 days",
-                    "25 days"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's EBITDA margin is 35% with depreciation of $800,000 and amortization of $200,000. If EBIT is $3 million, what is the revenue?",
-                options: [
-                    "$10.00 million",
-                    "$10.86 million",
-                    "$11.43 million",
-                    "$12.00 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's net profit margin increased from 10% to 12% while asset turnover decreased from 1.5 to 1.4. What is the change in ROA?",
-                options: [
-                    "-0.2%",
-                    "+0.2%",
-                    "+0.8%",
-                    "+1.2%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's current assets are $3 million with inventory turnover of 12. If current ratio is 2 and quick ratio is 1.5, what are current liabilities?",
-                options: [
-                    "$1.00 million",
-                    "$1.25 million",
-                    "$1.50 million",
-                    "$1.75 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's fixed asset turnover is 1.8 with net fixed assets of $15 million. If total assets are $25 million, what is the total asset turnover?",
-                options: [
-                    "1.08",
-                    "1.12",
-                    "1.16",
-                    "1.20"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's earnings yield is 8% with EPS of $2.40. What is the current stock price?",
-                options: [
-                    "$30.00",
-                    "$32.50",
-                    "$35.00",
-                    "$37.50"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Financial Management",
-                question: "A hotel's P/E ratio decreased from 20 to 18 while EPS increased from $1.50 to $1.80. What is the percentage change in stock price?",
-                options: [
-                    "+8.0%",
-                    "+6.5%",
-                    "+5.0%",
-                    "+3.5%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            // Section 3: Human Resources (20 questions)
-            {
-                section: "Human Resources",
-                question: "A hotel has 120 employees with a turnover rate of 28%. If 15 new employees were hired last year, how many employees left?",
-                options: [
-                    "29",
-                    "31",
-                    "33",
-                    "35"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's labor cost is 38% of revenue. If benefits are 25% of wages and total payroll is $1.9 million, what is the hotel's revenue?",
-                options: [
-                    "$5.00 million",
-                    "$5.26 million",
-                    "$5.52 million",
-                    "$5.78 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel department has 18 employees with an absenteeism rate of 8%. How many person-days are lost annually if each employee works 240 days a year?",
-                options: [
-                    "345.6",
-                    "364.8",
-                    "384.0",
-                    "403.2"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's training program reduced errors by 40%. If pre-training errors were 15 per 100 transactions at a cost of $25 per error, and the hotel has 50,000 transactions annually, what is the annual savings?",
-                options: [
-                    "$75,000",
-                    "$82,500",
-                    "$90,000",
-                    "$97,500"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's employee satisfaction improved from 68% to 75%. If turnover was previously 32% with 150 employees, how many fewer employees will leave assuming turnover decreases proportionally?",
-                options: [
-                    "9",
-                    "11",
-                    "13",
-                    "15"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's productivity improved from 12 rooms cleaned per shift to 14. If labor cost was $22 per room and wages are unchanged, what is the percentage change in labor cost per room?",
-                options: [
-                    "-14.3%",
-                    "-12.5%",
-                    "-10.7%",
-                    "-8.9%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's cross-training program reduced overtime by 35%. If overtime was previously 12% of payroll at $1.2 million, what is the annual savings?",
-                options: [
-                    "$42,000",
-                    "$50,400",
-                    "$58,800",
-                    "$67,200"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's incentive program increased sales by 15%. If average check was $45 with 50,000 covers annually and the incentive cost is 3% of incremental revenue, what is the net gain?",
-                options: [
-                    "$146,250",
-                    "$153,563",
-                    "$160,875",
-                    "$168,188"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's health insurance costs increased by 12% to $1,120 per employee monthly. If the hotel covers 80% of the cost for 125 employees, what is the annual increase in expense?",
-                options: [
-                    "$168,000",
-                    "$172,800",
-                    "$177,600",
-                    "$182,400"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel reduced staff from 150 to 135 while maintaining output. If average salary was $35,000 with 30% benefits, what is the annual savings?",
-                options: [
-                    "$682,500",
-                    "$717,750",
-                    "$753,000",
-                    "$788,250"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's recruitment cost is $3,500 per hire with 45 hires annually. If a new onboarding program reduces turnover from 28% to 22%, how much is saved if the program costs $50,000?",
-                options: [
-                    "$18,900",
-                    "$23,100",
-                    "$27,300",
-                    "$31,500"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's training program costs $75,000 and improves productivity by 8%. If labor cost was $2.4 million annually, what is the ROI in the first year?",
-                options: [
-                    "156%",
-                    "168%",
-                    "180%",
-                    "192%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's employee engagement survey scores improved from 68% to 74%. If a 1% increase correlates with 0.5% higher customer satisfaction, and each 1% in customer satisfaction increases revenue by $25,000, what is the projected revenue increase?",
-                options: [
-                    "$75,000",
-                    "$82,500",
-                    "$90,000",
-                    "$97,500"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's workforce is 60% full-time and 40% part-time. Full-time employees work 40 hours/week at $18/hour, part-time work 20 hours/week at $16/hour. What is the average hourly wage?",
-                options: [
-                    "$17.20",
-                    "$17.40",
-                    "$17.60",
-                    "$17.80"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's workers' compensation premium is $2.50 per $100 of payroll. If safety training reduces claims by 30% and payroll is $3.6 million, what is the annual savings?",
-                options: [
-                    "$27,000",
-                    "$29,700",
-                    "$32,400",
-                    "$35,100"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's staff scheduling software reduced labor hours by 8%. If labor was 35% of revenue at $4.2 million, and the software costs $25,000 annually, what is the net savings?",
-                options: [
-                    "$91,400",
-                    "$94,600",
-                    "$97,800",
-                    "$101,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's employee referral program yields 25 hires annually with 20% better retention. If regular hires cost $3,500 and stay 2.5 years on average, what is the annual savings if referred hires stay 3 years?",
-                options: [
-                    "$14,000",
-                    "$17,500",
-                    "$21,000",
-                    "$24,500"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's diversity initiative increased minority hires from 15% to 25% of 120 employees. If turnover is 10% lower in minority groups, how many fewer employees will leave annually if overall turnover was 30%?",
-                options: [
-                    "2",
-                    "3",
-                    "4",
-                    "5"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's leadership program promoted 15 internal candidates last year, saving $12,000 per external hire in recruitment costs. If external hires typically cost 20% more in salary, and average salary is $45,000, what is the total first-year savings?",
-                options: [
-                    "$243,000",
-                    "$256,500",
-                    "$270,000",
-                    "$283,500"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's flexible scheduling reduced turnover from 28% to 22% among 75 hourly employees. If replacement costs average $3,500 per employee, what is the annual savings?",
-                options: [
-                    "$15,750",
-                    "$17,850",
-                    "$19,950",
-                    "$22,050"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Human Resources",
-                question: "A hotel's performance pay increased productivity by 12% with a 5% payroll increase. If original payroll was $2.4 million, what is the productivity gain per dollar of additional payroll?",
-                options: [
-                    "$2.40",
-                    "$2.60",
-                    "$2.80",
-                    "$3.00"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            // Section 4: Marketing (20 questions)
-            {
-                section: "Marketing",
-                question: "A hotel's direct booking percentage increased from 25% to 35% of 50,000 room nights. If commission is 15% on $200 average rate for indirect bookings, what is the annual savings?",
-                options: [
-                    "$450,000",
-                    "$525,000",
-                    "$600,000",
-                    "$675,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's loyalty program members spend 25% more than non-members. If members account for 30% of 60,000 annual guests with average spend of $150, what is the incremental revenue?",
-                options: [
-                    "$675,000",
-                    "$720,000",
-                    "$765,000",
-                    "$810,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's website conversion rate improved from 3% to 4% with 500,000 annual visitors. If average booking value is $800, what is the incremental revenue?",
-                options: [
-                    "$4.0 million",
-                    "$4.5 million",
-                    "$5.0 million",
-                    "$5.5 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's paid search CPA is $45 with a 20% conversion rate. If average stay value is $900, what is the ROAS?",
-                options: [
-                    "400%",
-                    "450%",
-                    "500%",
-                    "550%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's email campaign has 25% open rate and 5% click-through rate. If sent to 50,000 subscribers with 2% conversion and $800 average booking, what is the revenue?",
-                options: [
-                    "$100,000",
-                    "$120,000",
-                    "$140,000",
-                    "$160,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's social media campaign generated 500 bookings from 2 million impressions. If the campaign cost $50,000 and average stay is $750, what is the ROAS?",
-                options: [
-                    "650%",
-                    "700%",
-                    "750%",
-                    "800%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's reputation score improved from 4.2 to 4.5 on OTAs. If each 0.1 increase typically yields 5% more bookings, and baseline is 10,000 bookings at $200 average rate, what is the incremental revenue?",
-                options: [
-                    "$300,000",
-                    "$330,000",
-                    "$360,000",
-                    "$390,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's metasearch campaign has 5% conversion rate with $15 CPA. If average booking value is $600, what is the profit margin if other costs are 30% of revenue?",
-                options: [
-                    "55%",
-                    "57.5%",
-                    "60%",
-                    "62.5%"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's package sales increased from 15% to 25% of 40,000 room nights. If packages generate $50 more revenue per night, what is the incremental revenue?",
-                options: [
-                    "$200,000",
-                    "$220,000",
-                    "$240,000",
-                    "$260,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's upselling program increased ancillary revenue from $15 to $25 per room night. If the hotel has 50,000 occupied room nights, what is the incremental revenue?",
-                options: [
-                    "$500,000",
-                    "$550,000",
-                    "$600,000",
-                    "$650,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's segmentation strategy increased ADR by 12% without affecting occupancy. If baseline RevPAR was $120 with 75,000 room nights, what is the incremental revenue?",
-                options: [
-                    "$1.08 million",
-                    "$1.18 million",
-                    "$1.28 million",
-                    "$1.38 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's dynamic pricing increased occupancy from 72% to 78% while maintaining RevPAR. If the hotel has 200 rooms, what is the annual incremental revenue if ADR decreased by 5%?",
-                options: [
-                    "$394,200",
-                    "$413,100",
-                    "$432,000",
-                    "$450,900"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's CRM program increased repeat guests from 25% to 35% of 60,000 annual guests. If repeat guests spend 20% more with $150 average spend, what is the incremental revenue?",
-                options: [
-                    "$1.08 million",
-                    "$1.26 million",
-                    "$1.44 million",
-                    "$1.62 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's content marketing increased organic traffic by 40% to 350,000 visitors with 3% conversion. If average booking value is $750, what is the incremental revenue?",
-                options: [
-                    "$3.15 million",
-                    "$3.50 million",
-                    "$3.85 million",
-                    "$4.20 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's OTA contribution decreased from 45% to 35% of 50,000 room nights. If direct bookings save 15% commission on $200 average rate, what is the annual savings?",
-                options: [
-                    "$450,000",
-                    "$525,000",
-                    "$600,000",
-                    "$675,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's mobile app bookings increased from 10% to 25% of direct bookings, which are 40% of 60,000 room nights. If app bookings have 5% higher ADR at $210, what is the incremental revenue?",
-                options: [
-                    "$378,000",
-                    "$415,800",
-                    "$453,600",
-                    "$491,400"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's group business increased from 15% to 25% of 50,000 room nights. If group ADR is $20 lower but generates $50 in ancillary revenue per room night, what is the net revenue impact if baseline ADR was $200?",
-                options: [
-                    "$750,000",
-                    "$825,000",
-                    "$900,000",
-                    "$975,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's length of stay increased from 2.0 to 2.3 nights through packaging. If this affected 20% of 60,000 annual guests, what is the incremental room nights?",
-                options: [
-                    "3,600",
-                    "4,200",
-                    "4,800",
-                    "5,400"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's reputation management responded to 90% of reviews averaging 4.8/5. If each 0.1 rating increase drives 2% more bookings at 50,000 baseline and $200 ADR, what is the revenue impact vs. 4.5 with 70% response rate?",
-                options: [
-                    "$1.20 million",
-                    "$1.35 million",
-                    "$1.50 million",
-                    "$1.65 million"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's GDS bookings increased from 15% to 20% of 40,000 room nights through optimized content. If GDS rates are 10% higher at $220, what is the incremental revenue?",
-                options: [
-                    "$440,000",
-                    "$484,000",
-                    "$528,000",
-                    "$572,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Marketing",
-                question: "A hotel's promotional offers increased shoulder season occupancy from 65% to 75% for 100 rooms over 90 days, with $20 lower ADR at $180 but $30 ancillary revenue per night. What is the net revenue impact?",
-                options: [
-                    "$243,000",
-                    "$256,500",
-                    "$270,000",
-                    "$283,500"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            // Section 5: Operations (20 questions)
-            {
-                section: "Operations",
-                question: "A hotel's energy management system reduced consumption by 18%. If energy costs were 4% of $12 million revenue at $0.12/kWh, how many kWh were saved?",
-                options: [
-                    "720,000",
-                    "810,000",
-                    "900,000",
-                    "990,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's preventive maintenance program reduced equipment failures by 40%. If previous repairs cost $120,000 annually with $80,000 in lost revenue, and the program costs $50,000, what is the net savings?",
-                options: [
-                    "$42,000",
-                    "$54,000",
-                    "$66,000",
-                    "$78,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's linen reuse program reduced laundry costs by 25%. If 60% of 200 rooms participate daily, saving $1.20 per room, what is the annual savings?",
-                options: [
-                    "$31,680",
-                    "$34,560",
-                    "$37,440",
-                    "$40,320"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's inventory management system reduced F&B waste from 12% to 8% of $1.8 million cost. What is the annual savings?",
-                options: [
-                    "$72,000",
-                    "$79,200",
-                    "$86,400",
-                    "$93,600"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's cross-trained staff reduced departmental overtime from 8% to 5% of $1.2 million payroll. What is the annual savings?",
-                options: [
-                    "$36,000",
-                    "$42,000",
-                    "$48,000",
-                    "$54,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's digital check-in increased from 15% to 40% of 100,000 annual guests, saving 2 minutes per check-in. If front desk staff cost $25/hour, what is the annual labor savings?",
-                options: [
-                    "$20,833",
-                    "$22,917",
-                    "$25,000",
-                    "$27,083"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's room inspection app reduced housekeeping rework from 8% to 3% of 50,000 annual room cleans. If rework takes 15 minutes at $18/hour, what is the annual savings?",
-                options: [
-                    "$11,250",
-                    "$12,375",
-                    "$13,500",
-                    "$14,625"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's predictive maintenance on HVAC reduced energy costs by 12%. If HVAC was 40% of $600,000 utility costs, what is the annual savings?",
-                options: [
-                    "$28,800",
-                    "$31,680",
-                    "$34,560",
-                    "$37,440"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's staff scheduling algorithm reduced labor hours by 7% for a department with $800,000 annual payroll. What is the annual savings?",
-                options: [
-                    "$56,000",
-                    "$61,600",
-                    "$67,200",
-                    "$72,800"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's digital key adoption increased from 20% to 50% of 80,000 annual guests, reducing key replacement costs from $8,000 to $3,000. What is the annual savings?",
-                options: [
-                    "$5,000",
-                    "$6,000",
-                    "$7,000",
-                    "$8,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's consolidated purchases with preferred vendors reduced costs by 8%. If purchasing was $3.6 million annually, what is the savings?",
-                options: [
-                    "$288,000",
-                    "$316,800",
-                    "$345,600",
-                    "$374,400"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's automated beverage system reduced liquor costs from 24% to 20% of $900,000 beverage revenue. What is the annual savings?",
-                options: [
-                    "$36,000",
-                    "$39,600",
-                    "$43,200",
-                    "$46,800"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's guest messaging reduced front desk calls by 30%. If previously 50% of 80,000 annual guests called twice at $0.50 per call, what is the annual savings?",
-                options: [
-                    "$12,000",
-                    "$13,200",
-                    "$14,400",
-                    "$15,600"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's water-saving fixtures reduced consumption by 25%. If water costs were $120,000 annually with 30% from guest rooms, and fixtures cost $45,000, what is the payback period?",
-                options: [
-                    "1.50 years",
-                    "1.67 years",
-                    "1.83 years",
-                    "2.00 years"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's digital concierge increased spa bookings by 15%. If spa revenue was $600,000 with 25% profit margin, what is the incremental profit?",
-                options: [
-                    "$22,500",
-                    "$24,750",
-                    "$27,000",
-                    "$29,250"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's kitchen display system reduced order errors from 5% to 2% of 150,000 annual covers. If each error costs $8 in comps and lost goodwill, what is the annual savings?",
-                options: [
-                    "$36,000",
-                    "$39,600",
-                    "$43,200",
-                    "$46,800"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's laundry automation reduced labor hours by 20% in a department with $250,000 annual payroll. What is the annual savings?",
-                options: [
-                    "$50,000",
-                    "$55,000",
-                    "$60,000",
-                    "$65,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's staff mobile app reduced task completion time by 15%. If department payroll is $1.2 million annually, what is the labor efficiency gain?",
-                options: [
-                    "$180,000",
-                    "$198,000",
-                    "$216,000",
-                    "$234,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's waste recycling program reduced disposal costs by 30%. If waste removal was $75,000 annually with 40% recyclables, and the program costs $10,000, what is the annual savings?",
-                options: [
-                    "$8,000",
-                    "$9,000",
-                    "$10,000",
-                    "$11,000"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's room automation system reduced energy costs by 18% for 45% of 200 rooms occupied daily. If energy was $300,000 annually with 40% from rooms, what is the annual savings?",
-                options: [
-                    "$19,440",
-                    "$21,384",
-                    "$23,328",
-                    "$25,272"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Operations",
-                question: "A hotel's consolidated deliveries reduced freight costs by 12%. If purchasing was $2.4 million with 5% freight, what is the annual savings?",
-                options: [
-                    "$14,400",
-                    "$15,840",
-                    "$17,280",
-                    "$18,720"
-                ],
-                hasChart: false,
-                hasTable: false
-            }
-        ];
-
-        // User data
-        let userAnswers = {};
-        let markedQuestions = {};
-        let currentQuestion = 1;
-        let timerInterval;
-        let timeLeft = 90 * 60; // 90 minutes in seconds
-        let examLogs = JSON.parse(localStorage.getItem('examLogs')) || [];
-        let currentUserId = '';
-        let examSubmitted = false;
-
         // DOM Elements
-        const splashScreen = document.getElementById('splashScreen');
-        const examContainer = document.getElementById('examContainer');
-        const loginBtn = document.getElementById('loginBtn');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const errorMessage = document.getElementById('errorMessage');
-        const questionDisplay = document.getElementById('questionDisplay');
-        const questionNav = document.getElementById('questionNav');
-        const currentQuestionDisplay = document.getElementById('currentQuestion');
-        const currentSectionDisplay = document.getElementById('currentSection');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const markBtn = document.getElementById('markBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        const timerDisplay = document.getElementById('timer');
-        const timeDisplay = document.getElementById('timeDisplay');
-        const answeredCount = document.getElementById('answeredCount');
-        const progressPercent = document.getElementById('progressPercent');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const serviceContainer = document.getElementById('serviceContainer');
         const progressFill = document.getElementById('progressFill');
-        const resultModal = document.getElementById('resultModal');
-        const closeModal = document.getElementById('closeModal');
-        const correctAnswersDisplay = document.getElementById('correctAnswers');
-        const incorrectAnswersDisplay = document.getElementById('incorrectAnswers');
-        const unansweredDisplay = document.getElementById('unanswered');
-        const percentageDisplay = document.getElementById('percentage');
-        const verdictDisplay = document.getElementById('verdict');
-        const answersheetContent = document.getElementById('answersheetContent');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const adminBtn = document.getElementById('adminBtn');
-        const adminLogModal = document.getElementById('adminLogModal');
-        const closeAdminModal = document.getElementById('closeAdminModal');
-        const adminPassword = document.getElementById('adminPassword');
-        const viewLogBtn = document.getElementById('viewLogBtn');
-        const logContent = document.getElementById('logContent');
-        const logTableBody = document.getElementById('logTableBody');
-        const fatigueNotice = document.getElementById('fatigueNotice');
-
-        // Check exam window (14/08/2025 11:00-13:00)
-        function isWithinExamWindow() {
+        const progressPercent = document.getElementById('progressPercent');
+        const detectedLocation = document.getElementById('detectedLocation');
+        const checkTime = document.getElementById('checkTime');
+        
+        // Simulate location detection for 10 seconds
+        let progress = 0;
+        const totalTime = 10000; // 10 seconds
+        const intervalTime = 100; // Update every 100ms
+        const steps = totalTime / intervalTime;
+        const increment = 100 / steps;
+        
+        // Start the loading animation
+        const loadingInterval = setInterval(() => {
+            progress += increment;
+            progressFill.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.min(Math.round(progress), 100)}%`;
+            
+            if (progress >= 100) {
+                clearInterval(loadingInterval);
+                showServiceUnavailable();
+            }
+        }, intervalTime);
+        
+        // Function to show service unavailable screen
+        function showServiceUnavailable() {
+            // Get current time for display
             const now = new Date();
-            const examDate = new Date(2025, 7, 14); // August is month 7 (0-indexed)
+            checkTime.textContent = now.toLocaleTimeString() + ', ' + now.toLocaleDateString();
             
-            // Check if it's the correct date
-            if (now.getFullYear() !== examDate.getFullYear() || 
-                now.getMonth() !== examDate.getMonth() || 
-                now.getDate() !== examDate.getDate()) {
-                return false;
+            // Try to get actual location (will fallback to "Unknown" if denied)
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // Reverse geocoding would go here in a real implementation
+                        detectedLocation.textContent = "Approximate area detected";
+                    },
+                    (error) => {
+                        detectedLocation.textContent = "Location access denied";
+                    }
+                );
+            } else {
+                detectedLocation.textContent = "Location services not available";
             }
             
-            // Check if it's between 11:00 and 13:00
-            const hours = now.getHours();
-            return hours >= 11 && hours < 13;
-        }
-
-        // Generate random user ID
-        function generateUserId() {
-            const prefix = 'ALP';
-            const randomNum = Math.floor(10000 + Math.random() * 90000);
-            return prefix + randomNum;
-        }
-
-        // Login Functionality
-        loginBtn.addEventListener('click', () => {
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
+            // Hide loading screen and show service message
+            loadingScreen.style.opacity = '0';
             
-            if (!isWithinExamWindow()) {
-                errorMessage.textContent = "Exam can only be taken on 14/08/2025 between 11:00 AM and 1:00 PM";
-                errorMessage.style.display = 'block';
-                return;
-            }
-            
-            if (username && password) {
-                // Generate user ID and store it
-                currentUserId = generateUserId();
-                
-                // Hide splash screen and show exam
-                errorMessage.style.display = 'none';
-                splashScreen.style.opacity = '0';
-                splashScreen.style.pointerEvents = 'none';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                serviceContainer.style.display = 'flex';
                 
                 setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                    examContainer.style.display = 'block';
-                    startTimer();
-                    loadQuestion(currentQuestion);
-                    createNavigationButtons();
-                    updateProgress();
-                }, 500);
-            } else {
-                errorMessage.textContent = "Please enter both username and password";
-                errorMessage.style.display = 'block';
-            }
-        });
-
-        // Timer Functionality
-        function startTimer() {
-            updateTimerDisplay();
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                
-                if (timeLeft <= 300) { // 5 minutes left
-                    timerDisplay.classList.add('warning');
-                    fatigueNotice.style.display = 'block';
-                }
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    submitExam();
-                }
-            }, 1000);
+                    serviceContainer.style.opacity = '1';
+                    document.querySelector('.service-content').style.transform = 'translateY(0)';
+                }, 50);
+            }, 500);
         }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        }
-
-        // Progress Tracking
-        function updateProgress() {
-            const answered = Object.keys(userAnswers).length;
-            const percent = Math.round((answered / 100) * 100);
-            
-            answeredCount.textContent = answered;
-            progressPercent.textContent = `${percent}%`;
-            progressFill.style.width = `${percent}%`;
-        }
-
-        // Question Navigation
-        function createNavigationButtons() {
-            questionNav.innerHTML = '';
-            
-            for (let i = 1; i <= 100; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'nav-btn';
-                btn.textContent = i;
-                btn.dataset.question = i;
-                
-                if (i === 1) {
-                    btn.classList.add('current');
-                }
-                
-                btn.addEventListener('click', () => {
-                    navigateToQuestion(parseInt(btn.dataset.question));
-                });
-                
-                questionNav.appendChild(btn);
-            }
-        }
-
-        function updateNavigationButtons() {
-            const buttons = questionNav.querySelectorAll('.nav-btn');
-            
-            buttons.forEach(btn => {
-                btn.classList.remove('current', 'visited', 'answered', 'marked');
-                
-                const questionNum = parseInt(btn.dataset.question);
-                
-                if (questionNum === currentQuestion) {
-                    btn.classList.add('current');
-                }
-                
-                if (markedQuestions[questionNum]) {
-                    btn.classList.add('marked');
-                }
-                
-                if (userAnswers[questionNum]) {
-                    btn.classList.add('answered');
-                } else if (questionNum < currentQuestion) {
-                    btn.classList.add('visited');
-                }
-            });
-        }
-
-        function navigateToQuestion(questionNum) {
-            if (questionNum >= 1 && questionNum <= 100) {
-                currentQuestion = questionNum;
-                loadQuestion(currentQuestion);
-                updateNavigationButtons();
-                currentQuestionDisplay.textContent = currentQuestion;
-                
-                // Update section header
-                const questionData = examQuestions[currentQuestion - 1];
-                currentSectionDisplay.textContent = questionData.section;
-                
-                // Scroll to top of question
-                window.scrollTo({
-                    top: questionDisplay.offsetTop - 20,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        // Question Loading
-        function loadQuestion(questionNum) {
-            const questionData = examQuestions[questionNum - 1]; // Adjust for 0-based index
-            
-            let questionHTML = `
-                <div class="question" data-question="${questionNum}">
-                    <div class="question-text">
-                        ${questionData.question}
-                    </div>
-            `;
-            
-            // Add visual aid if needed
-            if (questionData.hasChart) {
-                questionHTML += `
-                    <div class="visual-aid">
-                        <div class="visual-aid-title">Data Visualization:</div>
-                        <div class="chart-container">
-                            <canvas id="chart-${questionNum}"></canvas>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            if (questionData.hasTable) {
-                questionHTML += `
-                    <div class="visual-aid">
-                        <div class="visual-aid-title">Reference Table:</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    ${questionData.tableData.headers.map(header => `<th>${header}</th>`).join('')}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${questionData.tableData.rows.map(row => `
-                                    <tr>
-                                        ${row.map(cell => `<td>${cell}</td>`).join('')}
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-            
-            // Add options
-            questionHTML += `<div class="options">`;
-            
-            const optionLetters = ['a', 'b', 'c', 'd'];
-            
-            questionData.options.forEach((option, index) => {
-                const optionLetter = optionLetters[index];
-                const isSelected = userAnswers[questionNum] === optionLetter;
-                const isLocked = userAnswers[questionNum] !== undefined && !examSubmitted;
-                
-                questionHTML += `
-                    <div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" 
-                         data-option="${optionLetter}" onclick="selectOption(${questionNum}, '${optionLetter}')">
-                        <input type="radio" name="q${questionNum}" id="q${questionNum}${optionLetter}" 
-                               ${isSelected ? 'checked' : ''} ${isLocked ? 'disabled' : ''}>
-                        <label for="q${questionNum}${optionLetter}">${option}</label>
-                    </div>
-                `;
-            });
-            
-            questionHTML += `</div></div>`;
-            
-            questionDisplay.innerHTML = questionHTML;
-            
-            // Update mark button state
-            updateMarkButton();
-            
-            // Render chart if needed
-            if (questionData.hasChart) {
-                const ctx = document.getElementById(`chart-${questionNum}`).getContext('2d');
-                new Chart(ctx, {
-                    type: questionData.chartType || 'bar',
-                    data: questionData.chartData,
-                    options: questionData.chartOptions || {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Update button states
-            prevBtn.disabled = questionNum === 1;
-            nextBtn.disabled = questionNum === 100;
-            submitBtn.disabled = examSubmitted;
-        }
-
-        // Mark Question
-        function updateMarkButton() {
-            if (markedQuestions[currentQuestion]) {
-                markBtn.innerHTML = '<i class="fas fa-star"></i> Unmark';
-                markBtn.classList.add('marked');
-            } else {
-                markBtn.innerHTML = '<i class="far fa-star"></i> Mark';
-                markBtn.classList.remove('marked');
-            }
-            
-            markBtn.disabled = examSubmitted;
-        }
-
-        markBtn.addEventListener('click', () => {
-            if (!examSubmitted) {
-                markedQuestions[currentQuestion] = !markedQuestions[currentQuestion];
-                updateMarkButton();
-                updateNavigationButtons();
-            }
-        });
-
-        // Option Selection
-        window.selectOption = function(questionNum, optionLetter) {
-            if (!examSubmitted && !userAnswers[questionNum]) {
-                userAnswers[questionNum] = optionLetter;
-                
-                // Update UI
-                const options = document.querySelectorAll(`.question[data-question="${questionNum}"] .option`);
-                options.forEach(opt => {
-                    opt.classList.remove('selected');
-                    if (opt.dataset.option === optionLetter) {
-                        opt.classList.add('selected');
-                    }
-                    opt.classList.add('locked');
-                    opt.querySelector('input').disabled = true;
-                });
-                
-                // Update navigation and progress
-                updateNavigationButtons();
-                updateProgress();
-            }
-        };
-
-        // Navigation Controls
-        prevBtn.addEventListener('click', () => {
-            navigateToQuestion(currentQuestion - 1);
-        });
-
-        nextBtn.addEventListener('click', () => {
-            navigateToQuestion(currentQuestion + 1);
-        });
-
-        // Keyboard Navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' && currentQuestion > 1) {
-                navigateToQuestion(currentQuestion - 1);
-            } else if (e.key === 'ArrowRight' && currentQuestion < 100) {
-                navigateToQuestion(currentQuestion + 1);
-            }
-        });
-
-        // Submit Exam
-        submitBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to submit your exam? You won't be able to make changes after submission.")) {
-                submitExam();
-            }
-        });
-
-        function submitExam() {
-            if (examSubmitted) return;
-            
-            clearInterval(timerInterval);
-            examSubmitted = true;
-            const results = calculateResults();
-            showResults(results);
-            logResults(results);
-            
-            // Disable all inputs
-            const allOptions = document.querySelectorAll('.option');
-            allOptions.forEach(opt => {
-                opt.classList.add('locked');
-                const input = opt.querySelector('input');
-                if (input) input.disabled = true;
-            });
-            
-            submitBtn.disabled = true;
-        }
-
-        // Results Calculation
-        function calculateResults() {
-            let correct = 0;
-            let incorrect = 0;
-            let unanswered = 0;
-            
-            for (let i = 1; i <= 100; i++) {
-                if (userAnswers[i] === undefined) {
-                    unanswered++;
-                } else if (userAnswers[i] === answerKey[i]) {
-                    correct++;
-                } else {
-                    incorrect++;
-                }
-            }
-            
-            const percentage = Math.round((correct / 100) * 100);
-            const passed = correct >= 55;
-            
-            return {
-                correct,
-                incorrect,
-                unanswered,
-                percentage,
-                passed,
-                userId: currentUserId,
-                timestamp: new Date().toISOString()
-            };
-        }
-
-        // Show Results
-        function showResults(results) {
-            correctAnswersDisplay.textContent = results.correct;
-            incorrectAnswersDisplay.textContent = results.incorrect;
-            unansweredDisplay.textContent = results.unanswered;
-            percentageDisplay.textContent = `${results.percentage}%`;
-            
-            verdictDisplay.textContent = results.passed 
-                ? `Congratulations! You have passed the Managerial Aptitude Test with a score of ${results.correct}/100.` 
-                : `Unfortunately, you did not pass the exam. You scored ${results.correct}/100 (minimum 55 required to pass).`;
-            
-            verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
-            
-            // Generate answersheet
-            answersheetContent.innerHTML = '';
-            
-            for (let i = 1; i <= 100; i++) {
-                const questionData = examQuestions[i - 1];
-                const userAnswer = userAnswers[i];
-                const correctAnswer = answerKey[i];
-                const isCorrect = userAnswer === correctAnswer;
-                
-                const answerItem = document.createElement('div');
-                answerItem.className = 'answer-item';
-                
-                let statusClass, statusText;
-                if (userAnswer === undefined) {
-                    statusClass = 'unanswered';
-                    statusText = 'Unanswered';
-                } else if (isCorrect) {
-                    statusClass = 'correct';
-                    statusText = 'Correct';
-                } else {
-                    statusClass = 'incorrect';
-                    statusText = 'Incorrect';
-                }
-                
-                answerItem.innerHTML = `
-                    <div class="answer-status ${statusClass}">
-                        Question ${i}: ${statusText}
-                    </div>
-                    <div class="answer-question">${questionData.question}</div>
-                    <div class="answer-details">
-                        <div class="answer-detail">
-                            <strong>Your Answer</strong>
-                            <span>${userAnswer ? userAnswer.toUpperCase() : 'Not answered'}</span>
-                        </div>
-                        <div class="answer-detail">
-                            <strong>Correct Answer</strong>
-                            <span>${correctAnswer.toUpperCase()}</span>
-                        </div>
-                    </div>
-                `;
-                
-                answersheetContent.appendChild(answerItem);
-            }
-            
-            // Show modal
-            resultModal.classList.add('active');
-        }
-
-        // Log Results
-        function logResults(results) {
-            const now = new Date();
-            const logEntry = {
-                timestamp: now.toISOString(),
-                dateTime: now.toLocaleString(),
-                candidateId: currentUserId,
-                score: results.correct,
-                percentage: results.percentage,
-                passed: results.passed,
-                username: usernameInput.value.trim()
-            };
-            
-            examLogs.push(logEntry);
-            localStorage.setItem('examLogs', JSON.stringify(examLogs));
-        }
-
-        // Close Modal
-        closeModal.addEventListener('click', () => {
-            resultModal.classList.remove('active');
-        });
-
-        // Download Results
-        downloadBtn.addEventListener('click', () => {
-            html2canvas(document.querySelector('.modal-content')).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Alpana-Managerial-Test-Results-${currentUserId}-${new Date().toISOString().slice(0,10)}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
-        });
-
-        // Admin Log Functions
-        adminBtn.addEventListener('click', () => {
-            adminLogModal.classList.add('active');
-        });
-
-        closeAdminModal.addEventListener('click', () => {
-            adminLogModal.classList.remove('active');
-        });
-
-        viewLogBtn.addEventListener('click', () => {
-            if (adminPassword.value === "adminlog") {
-                logTableBody.innerHTML = '';
-                
-                // Sort logs by timestamp (newest first)
-                const sortedLogs = [...examLogs].sort((a, b) => 
-                    new Date(b.timestamp) - new Date(a.timestamp));
-                
-                sortedLogs.forEach(log => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${log.dateTime}</td>
-                        <td>${log.username || 'N/A'} (${log.candidateId})</td>
-                        <td>${log.score}/100 (${log.percentage}%)</td>
-                        <td class="${log.passed ? 'pass-status' : 'fail-status'}">${log.passed ? 'PASS' : 'FAIL'}</td>
-                    `;
-                    logTableBody.appendChild(row);
-                });
-                
-                logContent.style.display = 'block';
-                adminPassword.value = '';
-            } else {
-                alert('Incorrect admin password');
-            }
-        });
-
-        // Prevent copying
-        document.addEventListener('copy', (e) => {
-            if (!examSubmitted) {
-                e.preventDefault();
-                alert('Copying content from this exam is not allowed.');
-            }
-        });
-
-        document.addEventListener('contextmenu', (e) => {
-            if (!examSubmitted) {
-                e.preventDefault();
-            }
-        });
-
-        // Disable keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (!examSubmitted && e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
-                e.preventDefault();
-                alert('Copying content from this exam is not allowed.');
-            }
-        });
-
-        // Initialize
-        if (!isWithinExamWindow()) {
-            errorMessage.textContent = "Note: Exam can only be taken on 14/08/2025 between 11:00 AM and 1:00 PM";
-            errorMessage.style.display = 'block';
-        }
+        
+        // In a real implementation, you would add:
+        // 1. Actual geolocation API calls
+        // 2. Reverse geocoding to get city/region
+        // 3. Service availability check against your database
+        // 4. Proper error handling for location services
     </script>
 </body>
 </html>
