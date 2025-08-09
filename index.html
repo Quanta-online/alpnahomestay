@@ -2164,592 +2164,423 @@
             }
         ];
 
-        // User data
-        let userAnswers = {};
-        let currentQuestion = 1;
-        let timerInterval;
-        let timeLeft = 120 * 60; // 120 minutes in seconds
-        let examSubmitted = false;
-        let permissionsGranted = false;
+      
 
-        // DOM Elements
-        const permissionModal = document.getElementById('permissionModal');
-        const grantPermissionsBtn = document.getElementById('grantPermissions');
-        const permissionError = document.getElementById('permissionError');
-        const splashScreen = document.getElementById('splashScreen');
-        const examContainer = document.getElementById('examContainer');
-        const loginBtn = document.getElementById('loginBtn');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const errorMessage = document.getElementById('errorMessage');
-        const questionDisplay = document.getElementById('questionDisplay');
-        const questionNav = document.getElementById('questionNav');
-        const currentQuestionDisplay = document.getElementById('currentQuestion');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        const timerDisplay = document.getElementById('timeDisplay');
-        const loadingScreen = document.getElementById('loadingScreen');
-        const countdownDisplay = document.getElementById('countdown');
-        const resultModal = document.getElementById('resultModal');
-        const closeModal = document.getElementById('closeModal');
-        const correctAnswersDisplay = document.getElementById('correctAnswers');
-        const incorrectAnswersDisplay = document.getElementById('incorrectAnswers');
-        const unansweredDisplay = document.getElementById('unanswered');
-        const percentageDisplay = document.getElementById('percentage');
-        const verdictDisplay = document.getElementById('verdict');
-        const answersheetContent = document.getElementById('answersheetContent');
-        const printResultsBtn = document.getElementById('printResults');
-        const downloadResultsBtn = document.getElementById('downloadResults');
+// उपयोगकर्ता डेटा और स्थिति
+let userAnswers = {};
+let currentQuestion = 1;
+let timerInterval;
+let timeLeft = 120 * 60; // 120 मिनट (सेकंड में)
+let examSubmitted = false;
+let permissionsGranted = false;
 
-        // Permission Handling
-        grantPermissionsBtn.addEventListener('click', async () => {
-            try {
-                // Request camera access
-                const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                cameraStream.getTracks().forEach(track => track.stop());
-                
-                // Request microphone access
-                const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                micStream.getTracks().forEach(track => track.stop());
-                
-                // Request location access
-                const position = await new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject);
-                });
-                
-                permissionsGranted = true;
-                permissionModal.style.display = 'none';
-                splashScreen.style.display = 'flex';
-                
-            } catch (error) {
-                permissionError.style.display = 'block';
-                console.error("Permission error:", error);
-            }
-        });
+// DOM तत्व
+const permissionModal = document.getElementById('permissionModal');
+const splashScreen = document.getElementById('splashScreen');
+const examContainer = document.getElementById('examContainer');
+const loadingScreen = document.getElementById('loadingScreen');
+const resultModal = document.getElementById('resultModal');
+const questionDisplay = document.getElementById('questionDisplay');
+const questionNav = document.getElementById('questionNav');
+const timerDisplay = document.getElementById('timeDisplay');
+const currentQuestionDisplay = document.getElementById('currentQuestion');
+const correctAnswersDisplay = document.getElementById('correctAnswers');
+const incorrectAnswersDisplay = document.getElementById('incorrectAnswers');
+const unansweredDisplay = document.getElementById('unanswered');
+const percentageDisplay = document.getElementById('percentage');
+const verdictDisplay = document.getElementById('verdict');
+const answersheetContent = document.getElementById('answersheetContent');
+const printResultsBtn = document.getElementById('printResults');
+const downloadResultsBtn = document.getElementById('downloadResults');
+const closeModal = document.getElementById('closeModal');
+const loginBtn = document.getElementById('loginBtn');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const errorMessage = document.getElementById('errorMessage');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const submitBtn = document.getElementById('submitBtn');
 
-        // Login Functionality
-        loginBtn.addEventListener('click', () => {
-            if (!permissionsGranted) {
-                permissionError.style.display = 'block';
-                return;
-            }
-
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
-            
-            if (username === "mtest@alpnagroup.com" && password === "MTS95068") {
-                errorMessage.style.display = 'none';
-                splashScreen.style.opacity = '0';
-                splashScreen.style.pointerEvents = 'none';
-                
-                setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                    examContainer.style.display = 'block';
-                    startTimer();
-                    loadQuestion(currentQuestion);
-                    createNavigationButtons();
-                    
-                    // Prevent going back to login
-                    window.history.pushState(null, null, window.location.href);
-                    window.onpopstate = function() {
-                        window.history.pushState(null, null, window.location.href);
-                    };
-                }, 500);
-            } else {
-                errorMessage.style.display = 'block';
-                usernameInput.value = '';
-                passwordInput.value = '';
-                
-                // Shake animation for wrong credentials
-                loginBtn.style.animation = 'shake 0.5s';
-                setTimeout(() => {
-                    loginBtn.style.animation = '';
-                }, 500);
-            }
-        });
-
-        // Timer Functionality
-        function startTimer() {
-            updateTimerDisplay();
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                
-                if (timeLeft <= 0 && !examSubmitted) {
-                    clearInterval(timerInterval);
-                    submitExam();
-                    alert("Time's up! Your exam has been automatically submitted.");
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            
-            // Visual warnings as time runs low
-            if (timeLeft <= 300) { // 5 minutes left
-                timerDisplay.style.color = 'var(--accent-color)';
-                timerDisplay.style.fontWeight = '700';
-                if (timeLeft % 30 === 0) { // Blink every 30 seconds in last 5 minutes
-                    timerDisplay.style.visibility = timerDisplay.style.visibility === 'hidden' ? 'visible' : 'hidden';
-                }
-            } else if (timeLeft <= 600) { // 10 minutes left
-                timerDisplay.style.color = 'var(--warning-color)';
-            }
-        }
-
-        // Question Navigation
-        function createNavigationButtons() {
-            questionNav.innerHTML = '';
-            
-            for (let i = 1; i <= 100; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'nav-btn';
-                btn.textContent = i;
-                btn.dataset.question = i;
-                
-                if (i === 1) {
-                    btn.classList.add('current');
-                }
-                
-                btn.addEventListener('click', () => {
-                    if (!examSubmitted) {
-                        navigateToQuestion(parseInt(btn.dataset.question));
-                    }
-                });
-                
-                questionNav.appendChild(btn);
-            }
-        }
-
-        function updateNavigationButtons() {
-            const buttons = questionNav.querySelectorAll('.nav-btn');
-            
-            buttons.forEach(btn => {
-                btn.classList.remove('current', 'visited', 'answered');
-                
-                const questionNum = parseInt(btn.dataset.question);
-                
-                if (questionNum === currentQuestion) {
-                    btn.classList.add('current');
-                }
-                
-                if (userAnswers[questionNum] !== undefined) {
-                    btn.classList.add('answered');
-                } else if (questionNum < currentQuestion) {
-                    btn.classList.add('visited');
-                }
-            });
-        }
-
-        function navigateToQuestion(questionNum) {
-            if (questionNum >= 1 && questionNum <= 100) {
-                currentQuestion = questionNum;
-                loadQuestion(currentQuestion);
-                updateNavigationButtons();
-                currentQuestionDisplay.textContent = currentQuestion;
-                
-                // Scroll to top of question
-                window.scrollTo({
-                    top: questionDisplay.offsetTop - 20,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        // Question Loading
-        function loadQuestion(questionNum) {
-            const questionData = examQuestions[questionNum - 1];
-            
-            let questionHTML = `
-                <div class="question">
-                    <div class="question-text">
-                        ${questionNum}. ${questionData.question}
-                    </div>
-            `;
-            
-            // Add visual aid if needed
-            if (questionData.hasChart) {
-                questionHTML += `
-                    <div class="visual-aid">
-                        <div class="chart-container">
-                            <canvas id="chart-${questionNum}"></canvas>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            if (questionData.hasTable) {
-                questionHTML += `
-                    <div class="visual-aid">
-                        <table>
-                            <thead>
-                                <tr>
-                                    ${questionData.tableData.headers.map(header => `<th>${header}</th>`).join('')}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${questionData.tableData.rows.map(row => `
-                                    <tr>
-                                        ${row.map(cell => `<td>${cell}</td>`).join('')}
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-            
-            // Add options
-            questionHTML += `<div class="options">`;
-            
-            const optionLetters = ['a', 'b', 'c', 'd'];
-            
-            questionData.options.forEach((option, index) => {
-                const optionLetter = optionLetters[index];
-                const isSelected = userAnswers[questionNum] === optionLetter;
-                const isLocked = userAnswers[questionNum] !== undefined;
-                
-                questionHTML += `
-                    <div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" 
-                         data-option="${optionLetter}" onclick="selectOption(${questionNum}, '${optionLetter}')">
-                        <input type="radio" name="q${questionNum}" id="q${questionNum}${optionLetter}" 
-                               ${isSelected ? 'checked' : ''} ${isLocked ? 'disabled' : ''}>
-                        <label for="q${questionNum}${optionLetter}">${option}</label>
-                    </div>
-                `;
-            });
-            
-            questionHTML += `</div></div>`;
-            
-            questionDisplay.innerHTML = questionHTML;
-            
-            // Render chart if needed
-            if (questionData.hasChart) {
-                const ctx = document.getElementById(`chart-${questionNum}`).getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: questionData.chartData,
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return `${context.dataset.label}: ${context.raw}`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Update button states
-            prevBtn.disabled = questionNum === 1;
-            nextBtn.disabled = questionNum === 100;
-        }
-
-        // Option Selection
-        window.selectOption = function(questionNum, optionLetter) {
-            if (!examSubmitted && userAnswers[questionNum] === undefined) {
-                userAnswers[questionNum] = optionLetter;
-                
-                // Update UI
-                const options = document.querySelectorAll(`#questionDisplay .option`);
-                options.forEach(opt => {
-                    opt.classList.remove('selected');
-                    if (opt.dataset.option === optionLetter) {
-                        opt.classList.add('selected');
-                    }
-                    opt.classList.add('locked');
-                    opt.querySelector('input').disabled = true;
-                });
-                
-                // Update navigation
-                updateNavigationButtons();
-                
-                // Auto-save progress
-                localStorage.setItem('examProgress', JSON.stringify({
-                    answers: userAnswers,
-                    currentQuestion,
-                    timeLeft
-                }));
-            }
-        };
-
-        // Navigation Controls
-        prevBtn.addEventListener('click', () => {
-            if (!examSubmitted) {
-                navigateToQuestion(currentQuestion - 1);
-            }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            if (!examSubmitted) {
-                navigateToQuestion(currentQuestion + 1);
-            }
-        });
-
-        // Exam Submission
-        submitBtn.addEventListener('click', () => {
-            if (!examSubmitted) {
-                const unanswered = 100 - Object.keys(userAnswers).length;
-                if (unanswered > 0) {
-                    if (!confirm(`You have ${unanswered} unanswered questions. Are you sure you want to submit?`)) {
-                        return;
-                    }
-                } else {
-                    if (!confirm("Are you sure you want to submit your exam? You won't be able to make changes after submission.")) {
-                        return;
-                    }
-                }
-                submitExam();
-            }
-        });
-
-        function submitExam() {
-            examSubmitted = true;
-            clearInterval(timerInterval);
-            
-            // Disable all inputs
-            document.querySelectorAll('input[type="radio"]').forEach(input => {
-                input.disabled = true;
-            });
-            
+// अनुमति प्रबंधन
+document.getElementById('grantPermissions').addEventListener('click', async () => {
+    try {
+        // कैमरा और माइक्रोफोन एक्सेस के लिए अनुरोध
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        stream.getTracks().forEach(track => track.stop());
         
+        // लोकेशन एक्सेस के लिए अनुरोध
+        await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        
+        permissionsGranted = true;
+        permissionModal.style.display = 'none';
+        splashScreen.style.display = 'flex';
+    } catch (error) {
+        document.getElementById('permissionError').style.display = 'block';
+    }
+});
 
+// लॉगिन प्रक्रिया
+loginBtn.addEventListener('click', () => {
+    if (!permissionsGranted) {
+        alert("कृपया सभी अनुमतियाँ प्रदान करें");
+        return;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-        // Results Calculation with negative marking
-        function calculateResults() {
-            let correct = 0;
-            let incorrect = 0;
-            let unanswered = 0;
-            let score = 0;
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    if (username === "mtest@alpnagroup.com" && password === "MTS95068") {
+        errorMessage.style.display = 'none';
+        splashScreen.style.opacity = '0';
+        
+        setTimeout(() => {
+            splashScreen.style.display = 'none';
+            examContainer.style.display = 'block';
+            startTimer();
+            loadQuestion(currentQuestion);
+            createNavigationButtons();
             
-            for (let i = 1; i <= 100; i++) {
-                if (userAnswers[i] === undefined) {
-                    unanswered++;
-                } else if (userAnswers[i] === answerKey[i]) {
-                    correct++;
-                    score += 1;
-                } else {
-                    incorrect++;
-                    score -= 0.33; // Negative marking
-                }
-            }
-            
-            // Ensure minimum score is 0
-            score = Math.max(0, score);
-            const percentage = Math.round((score / 100) * 100);
-            const passed = percentage >= 55; // 55% passing score
-            
-            return {
-                correct,
-                incorrect,
-                unanswered,
-                score,
-                percentage,
-                passed
-            };
+            // बैक बटन से बचाव
+            history.pushState(null, null, location.href);
+            window.onpopstate = () => history.pushState(null, null, location.href);
+        }, 500);
+    } else {
+        errorMessage.style.display = 'block';
+        usernameInput.value = '';
+        passwordInput.value = '';
+    }
+});
+
+// टाइमर प्रबंधन
+function startTimer() {
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        
+        if (timeLeft <= 0 && !examSubmitted) {
+            clearInterval(timerInterval);
+            submitExam();
         }
+    }, 1000);
+}
 
-        // Results Display
-        function showResults() {
-            loadingScreen.style.display = 'none';
-            examContainer.style.display = 'none';
-            
-            const results = calculateResults();
-            
-            correctAnswersDisplay.textContent = results.correct;
-            incorrectAnswersDisplay.textContent = results.incorrect;
-            unansweredDisplay.textContent = results.unanswered;
-            percentageDisplay.textContent = `${results.percentage}%`;
-            
-            verdictDisplay.textContent = results.passed 
-                ? `Congratulations! You scored ${results.score.toFixed(2)}/100 and have passed the exam.` 
-                : `Unfortunately, you scored ${results.score.toFixed(2)}/100 and did not meet the passing score of 55%. Please try again.`;
-            verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
-            
-            // Generate answersheet
-            answersheetContent.innerHTML = '';
-            for (let i = 1; i <= 100; i++) {
-                const questionData = examQuestions[i - 1];
-                const userAnswer = userAnswers[i];
-                const isCorrect = userAnswer === answerKey[i];
-                const correctAnswer = answerKey[i] ? answerKey[i].toUpperCase() : 'Not Attempted';
-                
-                const answerItem = document.createElement('div');
-                answerItem.className = 'answer-item';
-                
-                const status = document.createElement('div');
-                status.className = `answer-status ${isCorrect ? 'correct' : 'incorrect'}`;
-                status.textContent = `Question ${i}: ${isCorrect ? 'Correct' : 'Incorrect'} (Correct Answer: ${correctAnswer})`;
-                
-                const explanation = document.createElement('p');
-                explanation.className = 'answer-explanation';
-                explanation.textContent = questionData.explanation;
-                
-                answerItem.appendChild(status);
-                answerItem.appendChild(explanation);
-                answersheetContent.appendChild(answerItem);
+function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    
+    if (timeLeft <= 300) { // 5 मिनट शेष
+        timerDisplay.style.color = 'var(--accent-color)';
+    }
+}
+
+// प्रश्न नेविगेशन
+function createNavigationButtons() {
+    questionNav.innerHTML = '';
+    
+    for (let i = 1; i <= 100; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.textContent = i;
+        btn.dataset.question = i;
+        
+        if (i === 1) btn.classList.add('current');
+        
+        btn.addEventListener('click', () => {
+            if (!examSubmitted) {
+                navigateToQuestion(parseInt(btn.dataset.question));
             }
-            
-            // Show modal
-            resultModal.classList.add('active');
-            
-            // Prevent closing modal by clicking outside
-            resultModal.addEventListener('click', (e) => {
-                if (e.target === resultModal) {
-                    e.stopPropagation();
-                }
-            });
+        });
+        
+        questionNav.appendChild(btn);
+    }
+}
+
+function updateNavigationButtons() {
+    const buttons = questionNav.querySelectorAll('.nav-btn');
+    
+    buttons.forEach(btn => {
+        const questionNum = parseInt(btn.dataset.question);
+        btn.classList.remove('current', 'visited', 'answered');
+        
+        if (questionNum === currentQuestion) {
+            btn.classList.add('current');
+        } else if (userAnswers[questionNum] !== undefined) {
+            btn.classList.add('answered');
+        } else if (questionNum < currentQuestion) {
+            btn.classList.add('visited');
         }
+    });
+}
 
-        closeModal.addEventListener('click', () => {
-            resultModal.classList.remove('active');
+function navigateToQuestion(questionNum) {
+    if (questionNum >= 1 && questionNum <= 100) {
+        currentQuestion = questionNum;
+        loadQuestion(questionNum);
+        updateNavigationButtons();
+        currentQuestionDisplay.textContent = questionNum;
+    }
+}
+
+// प्रश्न लोड करना
+function loadQuestion(questionNum) {
+    const questionData = examQuestions[questionNum - 1];
+    
+    let questionHTML = `
+        <div class="question">
+            <div class="question-text">
+                ${questionNum}. ${questionData.question}
+            </div>
+            <div class="options">
+    `;
+    
+    ['a', 'b', 'c', 'd'].forEach((optionLetter, index) => {
+        const isSelected = userAnswers[questionNum] === optionLetter;
+        const isLocked = userAnswers[questionNum] !== undefined;
+        
+        questionHTML += `
+            <div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" 
+                 data-option="${optionLetter}" onclick="selectOption(${questionNum}, '${optionLetter}')">
+                <input type="radio" name="q${questionNum}" id="q${questionNum}${optionLetter}" 
+                       ${isSelected ? 'checked' : ''} ${isLocked ? 'disabled' : ''}>
+                <label for="q${questionNum}${optionLetter}">${questionData.options[index]}</label>
+            </div>
+        `;
+    });
+    
+    questionHTML += `</div></div>`;
+    questionDisplay.innerHTML = questionHTML;
+    
+    prevBtn.disabled = questionNum === 1;
+    nextBtn.disabled = questionNum === 100;
+}
+
+// विकल्प चयन
+window.selectOption = function(questionNum, optionLetter) {
+    if (!examSubmitted && userAnswers[questionNum] === undefined) {
+        userAnswers[questionNum] = optionLetter;
+        
+        const options = document.querySelectorAll(`#questionDisplay .option`);
+        options.forEach(opt => {
+            opt.classList.remove('selected');
+            if (opt.dataset.option === optionLetter) opt.classList.add('selected');
+            opt.classList.add('locked');
+            opt.querySelector('input').disabled = true;
         });
+        
+        updateNavigationButtons();
+        saveProgress();
+    }
+};
 
-        // Print Results
-        printResultsBtn.addEventListener('click', () => {
-            window.print();
-        });
+// प्रगति सहेजना
+function saveProgress() {
+    localStorage.setItem('examProgress', JSON.stringify({
+        answers: userAnswers,
+        currentQuestion,
+        timeLeft
+    }));
+}
 
-        // Download Results as PDF
-        downloadResultsBtn.addEventListener('click', async () => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add title
-            doc.setFontSize(18);
-            doc.setTextColor(37, 99, 235);
-            doc.text('Alpana Group - Managerial Aptitude Test Results', 105, 20, { align: 'center' });
-            
-            // Add date
-            doc.setFontSize(12);
-            doc.setTextColor(30, 41, 59);
-            doc.text(`Date: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
-            
-            // Add score summary
-            doc.setFontSize(14);
-            doc.text('Score Summary', 14, 40);
-            
-            doc.setFontSize(12);
-            doc.text(`Correct Answers: ${correctAnswersDisplay.textContent}`, 14, 50);
-            doc.text(`Incorrect Answers: ${incorrectAnswersDisplay.textContent}`, 14, 60);
-            doc.text(`Unanswered: ${unansweredDisplay.textContent}`, 14, 70);
-            doc.text(`Score Percentage: ${percentageDisplay.textContent}`, 14, 80);
-            
-            // Add verdict
-            doc.setFontSize(14);
-            doc.text('Verdict', 14, 90);
-            
-            doc.setFontSize(12);
-            doc.text(verdictDisplay.textContent, 14, 100, { maxWidth: 180 });
-            
-            // Add answersheet
-            doc.addPage();
-            doc.setFontSize(14);
-            doc.text('Answer Sheet', 105, 20, { align: 'center' });
-            
-            let yPosition = 30;
-            const answerItems = answersheetContent.querySelectorAll('.answer-item');
-            
-            for (let i = 0; i < answerItems.length; i++) {
-                const item = answerItems[i];
-                const status = item.querySelector('.answer-status').textContent;
-                const explanation = item.querySelector('.answer-explanation').textContent;
+// परीक्षा जमा करना
+function submitExam() {
+    if (examSubmitted) return;
+
+    examSubmitted = true;
+    clearInterval(timerInterval);
+    
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.disabled = true;
+    });
+    
+    examContainer.style.display = 'none';
+    loadingScreen.style.display = 'flex';
+    
+    // तुरंत परिणाम दिखाएं (लोडिंग स्क्रीन के बिना)
+    setTimeout(showResults, 500);
+}
+
+// परिणाम गणना
+function calculateResults() {
+    let correct = 0, incorrect = 0, unanswered = 0;
+    let score = 0;
+    
+    for (let i = 1; i <= 100; i++) {
+        if (userAnswers[i] === undefined) {
+            unanswered++;
+        } else if (userAnswers[i] === answerKey[i]) {
+            correct++;
+            score += 1;
+        } else {
+            incorrect++;
+            score -= 0.33;
+        }
+    }
+    
+    score = Math.max(0, score);
+    const percentage = Math.round((score / 100) * 100);
+    const passed = percentage >= 55;
+    
+    return { correct, incorrect, unanswered, score, percentage, passed };
+}
+
+// परिणाम प्रदर्शित करना
+function showResults() {
+    loadingScreen.style.display = 'none';
+    const results = calculateResults();
+    
+    correctAnswersDisplay.textContent = results.correct;
+    incorrectAnswersDisplay.textContent = results.incorrect;
+    unansweredDisplay.textContent = results.unanswered;
+    percentageDisplay.textContent = `${results.percentage}%`;
+    
+    verdictDisplay.textContent = results.passed 
+        ? `बधाई हो! आपने ${results.score.toFixed(2)}/100 (${results.percentage}%) अंक प्राप्त किए और परीक्षा उत्तीर्ण की।` 
+        : `आपने ${results.score.toFixed(2)}/100 (${results.percentage}%) अंक प्राप्त किए। उत्तीर्ण होने के लिए न्यूनतम 55% आवश्यक है।`;
+    verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
+    
+    // उत्तर पत्रक तैयार करना
+    answersheetContent.innerHTML = '';
+    examQuestions.forEach((questionData, index) => {
+        const questionNum = index + 1;
+        const userAnswer = userAnswers[questionNum];
+        const isCorrect = userAnswer === answerKey[questionNum];
+        const correctAnswer = answerKey[questionNum]?.toUpperCase() || '-';
+        
+        const answerItem = document.createElement('div');
+        answerItem.className = 'answer-item';
+        answerItem.innerHTML = `
+            <div class="answer-status ${isCorrect ? 'correct' : 'incorrect'}">
+                प्रश्न ${questionNum}: ${isCorrect ? 'सही' : 'गलत'} 
+                (आपका उत्तर: ${userAnswer?.toUpperCase() || 'अनुत्तरित'}, 
+                सही उत्तर: ${correctAnswer})
+            </div>
+            <p class="answer-explanation">${questionData.explanation}</p>
+        `;
+        answersheetContent.appendChild(answerItem);
+    });
+    
+    resultModal.classList.add('active');
+}
+
+// परिणाम प्रिंट करना
+printResultsBtn.addEventListener('click', () => {
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Alpana Group - परीक्षा परिणाम</title>
+                <style>
+                    body { font-family: Arial; padding: 20px; }
+                    h1 { color: #2563eb; text-align: center; }
+                    .score-card { display: flex; justify-content: space-around; margin: 20px 0; }
+                    .verdict { padding: 15px; margin: 20px 0; text-align: center; border-radius: 5px; }
+                    .answer-item { margin-bottom: 15px; }
+                </style>
+            </head>
+            <body>
+                <h1>Alpana Group - परीक्षा परिणाम</h1>
+                <div>तिथि: ${new Date().toLocaleDateString()}</div>
                 
-                doc.setFontSize(10);
-                doc.setTextColor(30, 41, 59);
-                doc.text(status, 14, yPosition);
-                yPosition += 7;
+                <div class="score-card">
+                    <div>
+                        <h3>${correctAnswersDisplay.textContent}</h3>
+                        <p>सही उत्तर</p>
+                    </div>
+                    <div>
+                        <h3>${incorrectAnswersDisplay.textContent}</h3>
+                        <p>गलत उत्तर</p>
+                    </div>
+                    <div>
+                        <h3>${unansweredDisplay.textContent}</h3>
+                        <p>अनुत्तरित</p>
+                    </div>
+                    <div>
+                        <h3>${percentageDisplay.textContent}</h3>
+                        <p>प्रतिशत</p>
+                    </div>
+                </div>
                 
-                doc.setFontSize(8);
-                doc.setTextColor(100, 116, 139);
-                doc.text(explanation, 20, yPosition, { maxWidth: 170 });
-                yPosition += 15;
+                <div class="verdict ${verdictDisplay.className}">
+                    ${verdictDisplay.textContent}
+                </div>
                 
-                if (yPosition > 270 && i < answerItems.length - 1) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-            }
-            
-            // Save the PDF
-            doc.save('Alpana_Group_Exam_Results.pdf');
-        });
+                <h2>उत्तर पत्रक</h2>
+                ${answersheetContent.innerHTML}
+                
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            window.close();
+                        }, 500);
+                    };
+                </script>
+            </body>
+        </html>
+    `);
+    printWindow.document.close();
+});
 
-        // Browser Tab Visibility Handling
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden' && !examSubmitted) {
-                alert("Warning: The exam system detected you switched tabs. This violation has been recorded.");
-            }
-        });
+// PDF डाउनलोड करना
+downloadResultsBtn.addEventListener('click', () => {
+    const password = prompt("परिणाम डाउनलोड करने के लिए पासवर्ड दर्ज करें:");
+    if (password === "Alpana@2025") {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        doc.setFontSize(18);
+        doc.setTextColor(37, 99, 235);
+        doc.text('Alpana Group - परीक्षा परिणाम', 105, 20, { align: 'center' });
+        
+        doc.setFontSize(12);
+        doc.text(`तिथि: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+        
+        doc.setFontSize(14);
+        doc.text('स्कोर सारांश', 14, 45);
+        
+        doc.setFontSize(12);
+        doc.text(`सही उत्तर: ${correctAnswersDisplay.textContent}`, 14, 55);
+        doc.text(`गलत उत्तर: ${incorrectAnswersDisplay.textContent}`, 14, 65);
+        doc.text(`अनुत्तरित: ${unansweredDisplay.textContent}`, 14, 75);
+        doc.text(`प्रतिशत: ${percentageDisplay.textContent}`, 14, 85);
+        
+        doc.setFontSize(14);
+        doc.text('निर्णय', 14, 100);
+        doc.setFontSize(12);
+        doc.text(verdictDisplay.textContent, 14, 110, { maxWidth: 180 });
+        
+        doc.save('Alpana_Group_Exam_Results.pdf');
+    } else {
+        alert("गलत पासवर्ड! कृपया प्रशासक से संपर्क करें।");
+    }
+});
 
-        // Copy Protection
-        document.addEventListener('copy', (e) => {
-            if (!examSubmitted) {
-                e.preventDefault();
-                alert("Copying exam content is not allowed!");
-            }
-        });
+// मॉडल बंद करना
+closeModal.addEventListener('click', () => {
+    resultModal.classList.remove('active');
+});
 
-        document.addEventListener('contextmenu', (e) => {
-            if (!examSubmitted) {
-                e.preventDefault();
-                alert("Right-click is disabled during the exam.");
-            }
-        });
-
-        // Window Resize Handling
-        window.addEventListener('resize', () => {
-            if (currentQuestion) {
-                loadQuestion(currentQuestion);
-            }
-        });
-
-        // BeforeUnload Handling
-        window.addEventListener('beforeunload', (e) => {
-            if (!examSubmitted) {
-                e.preventDefault();
-                e.returnValue = 'Are you sure you want to leave? Your exam progress may be lost.';
-                return e.returnValue;
-            }
-        });
-
-        // Load any saved progress
-        window.addEventListener('load', () => {
-            // Show permission modal first
-            permissionModal.style.display = 'flex';
-            
-            const savedProgress = localStorage.getItem('examProgress');
-            if (savedProgress) {
-                const progress = JSON.parse(savedProgress);
-                userAnswers = progress.answers || {};
-                currentQuestion = progress.currentQuestion || 1;
-                timeLeft = progress.timeLeft || 120 * 60;
-            }
-        });
+// पृष्ठ लोड होने पर
+window.addEventListener('load', () => {
+    permissionModal.style.display = 'flex';
+    
+    const savedProgress = localStorage.getItem('examProgress');
+    if (savedProgress) {
+        const progress = JSON.parse(savedProgress);
+        userAnswers = progress.answers || {};
+        currentQuestion = progress.currentQuestion || 1;
+        timeLeft = progress.timeLeft || 120 * 60;
+    }
+    
+    // नेविगेशन बटन
+    prevBtn.addEventListener('click', () => navigateToQuestion(currentQuestion - 1));
+    nextBtn.addEventListener('click', () => navigateToQuestion(currentQuestion + 1));
+    submitBtn.addEventListener('click', submitExam);
+});
     </script>
 </body>
 </html>
