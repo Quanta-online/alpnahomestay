@@ -2499,244 +2499,268 @@
             }
         });
 
-        
+        // Exam Submission
+        submitBtn.addEventListener('click', () => {
+            if (!examSubmitted) {
+                const unanswered = 100 - Object.keys(userAnswers).length;
+                if (unanswered > 0) {
+                    if (!confirm(`You have ${unanswered} unanswered questions. Are you sure you want to submit?`)) {
+                        return;
+                    }
+                } else {
+                    if (!confirm("Are you sure you want to submit your exam? You won't be able to make changes after submission.")) {
+                        return;
+                    }
+                }
+                submitExam();
+            }
+        });
 
-// User Data
-let userAnswers = {};
-let currentQuestion = 1;
-let timerInterval;
-let timeLeft = 120 * 60; // 120 minutes in seconds
-let examSubmitted = false;
-
-// DOM Elements
-const examContainer = document.getElementById('examContainer');
-const loadingScreen = document.getElementById('loadingScreen');
-const resultModal = document.getElementById('resultModal');
-const correctAnswersDisplay = document.getElementById('correctAnswers');
-const incorrectAnswersDisplay = document.getElementById('incorrectAnswers');
-const unansweredDisplay = document.getElementById('unanswered');
-const percentageDisplay = document.getElementById('percentage');
-const verdictDisplay = document.getElementById('verdict');
-const answersheetContent = document.getElementById('answersheetContent');
-const printResultsBtn = document.getElementById('printResults');
-const downloadResultsBtn = document.getElementById('downloadResults');
-const closeModal = document.getElementById('closeModal');
-
-// Exam Submission Function
-function submitExam() {
-    if (examSubmitted) return;
-
-    const unanswered = 100 - Object.keys(userAnswers).length;
-    if (unanswered > 0 && !confirm(`You have ${unanswered} unanswered questions. Submit anyway?`)) {
-        return;
-    }
-
-    examSubmitted = true;
-    clearInterval(timerInterval);
-    
-    // Disable all inputs
-    document.querySelectorAll('input[type="radio"]').forEach(input => {
-        input.disabled = true;
-    });
-    
-    // Show loading screen for 2 seconds
-    examContainer.style.display = 'none';
-    loadingScreen.style.display = 'flex';
-    
-    setTimeout(() => {
-        loadingScreen.style.display = 'none';
-        showResults();
-    }, 2000);
-}
-
-// Calculate Results with Negative Marking
-function calculateResults() {
-    let correct = 0;
-    let incorrect = 0;
-    let unanswered = 0;
-    let score = 0;
-    
-    for (let i = 1; i <= 100; i++) {
-        if (userAnswers[i] === undefined) {
-            unanswered++;
-        } else if (userAnswers[i] === answerKey[i]) {
-            correct++;
-            score += 1;
-        } else {
-            incorrect++;
-            score -= 0.33; // Negative marking
+        function submitExam() {
+            examSubmitted = true;
+            clearInterval(timerInterval);
+            
+            // Disable all inputs
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.disabled = true;
+            });
+            
+            // Show loading screen
+            examContainer.style.display = 'none';
+            loadingScreen.style.display = 'flex';
+            
+            // Start results countdown
+            let loadingTime = 5 * 60; // 5 minutes in seconds
+            const loadingInterval = setInterval(() => {
+                loadingTime--;
+                const minutes = Math.floor(loadingTime / 60);
+                const seconds = loadingTime % 60;
+                countdownDisplay.textContent = `Results will be available in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                
+                if (loadingTime <= 0) {
+                    clearInterval(loadingInterval);
+                    showResults();
+                }
+            }, 1000);
+            
+            // In a real app, this would send results to server
+            setTimeout(() => {
+                clearInterval(loadingInterval);
+                showResults();
+            }, 5000); // For demo, we'll use 5 seconds instead of 5 minutes
         }
-    }
-    
-    // Ensure minimum score is 0
-    score = Math.max(0, score);
-    const percentage = Math.round((score / 100) * 100);
-    const passed = percentage >= 55;
-    
-    return { correct, incorrect, unanswered, score, percentage, passed };
-}
 
-// Display Results
-function showResults() {
-    const results = calculateResults();
-    
-    // Update result displays
-    correctAnswersDisplay.textContent = results.correct;
-    incorrectAnswersDisplay.textContent = results.incorrect;
-    unansweredDisplay.textContent = results.unanswered;
-    percentageDisplay.textContent = `${results.percentage}%`;
-    
-    // Set verdict message
-    verdictDisplay.textContent = results.passed 
-        ? `Congratulations! You scored ${results.score.toFixed(2)}/100 (${results.percentage}%) and passed.` 
-        : `You scored ${results.score.toFixed(2)}/100 (${results.percentage}%). Minimum 55% required to pass.`;
-    verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
-    
-    // Generate answer sheet
-    answersheetContent.innerHTML = '';
-    examQuestions.forEach((questionData, index) => {
-        const questionNum = index + 1;
-        const userAnswer = userAnswers[questionNum];
-        const isCorrect = userAnswer === answerKey[questionNum];
-        const correctAnswer = answerKey[questionNum]?.toUpperCase() || '-';
-        
-        const answerItem = document.createElement('div');
-        answerItem.className = 'answer-item';
-        
-        answerItem.innerHTML = `
-            <div class="answer-status ${isCorrect ? 'correct' : 'incorrect'}">
-                Q${questionNum}: ${isCorrect ? 'Correct' : 'Incorrect'} 
-                (Your Answer: ${userAnswer?.toUpperCase() || 'Not Attempted'}, 
-                Correct Answer: ${correctAnswer})
-            </div>
-            <p class="answer-explanation">${questionData.explanation}</p>
-        `;
-        
-        answersheetContent.appendChild(answerItem);
-    });
-    
-    // Show result modal
-    resultModal.classList.add('active');
-}
+        // Results Calculation with negative marking
+        function calculateResults() {
+            let correct = 0;
+            let incorrect = 0;
+            let unanswered = 0;
+            let score = 0;
+            
+            for (let i = 1; i <= 100; i++) {
+                if (userAnswers[i] === undefined) {
+                    unanswered++;
+                } else if (userAnswers[i] === answerKey[i]) {
+                    correct++;
+                    score += 1;
+                } else {
+                    incorrect++;
+                    score -= 0.33; // Negative marking
+                }
+            }
+            
+            // Ensure minimum score is 0
+            score = Math.max(0, score);
+            const percentage = Math.round((score / 100) * 100);
+            const passed = percentage >= 55; // 55% passing score
+            
+            return {
+                correct,
+                incorrect,
+                unanswered,
+                score,
+                percentage,
+                passed
+            };
+        }
 
-// Print Results
-printResultsBtn.addEventListener('click', () => {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>Alpana Group - Exam Results</title>
-                <style>
-                    body { font-family: Arial; padding: 20px; }
-                    h1 { color: #2563eb; text-align: center; }
-                    .score-card { display: flex; justify-content: space-around; margin: 20px 0; }
-                    .score-item { text-align: center; padding: 10px; }
-                    .verdict { padding: 15px; margin: 20px 0; text-align: center; border-radius: 5px; }
-                    .verdict.pass { background-color: #dcfce7; color: #166534; }
-                    .verdict.fail { background-color: #fee2e2; color: #991b1b; }
-                    .answer-item { margin-bottom: 15px; }
-                </style>
-            </head>
-            <body>
-                <h1>Alpana Group - Exam Results</h1>
-                <div>Date: ${new Date().toLocaleDateString()}</div>
+        // Results Display
+        function showResults() {
+            loadingScreen.style.display = 'none';
+            examContainer.style.display = 'none';
+            
+            const results = calculateResults();
+            
+            correctAnswersDisplay.textContent = results.correct;
+            incorrectAnswersDisplay.textContent = results.incorrect;
+            unansweredDisplay.textContent = results.unanswered;
+            percentageDisplay.textContent = `${results.percentage}%`;
+            
+            verdictDisplay.textContent = results.passed 
+                ? `Congratulations! You scored ${results.score.toFixed(2)}/100 and have passed the exam.` 
+                : `Unfortunately, you scored ${results.score.toFixed(2)}/100 and did not meet the passing score of 55%. Please try again.`;
+            verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
+            
+            // Generate answersheet
+            answersheetContent.innerHTML = '';
+            for (let i = 1; i <= 100; i++) {
+                const questionData = examQuestions[i - 1];
+                const userAnswer = userAnswers[i];
+                const isCorrect = userAnswer === answerKey[i];
+                const correctAnswer = answerKey[i] ? answerKey[i].toUpperCase() : 'Not Attempted';
                 
-                <div class="score-card">
-                    <div class="score-item">
-                        <h3>${correctAnswersDisplay.textContent}</h3>
-                        <p>Correct Answers</p>
-                    </div>
-                    <div class="score-item">
-                        <h3>${incorrectAnswersDisplay.textContent}</h3>
-                        <p>Incorrect Answers</p>
-                    </div>
-                    <div class="score-item">
-                        <h3>${unansweredDisplay.textContent}</h3>
-                        <p>Unanswered</p>
-                    </div>
-                    <div class="score-item">
-                        <h3>${percentageDisplay.textContent}</h3>
-                        <p>Score Percentage</p>
-                    </div>
-                </div>
+                const answerItem = document.createElement('div');
+                answerItem.className = 'answer-item';
                 
-                <div class="verdict ${verdictDisplay.className}">
-                    ${verdictDisplay.textContent}
-                </div>
+                const status = document.createElement('div');
+                status.className = `answer-status ${isCorrect ? 'correct' : 'incorrect'}`;
+                status.textContent = `Question ${i}: ${isCorrect ? 'Correct' : 'Incorrect'} (Correct Answer: ${correctAnswer})`;
                 
-                <h2>Answer Sheet</h2>
-                ${answersheetContent.innerHTML}
+                const explanation = document.createElement('p');
+                explanation.className = 'answer-explanation';
+                explanation.textContent = questionData.explanation;
                 
-                <script>
-                    window.onload = function() {
-                        setTimeout(function() {
-                            window.print();
-                            window.close();
-                        }, 500);
-                    };
-                </script>
-            </body>
-        </html>
-    `);
-    printWindow.document.close();
-});
+                answerItem.appendChild(status);
+                answerItem.appendChild(explanation);
+                answersheetContent.appendChild(answerItem);
+            }
+            
+            // Show modal
+            resultModal.classList.add('active');
+            
+            // Prevent closing modal by clicking outside
+            resultModal.addEventListener('click', (e) => {
+                if (e.target === resultModal) {
+                    e.stopPropagation();
+                }
+            });
+        }
 
-// Download Results as PDF
-downloadResultsBtn.addEventListener('click', async () => {
-    const password = prompt("Enter password to download results:");
-    if (password === "Alpana@2025") {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        // Add title and date
-        doc.setFontSize(18);
-        doc.setTextColor(37, 99, 235);
-        doc.text('Alpana Group - Exam Results', 105, 20, { align: 'center' });
-        doc.setFontSize(12);
-        doc.text(`Date: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
-        
-        // Add score summary
-        doc.setFontSize(14);
-        doc.text('Score Summary', 14, 45);
-        
-        doc.setFontSize(12);
-        doc.text(`Correct Answers: ${correctAnswersDisplay.textContent}`, 14, 55);
-        doc.text(`Incorrect Answers: ${incorrectAnswersDisplay.textContent}`, 14, 65);
-        doc.text(`Unanswered: ${unansweredDisplay.textContent}`, 14, 75);
-        doc.text(`Score Percentage: ${percentageDisplay.textContent}`, 14, 85);
-        
-        // Add verdict
-        doc.setFontSize(14);
-        doc.text('Verdict', 14, 100);
-        doc.setFontSize(12);
-        doc.text(verdictDisplay.textContent, 14, 110, { maxWidth: 180 });
-        
-        // Save the PDF
-        doc.save('Alpana_Exam_Results.pdf');
-    } else {
-        alert("Incorrect password! Please contact administrator.");
-    }
-});
+        closeModal.addEventListener('click', () => {
+            resultModal.classList.remove('active');
+        });
 
-// Close modal
-closeModal.addEventListener('click', () => {
-    resultModal.classList.remove('active');
-});
+        // Print Results
+        printResultsBtn.addEventListener('click', () => {
+            window.print();
+        });
 
-// Initialize exam
-window.addEventListener('load', () => {
-    // Load any saved progress
-    const savedProgress = localStorage.getItem('examProgress');
-    if (savedProgress) {
-        const progress = JSON.parse(savedProgress);
-        userAnswers = progress.answers || {};
-        currentQuestion = progress.currentQuestion || 1;
-        timeLeft = progress.timeLeft || 120 * 60;
-    }
-    
-    // Set up submit button
-    document.getElementById('submitBtn').addEventListener('click', submitExam);
-});
+        // Download Results as PDF
+        downloadResultsBtn.addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(18);
+            doc.setTextColor(37, 99, 235);
+            doc.text('Alpana Group - Managerial Aptitude Test Results', 105, 20, { align: 'center' });
+            
+            // Add date
+            doc.setFontSize(12);
+            doc.setTextColor(30, 41, 59);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+            
+            // Add score summary
+            doc.setFontSize(14);
+            doc.text('Score Summary', 14, 40);
+            
+            doc.setFontSize(12);
+            doc.text(`Correct Answers: ${correctAnswersDisplay.textContent}`, 14, 50);
+            doc.text(`Incorrect Answers: ${incorrectAnswersDisplay.textContent}`, 14, 60);
+            doc.text(`Unanswered: ${unansweredDisplay.textContent}`, 14, 70);
+            doc.text(`Score Percentage: ${percentageDisplay.textContent}`, 14, 80);
+            
+            // Add verdict
+            doc.setFontSize(14);
+            doc.text('Verdict', 14, 90);
+            
+            doc.setFontSize(12);
+            doc.text(verdictDisplay.textContent, 14, 100, { maxWidth: 180 });
+            
+            // Add answersheet
+            doc.addPage();
+            doc.setFontSize(14);
+            doc.text('Answer Sheet', 105, 20, { align: 'center' });
+            
+            let yPosition = 30;
+            const answerItems = answersheetContent.querySelectorAll('.answer-item');
+            
+            for (let i = 0; i < answerItems.length; i++) {
+                const item = answerItems[i];
+                const status = item.querySelector('.answer-status').textContent;
+                const explanation = item.querySelector('.answer-explanation').textContent;
+                
+                doc.setFontSize(10);
+                doc.setTextColor(30, 41, 59);
+                doc.text(status, 14, yPosition);
+                yPosition += 7;
+                
+                doc.setFontSize(8);
+                doc.setTextColor(100, 116, 139);
+                doc.text(explanation, 20, yPosition, { maxWidth: 170 });
+                yPosition += 15;
+                
+                if (yPosition > 270 && i < answerItems.length - 1) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+            }
+            
+            // Save the PDF
+            doc.save('Alpana_Group_Exam_Results.pdf');
+        });
+
+        // Browser Tab Visibility Handling
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden' && !examSubmitted) {
+                alert("Warning: The exam system detected you switched tabs. This violation has been recorded.");
+            }
+        });
+
+        // Copy Protection
+        document.addEventListener('copy', (e) => {
+            if (!examSubmitted) {
+                e.preventDefault();
+                alert("Copying exam content is not allowed!");
+            }
+        });
+
+        document.addEventListener('contextmenu', (e) => {
+            if (!examSubmitted) {
+                e.preventDefault();
+                alert("Right-click is disabled during the exam.");
+            }
+        });
+
+        // Window Resize Handling
+        window.addEventListener('resize', () => {
+            if (currentQuestion) {
+                loadQuestion(currentQuestion);
+            }
+        });
+
+        // BeforeUnload Handling
+        window.addEventListener('beforeunload', (e) => {
+            if (!examSubmitted) {
+                e.preventDefault();
+                e.returnValue = 'Are you sure you want to leave? Your exam progress may be lost.';
+                return e.returnValue;
+            }
+        });
+
+        // Load any saved progress
+        window.addEventListener('load', () => {
+            // Show permission modal first
+            permissionModal.style.display = 'flex';
+            
+            const savedProgress = localStorage.getItem('examProgress');
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                userAnswers = progress.answers || {};
+                currentQuestion = progress.currentQuestion || 1;
+                timeLeft = progress.timeLeft || 120 * 60;
+            }
+        });
     </script>
 </body>
 </html>
