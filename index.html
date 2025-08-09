@@ -1995,6 +1995,7 @@ const examQuestions = [
     }
 ];
 
+
 // User data
 let userAnswers = {};
 let currentQuestion = 1;
@@ -2021,7 +2022,6 @@ const nextBtn = document.getElementById('nextBtn');
 const submitBtn = document.getElementById('submitBtn');
 const timerDisplay = document.getElementById('timeDisplay');
 const loadingScreen = document.getElementById('loadingScreen');
-const countdownDisplay = document.getElementById('countdown');
 const resultModal = document.getElementById('resultModal');
 const closeModal = document.getElementById('closeModal');
 const correctAnswersDisplay = document.getElementById('correctAnswers');
@@ -2119,13 +2119,13 @@ function updateTimerDisplay() {
     timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     
     // Visual warnings as time runs low
-    if (timeLeft <= 300) { // 5 minutes left
+    if (timeLeft <= 300) {
         timerDisplay.style.color = 'var(--accent-color)';
         timerDisplay.style.fontWeight = '700';
-        if (timeLeft % 30 === 0) { // Blink every 30 seconds in last 5 minutes
+        if (timeLeft % 30 === 0) {
             timerDisplay.style.visibility = timerDisplay.style.visibility === 'hidden' ? 'visible' : 'hidden';
         }
-    } else if (timeLeft <= 600) { // 10 minutes left
+    } else if (timeLeft <= 600) {
         timerDisplay.style.color = 'var(--warning-color)';
     }
 }
@@ -2200,38 +2200,6 @@ function loadQuestion(questionNum) {
             </div>
     `;
     
-    // Add visual aid if needed
-    if (questionData.hasChart) {
-        questionHTML += `
-            <div class="visual-aid">
-                <div class="chart-container">
-                    <canvas id="chart-${questionNum}"></canvas>
-                </div>
-            </div>
-        `;
-    }
-    
-    if (questionData.hasTable) {
-        questionHTML += `
-            <div class="visual-aid">
-                <table>
-                    <thead>
-                        <tr>
-                            ${questionData.tableData.headers.map(header => `<th>${header}</th>`).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${questionData.tableData.rows.map(row => `
-                            <tr>
-                                ${row.map(cell => `<td>${cell}</td>`).join('')}
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
-    }
-    
     // Add options
     questionHTML += `<div class="options">`;
     
@@ -2255,32 +2223,6 @@ function loadQuestion(questionNum) {
     questionHTML += `</div></div>`;
     
     questionDisplay.innerHTML = questionHTML;
-    
-    // Render chart if needed
-    if (questionData.hasChart) {
-        const ctx = document.getElementById(`chart-${questionNum}`).getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: questionData.chartData,
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.dataset.label}: ${context.raw}`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
     
     // Update button states
     prevBtn.disabled = questionNum === 1;
@@ -2354,25 +2296,14 @@ function submitExam() {
         input.disabled = true;
     });
     
-    // Show loading screen
+    // Show loading screen briefly
     examContainer.style.display = 'none';
     loadingScreen.style.display = 'flex';
     
-    // Start results countdown
-    let loadingTime = 1 * 60; // 5 minutes in seconds
-    const loadingInterval = setInterval(() => {
-        loadingTime--;
-        const minutes = Math.floor(loadingTime / 60);
-        const seconds = loadingTime % 60;
-        countdownDisplay.textContent = `Results will be available in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        
-        if (loadingTime <= 0) {
-            clearInterval(loadingInterval);
-            showResults();
-        }
+    setTimeout(() => {
+        loadingScreen.style.display = 'none';
+        showResults();
     }, 1000);
-    
-
 }
 
 // Results Calculation with negative marking
