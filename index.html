@@ -2521,17 +2521,7 @@ function submitExam() {
             input.disabled = true;
         });
         
-        // Show loading screen
-        examContainer.style.display = 'none';
-        loadingScreen.style.display = 'flex';
-        
-        // Simulate processing delay (3 seconds)
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            showResults();
-        }, 3000);
-    }
-}
+       
 
 // Results Calculation with negative marking
 function calculateResults() {
