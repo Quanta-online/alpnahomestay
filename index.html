@@ -2525,30 +2525,19 @@
                 input.disabled = true;
             });
             
-            // Show loading screen
-            examContainer.style.display = 'none';
-            loadingScreen.style.display = 'flex';
-            
-            // Start results countdown
-            let loadingTime = 5 * 60; // 5 minutes in seconds
-            const loadingInterval = setInterval(() => {
-                loadingTime--;
-                const minutes = Math.floor(loadingTime / 60);
-                const seconds = loadingTime % 60;
-                countdownDisplay.textContent = `Results will be available in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                
-                if (loadingTime <= 0) {
-                    clearInterval(loadingInterval);
-                    showResults();
-                }
-            }, 1000);
-            
-            // In a real app, this would send results to server
-            setTimeout(() => {
-                clearInterval(loadingInterval);
-                showResults();
-            }, 5000); // For demo, we'll use 5 seconds instead of 5 minutes
-        }
+        
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Results Calculation with negative marking
         function calculateResults() {
