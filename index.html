@@ -2935,6 +2935,115 @@
             };
         }
         
+
+
+
+
+
+
+
+// Results Calculation with Negative Marking
+function calculateResults() {
+    let correct = 0;
+    let incorrect = 0;
+    let unanswered = 0;
+    let totalScore = 0;
+    
+    for (let i = 1; i <= 100; i++) {
+        if (userAnswers[i] === undefined) {
+            unanswered++;
+        } else if (userAnswers[i] === answerKey[i]) {
+            correct++;
+            totalScore += 1; // +1 for correct answer
+        } else {
+            incorrect++;
+            totalScore -= 0.33; // -0.33 for incorrect answer
+        }
+    }
+    
+    // Ensure score doesn't go below zero
+    totalScore = Math.max(0, totalScore);
+    const percentage = Math.round((totalScore / 100) * 100);
+    const passed = totalScore >= 55;
+    
+    return {
+        correct,
+        incorrect,
+        unanswered,
+        totalScore,
+        percentage,
+        passed
+    };
+}
+
+// Show Results with Negative Marking
+function showResults() {
+    const results = calculateResults();
+    
+    correctAnswersDisplay.textContent = results.correct;
+    incorrectAnswersDisplay.textContent = results.incorrect;
+    unansweredDisplay.textContent = results.unanswered;
+    percentageDisplay.textContent = `${results.percentage}%`;
+    
+    verdictDisplay.textContent = results.passed 
+        ? `Congratulations! You have passed with a score of ${results.totalScore.toFixed(2)}/100 (Correct: ${results.correct}, Incorrect: ${results.incorrect} with -0.33 each).` 
+        : `You scored ${results.totalScore.toFixed(2)}/100 (Correct: ${results.correct}, Incorrect: ${results.incorrect} with -0.33 each). Minimum 55 required to pass.`;
+    
+    verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
+    
+    // Rest of the showResults function remains the same...
+    answersheetContent.innerHTML = '';
+    
+    for (let i = 1; i <= 100; i++) {
+        const questionData = examQuestions[i - 1];
+        const userAnswer = userAnswers[i];
+        const correctAnswer = answerKey[i];
+        const isCorrect = userAnswer === correctAnswer;
+        
+        const answerItem = document.createElement('div');
+        answerItem.className = 'answer-item';
+        
+        let statusClass, statusText;
+        if (userAnswer === undefined) {
+            statusClass = 'unanswered';
+            statusText = 'Unanswered';
+        } else if (isCorrect) {
+            statusClass = 'correct';
+            statusText = 'Correct (+1)';
+        } else {
+            statusClass = 'incorrect';
+            statusText = 'Incorrect (-0.33)';
+        }
+        
+        answerItem.innerHTML = `
+            <div class="answer-status ${statusClass}">
+                Question ${i}: ${statusText}
+            </div>
+            <div class="answer-question">${questionData.question}</div>
+            <div class="answer-details">
+                <div class="answer-detail">
+                    <strong>Your Answer</strong>
+                    <span>${userAnswer ? userAnswer.toUpperCase() : 'Not answered'}</span>
+                </div>
+                <div class="answer-detail">
+                    <strong>Correct Answer</strong>
+                    <span>${correctAnswer.toUpperCase()}</span>
+                </div>
+            </div>
+        `;
+        
+        answersheetContent.appendChild(answerItem);
+    }
+    
+    resultModal.classList.add('active');
+}
+
+
+
+
+
+
+
         // Show Results
         function showResults() {
             const results = calculateResults();
