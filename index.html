@@ -3,41 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpana Homestay - Managerial Aptitude Test</title>
+    <title>Alpana Group - Managerial Aptitude Test</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
         :root {
-            --primary: #1a365d;
-            --secondary: #2c5282;
-            --accent: #e53e3e;
-            --light: #f7fafc;
-            --dark: #1a202c;
-            --success: #38a169;
-            --warning: #dd6b20;
-            --info: #3182ce;
-            --bg-gradient: linear-gradient(135deg, #1a365d, #2c5282);
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #dc2626;
+            --light-color: #f8fafc;
+            --dark-color: #1e293b;
+            --success-color: #16a34a;
+            --warning-color: #d97706;
+            --info-color: #0284c7;
+            --bg-gradient: linear-gradient(135deg, #2563eb, #1e40af);
         }
-
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
         }
-
+        
         body {
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
-            color: var(--dark);
-            background-color: var(--light);
+            color: var(--dark-color);
+            background-color: #f1f5f9;
             overflow-x: hidden;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: background-image 1s ease-in-out;
         }
-
+        
+        /* Permission Request Modal */
+        .permission-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: white;
+        }
+        
+        .permission-box {
+            background: white;
+            color: var(--dark-color);
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .permission-item {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .permission-icon {
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
         /* Splash Screen */
         .splash-screen {
             position: fixed;
@@ -52,105 +95,525 @@
             align-items: center;
             z-index: 1000;
             color: white;
+            transition: opacity 0.5s ease;
         }
-
+        
         .splash-logo {
-            width: 200px;
+            width: 180px;
             margin-bottom: 2rem;
             animation: pulse 2s infinite;
         }
-
+        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-
-        /* Permission Modal */
-        .permission-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            color: white;
-        }
-
-        .permission-box {
-            background: white;
-            color: var(--dark);
+        
+        .login-box {
+            background-color: rgba(255, 255, 255, 0.1);
             padding: 2rem;
             border-radius: 10px;
             width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
-
-        /* Instruction Screen */
-        .instruction-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
+        
+        .login-box h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.5rem;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .input-group input {
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1500;
-            color: white;
-            padding: 2rem;
-            overflow-y: auto;
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
         }
-
-        /* Main Exam Container */
+        
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .login-btn:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            color: #fecaca;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            display: none;
+            font-weight: 500;
+        }
+        
+        /* Main Container */
         .container {
             display: none;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-
-        /* Header Styles */
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
         .header-content {
             background: var(--bg-gradient);
             padding: 2rem;
             border-radius: 10px;
             color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
         }
-
+        
+        .header-content::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+            z-index: 0;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .test-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .info-item {
+            margin: 0.5rem;
+            text-align: center;
+            min-width: 150px;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .info-item strong {
+            display: block;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .info-item span {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        
+        .timer {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            min-width: 120px;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+        }
+        
+        .timer i {
+            margin-right: 0.5rem;
+        }
+        
+        .question-nav-container {
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin: 0 1rem;
+            flex-grow: 1;
+        }
+        
+        .question-nav {
+            display: flex;
+            padding: 0.5rem 0;
+            min-width: max-content;
+        }
+        
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.2rem;
+            cursor: pointer;
+            background-color: #e2e8f0;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .nav-btn:hover {
+            background-color: #cbd5e1;
+        }
+        
+        .nav-btn.visited {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .nav-btn.current {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+        
+        .nav-btn.answered {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
         /* Question Container */
         .question-container {
             background-color: white;
             border-radius: 10px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            margin: -2rem -2rem 1.5rem -2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             position: relative;
         }
-
-        /* Results Modal */
+        
+        .section-header h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .question {
+            position: relative;
+            counter-increment: question-counter;
+            margin-bottom: 1.5rem;
+        }
+        
+        .question::before {
+            content: counter(question-counter);
+            position: absolute;
+            left: -40px;
+            top: 0;
+            background-color: var(--accent-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .question-text img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .options {
+            margin-left: 10px;
+        }
+        
+        .option {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            padding: 0.8rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .option:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        
+        .option.selected {
+            background-color: #dbeafe;
+            border-color: var(--primary-color);
+        }
+        
+        .option.correct {
+            background-color: #dcfce7;
+            border-color: var(--success-color);
+        }
+        
+        .option.incorrect {
+            background-color: #fee2e2;
+            border-color: var(--accent-color);
+        }
+        
+        .option.locked {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        .option input {
+            margin-right: 10px;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+        
+        .visual-aid {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: #dbeafe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-outline:active {
+            transform: translateY(0);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-danger:active {
+            transform: translateY(0);
+        }
+        
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: white;
+        }
+        
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Result Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-
+        
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
         .modal-content {
             background-color: white;
             border-radius: 10px;
@@ -160,96 +623,379 @@
             overflow-y: auto;
             padding: 2rem;
             position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-
-        /* Print Button */
-        .print-btn {
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .close-modal {
             position: absolute;
             top: 1rem;
-            right: 4rem;
-            background: var(--primary);
-            color: white;
+            right: 1rem;
+            background: none;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+            font-size: 1.5rem;
             cursor: pointer;
+            color: #64748b;
+            transition: all 0.3s ease;
         }
-
-        /* Responsive Styles */
+        
+        .close-modal:hover {
+            color: var(--dark-color);
+            transform: rotate(90deg);
+        }
+        
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .result-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .score-card {
+            background-color: #f8fafc;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .score-item {
+            margin: 0.5rem;
+            min-width: 150px;
+            padding: 1rem;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .score-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .score-item.correct h3 {
+            color: var(--success-color);
+        }
+        
+        .score-item.incorrect h3 {
+            color: var(--accent-color);
+        }
+        
+        .score-item.percentage h3 {
+            color: var(--primary-color);
+        }
+        
+        .score-item p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .verdict {
+            text-align: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        
+        .verdict.pass {
+            background-color: #dcfce7;
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        .verdict.fail {
+            background-color: #fee2e2;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .answersheet {
+            margin-top: 2rem;
+        }
+        
+        .answersheet h3 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 1.2rem;
+        }
+        
+        .answer-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .answer-item:last-child {
+            border-bottom: none;
+        }
+        
+        .answer-status {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .answer-status.correct {
+            background-color: #dcfce7;
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        .answer-status.incorrect {
+            background-color: #fee2e2;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .answer-explanation {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid #e2e8f0;
+        }
+        
+        .result-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .modal-content, .modal-content * {
+                visibility: visible;
+            }
+            .modal-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                max-width: 100%;
+                max-height: 100%;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .close-modal, .result-actions {
+                display: none;
+            }
+        }
+        
+        /* No Copy Protection */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
+            .question::before {
+                left: -30px;
+            }
+            
+            .nav-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+            
             .question-container {
                 padding: 1.5rem;
+            }
+            
+            .section-header {
+                margin: -1.5rem -1.5rem 1rem -1.5rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .section-header h2 {
+                margin-bottom: 0.5rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .timer {
+                order: -1;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .question::before {
+                position: static;
+                margin-right: 0.5rem;
+                margin-bottom: 0.5rem;
+                display: inline-flex;
+            }
+            
+            .options {
+                margin-left: 0;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .controls .btn {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+            
+            .score-card {
+                flex-direction: column;
+            }
+            
+            .score-item {
+                width: 100%;
+            }
+            
+            .result-actions {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Splash Screen -->
-    <div class="splash-screen" id="splashScreen">
-        <img src="new.png" alt="Alpana Homestay Logo" class="splash-logo">
-        <h1>Alpana Homestay</h1>
-        <p>Managerial Aptitude Test</p>
-    </div>
-
-    <!-- Permission Modal -->
+    <!-- Permission Request Modal -->
     <div class="permission-modal" id="permissionModal">
         <div class="permission-box">
             <h2>Exam Requirements</h2>
-            <p>To maintain exam integrity, please grant the following permissions:</p>
+            <p>To ensure exam integrity, please enable the following permissions:</p>
+            
             <div class="permission-item">
-                <h3>Camera Access</h3>
-                <p>Required for proctoring during the exam</p>
+                <div class="permission-icon">📷</div>
+                <div>
+                    <h3>Camera Access</h3>
+                    <p>Required for proctoring during the exam</p>
+                </div>
             </div>
+            
             <div class="permission-item">
-                <h3>Microphone Access</h3>
-                <p>Required for audio monitoring</p>
+                <div class="permission-icon">🎤</div>
+                <div>
+                    <h3>Microphone Access</h3>
+                    <p>Required for audio monitoring</p>
+                </div>
             </div>
+            
             <div class="permission-item">
-                <h3>Location Access</h3>
-                <p>Required to verify exam location</p>
+                <div class="permission-icon">📍</div>
+                <div>
+                    <h3>Location Access</h3>
+                    <p>Required to verify exam location</p>
+                </div>
             </div>
+            
             <button class="btn btn-primary" id="grantPermissions">Grant Permissions</button>
-            <button class="btn btn-danger" id="denyPermissions">Deny & Exit</button>
+            <div class="error-message" id="permissionError" style="display:none;">
+                All permissions are required to proceed with the exam.
+            </div>
         </div>
     </div>
 
-    <!-- Instruction Screen -->
-    <div class="instruction-screen" id="instructionScreen">
-        <div class="instruction-content">
-            <h2>Exam Instructions</h2>
-            <ol>
-                <li>This exam consists of 100 multiple-choice questions.</li>
-                <li>You have 120 minutes to complete the exam.</li>
-                <li>There is negative marking (0.33 deducted for wrong answers).</li>
-                <li>Do not switch tabs or applications during the exam.</li>
-                <li>Your camera and microphone will be monitored throughout.</li>
-                <li>Any suspicious activity will result in exam termination.</li>
-                <li>The passing score is 55%.</li>
-            </ol>
-            <button class="btn btn-primary" id="startExam">Start Exam</button>
+    <!-- Splash Screen with Login -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="new.png" alt="Alpana Group Logo" class="splash-logo">
+        <div class="login-box">
+            <h2>Managerial Aptitude Test</h2>
+            <div class="input-group">
+                <label for="username">User ID</label>
+                <input type="text" id="username" placeholder="Enter your user ID">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+            <button class="login-btn" id="loginBtn">Enter Exam Portal</button>
+            <div class="error-message" id="errorMessage">
+                Invalid credentials. Please try again.
+            </div>
         </div>
     </div>
-
+    
     <!-- Main Exam Container -->
     <div class="container" id="examContainer">
         <header>
             <div class="header-content">
-                <h1>Managerial Aptitude Test</h1>
+                <h1>Alpana Homestay & Travels</h1>
+                <p class="subtitle">Managerial Aptitude Test - August 14, 2025</p>
                 <div class="test-info">
                     <div class="info-item">
-                        <strong>Time Remaining</strong>
-                        <span id="timeDisplay">120:00</span>
+                        <strong>Position</strong>
+                        <span>Manager</span>
                     </div>
                     <div class="info-item">
-                        <strong>Questions</strong>
-                        <span id="questionCount">1/100</span>
+                        <strong>Total Questions</strong>
+                        <span>100</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Time Allotted</strong>
+                        <span>120 Minutes</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Passing Score</strong>
+                        <span>55/100</span>
                     </div>
                 </div>
             </div>
         </header>
         
+        <div class="nav-container">
+            <div class="timer" id="timer">
+                <i></i> <span id="timeDisplay">120:00</span>
+            </div>
+            <div class="question-nav-container">
+                <div class="question-nav" id="questionNav">
+                    <!-- Navigation buttons will be added dynamically -->
+                </div>
+            </div>
+        </div>
+        
         <div class="question-container">
-            <div id="questionDisplay"></div>
+            <div class="section-header">
+                <h2>Section 1: Tourist Management (Questions 1-20)</h2>
+                <span>Question <span id="currentQuestion">1</span> of 100</span>
+            </div>
+            
+            <div id="questionDisplay">
+                <!-- Questions will be loaded here dynamically -->
+            </div>
             
             <div class="controls">
                 <button class="btn btn-outline" id="prevBtn">Previous</button>
@@ -261,15 +1007,22 @@
             <button class="btn btn-danger" id="submitBtn">Submit Exam</button>
         </div>
     </div>
-
+    
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen" style="display:none;">
+        <div class="loader"></div>
+        <h2>Processing Your Exam</h2>
+        <p>Please wait while we evaluate your responses...</p>
+        <p id="countdown">Results will be available in 5:00</p>
+    </div>
+    
     <!-- Results Modal -->
     <div class="modal-overlay" id="resultModal">
         <div class="modal-content">
-            <button class="print-btn" id="printBtn">Print Results</button>
             <button class="close-modal" id="closeModal">&times;</button>
             <div class="result-header">
                 <h2>Exam Results</h2>
-                <p>Managerial Aptitude Test - Alpana Homestay</p>
+                <p>Managerial Aptitude Test - August 14, 2025</p>
             </div>
             
             <div class="score-card">
@@ -291,110 +1044,1167 @@
                 </div>
             </div>
             
-            <div class="verdict" id="verdict"></div>
+            <div class="verdict" id="verdict">
+                <!-- Pass/Fail verdict will be shown here -->
+            </div>
             
             <div class="answersheet">
-                <h3>Detailed Analysis</h3>
-                <div id="answersheetContent"></div>
+                <h3>Answer Sheet</h3>
+                <div id="answersheetContent">
+                    <!-- Answersheet will be generated here -->
+                </div>
+            </div>
+            
+            <div class="result-actions">
+                <button class="btn btn-primary" id="printResults">Print Results</button>
+                <button class="btn btn-outline" id="downloadResults">Download as PDF</button>
             </div>
         </div>
     </div>
-
+    
     <script>
-        // Answer Key
+        // Strict Answer Key with negative marking pattern
         const answerKey = {
             1: "a", 2: "b", 3: "c", 4: "d", 5: "a", 6: "b", 7: "c", 8: "d", 9: "a", 10: "b",
-            // ... (all 100 questions with answers)
-            100: "d"
+            11: "c", 12: "d", 13: "a", 14: "b", 15: "c", 16: "d", 17: "a", 18: "b", 19: "c", 20: "d",
+            21: "a", 22: "b", 23: "c", 24: "d", 25: "a", 26: "b", 27: "c", 28: "d", 29: "a", 30: "b",
+            31: "c", 32: "d", 33: "a", 34: "b", 35: "c", 36: "d", 37: "a", 38: "b", 39: "c", 40: "d",
+            41: "a", 42: "b", 43: "c", 44: "d", 45: "a", 46: "b", 47: "c", 48: "d", 49: "a", 50: "b",
+            51: "c", 52: "d", 53: "a", 54: "b", 55: "c", 56: "d", 57: "a", 58: "b", 59: "c", 60: "d",
+            61: "a", 62: "b", 63: "c", 64: "d", 65: "a", 66: "b", 67: "c", 68: "d", 69: "a", 70: "b",
+            71: "c", 72: "d", 73: "a", 74: "b", 75: "c", 76: "d", 77: "a", 78: "b", 79: "c", 80: "d",
+            81: "a", 82: "b", 83: "c", 84: "d", 85: "a", 86: "b", 87: "c", 88: "d", 89: "a", 90: "b",
+            91: "c", 92: "d", 93: "a", 94: "b", 95: "c", 96: "d", 97: "a", 98: "b", 99: "c", 100: "d"
         };
 
-        // Exam Questions (100 questions)
+        // Complete Exam Questions with all 100 difficult questions in English
         const examQuestions = [
+            // Section 1: Tourist Management (Questions 1-20)
             {
-                question: "What is the primary responsibility of a hotel manager during peak season?",
+                section: "Tourist Management",
+                question: "Which theoretical framework best explains the phenomenon of 'overtourism' in urban heritage sites?",
                 options: [
-                    "Ensuring optimal staff allocation and guest satisfaction",
-                    "Focusing only on revenue generation",
-                    "Reducing operational costs",
-                    "Delegating all responsibilities to assistants"
+                    "Butler's Tourism Area Life Cycle Model",
+                    "Maslow's Hierarchy of Needs",
+                    "Porter's Five Forces Analysis",
+                    "Game Theory's Nash Equilibrium"
                 ],
-                explanation: "During peak season, a hotel manager must balance staff allocation and guest satisfaction as top priorities."
+                explanation: "Butler's Tourism Area Life Cycle Model explains how destinations evolve through exploration, involvement, development, consolidation, stagnation, and potential decline or rejuvenation stages, which directly relates to overtourism phenomena."
             },
-            // ... (add all 100 questions in this format)
             {
-                question: "What is the most effective way to handle a guest complaint about room cleanliness?",
+                section: "Tourist Management",
+                question: "What is the most statistically significant predictor of destination competitiveness according to the World Economic Forum's Travel & Tourism Competitiveness Index?",
                 options: [
-                    "Apologize sincerely, offer immediate cleaning, and provide compensation",
-                    "Explain your cleaning procedures",
-                    "Blame the housekeeping staff",
-                    "Ignore the complaint"
+                    "Cultural resources and business travel",
+                    "Price competitiveness and ICT readiness",
+                    "Environmental sustainability and safety/security",
+                    "International openness and air transport infrastructure"
                 ],
-                explanation: "A sincere apology with immediate corrective action and appropriate compensation is the professional approach."
+                explanation: "The WEF's research has consistently shown that environmental sustainability and safety/security are the most statistically significant predictors of long-term destination competitiveness."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which econometric model would be most appropriate for forecasting tourism demand elasticity in response to exchange rate fluctuations?",
+                options: [
+                    "Vector Autoregression (VAR) model",
+                    "Logit regression model",
+                    "Cobb-Douglas production function",
+                    "Gravity model of trade"
+                ],
+                explanation: "Vector Autoregression models are particularly suited for analyzing the dynamic relationships between multiple time-series variables like tourism demand and exchange rates."
+            },
+            {
+                section: "Tourist Management",
+                question: "When implementing a carrying capacity assessment for a protected natural area, which of the following methodologies incorporates both physical and perceptual indicators?",
+                options: [
+                    "Limits of Acceptable Change (LAC) framework",
+                    "Visitor Impact Management (VIM) model",
+                    "Tourism Optimization Management Model (TOMM)",
+                    "Visitor Experience and Resource Protection (VERP) system"
+                ],
+                explanation: "The Limits of Acceptable Change framework uniquely combines both biophysical indicators and social/visitor perception metrics to determine sustainable tourism thresholds."
+            },
+            {
+                section: "Tourist Management",
+                question: "In destination crisis management, which communication strategy has been empirically proven most effective during the recovery phase?",
+                options: [
+                    "Multi-channel messaging emphasizing safety and unique value proposition",
+                    "Price discounting campaigns to stimulate demand",
+                    "Complete media blackout until crisis resolves",
+                    "Focusing exclusively on traditional media outreach"
+                ],
+                explanation: "Research shows that integrated multi-channel communication emphasizing safety while highlighting destination uniqueness is most effective for post-crisis recovery."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which psychological principle best explains the 'Instagram effect' on tourist behavior patterns?",
+                options: [
+                    "Social proof theory",
+                    "Maslow's hierarchy of needs",
+                    "Theory of planned behavior",
+                    "Cognitive dissonance theory"
+                ],
+                explanation: "Social proof theory explains how people emulate behaviors they see others performing, particularly in social media contexts where certain locations gain popularity."
+            },
+            {
+                section: "Tourist Management",
+                question: "What is the optimal sampling method for conducting intercept surveys assessing visitor satisfaction at a large multi-attraction destination?",
+                options: [
+                    "Stratified random sampling by attraction and time of day",
+                    "Convenience sampling at major entry points",
+                    "Snowball sampling through tour operators",
+                    "Census approach attempting to survey all visitors"
+                ],
+                explanation: "Stratified random sampling ensures representation across different attractions and times while maintaining methodological rigor."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which regulatory approach has proven most effective in managing Airbnb's impact on local housing markets in urban destinations?",
+                options: [
+                    "Mandatory registration with strict enforcement and penalties",
+                    "Complete bans on all short-term rentals",
+                    "Voluntary compliance systems",
+                    "Tax incentives without regulation"
+                ],
+                explanation: "Evidence from multiple cities shows that mandatory registration systems with real enforcement mechanisms are most effective at balancing tourism and housing needs."
+            },
+            {
+                section: "Tourist Management",
+                question: "When calculating the economic impact of tourism using input-output analysis, which multiplier typically has the highest value for developing island nations?",
+                options: [
+                    "Income multiplier",
+                    "Employment multiplier",
+                    "Output multiplier",
+                    "Value-added multiplier"
+                ],
+                explanation: "In island economies with significant leakages, the income multiplier generally shows the most substantial effects due to direct payments to local workers."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which market segmentation approach provides the most actionable insights for luxury resort targeting?",
+                options: [
+                    "Psychographic segmentation based on lifestyle and values",
+                    "Geographic segmentation by country of origin",
+                    "Demographic segmentation by age and income",
+                    "Behavioral segmentation by past purchases"
+                ],
+                explanation: "Psychographic segmentation offers deeper understanding of luxury travelers' motivations beyond basic demographics or geography."
+            },
+            {
+                section: "Tourist Management",
+                question: "In hotel revenue management, what is the optimal overbooking percentage when the no-show rate is 15% with a standard deviation of 5%?",
+                options: [
+                    "17-20%",
+                    "10-12%",
+                    "22-25%",
+                    "5-8%"
+                ],
+                explanation: "The optimal overbooking percentage is calculated considering both the mean and standard deviation of no-shows to balance risk and revenue."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which sustainable tourism certification program has the highest global recognition and strictest environmental standards?",
+                options: [
+                    "EarthCheck",
+                    "Green Key",
+                    "LEED Certification",
+                    "ISO 14001"
+                ],
+                explanation: "EarthCheck is widely recognized as the most comprehensive and rigorous sustainability certification specifically for the travel industry."
+            },
+            {
+                section: "Tourist Management",
+                question: "What is the statistically optimal length for a tourist satisfaction survey to maximize response rate while maintaining data quality?",
+                options: [
+                    "12-15 questions",
+                    "5-7 questions",
+                    "20-25 questions",
+                    "30+ questions"
+                ],
+                explanation: "Research shows 12-15 questions achieves the best balance between sufficient data collection and acceptable response rates."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which crisis communication strategy is most effective during an active terrorist threat at a destination?",
+                options: [
+                    "Transparent, frequent updates with specific safety guidance",
+                    "Minimizing public statements to avoid panic",
+                    "Delaying communication until full facts are known",
+                    "Delegating all communication to security forces"
+                ],
+                explanation: "Transparent, frequent communication has been shown to maintain trust while actually reducing panic during security crises."
+            },
+            {
+                section: "Tourist Management",
+                question: "When analyzing tourism seasonality patterns, which statistical method best identifies underlying cyclical trends?",
+                options: [
+                    "Fourier analysis",
+                    "Linear regression",
+                    "Chi-square tests",
+                    "ANOVA"
+                ],
+                explanation: "Fourier analysis is specifically designed to decompose time series data into cyclical components."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which legal framework governs liability for international air travel incidents?",
+                options: [
+                    "Montreal Convention 1999",
+                    "Warsaw Convention 1929",
+                    "Chicago Convention 1944",
+                    "Athens Convention 1974"
+                ],
+                explanation: "The Montreal Convention 1999 is the primary international treaty governing carrier liability for international air travel."
+            },
+            {
+                section: "Tourist Management",
+                question: "In cultural tourism management, which approach best balances authenticity with commercial viability?",
+                options: [
+                    "Community-based tourism with local control",
+                    "Large-scale theme park development",
+                    "Complete non-commercialization",
+                    "Outsourcing to international operators"
+                ],
+                explanation: "Community-based tourism models have proven most effective at maintaining authenticity while creating economic benefits."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which technology shows the most promise for managing visitor flows at overcrowded heritage sites?",
+                options: [
+                    "Real-time IoT sensor networks with dynamic pricing",
+                    "Blockchain-based ticketing systems",
+                    "VR substitute experiences",
+                    "Drone surveillance systems"
+                ],
+                explanation: "IoT networks providing real-time crowding data enable dynamic management solutions like timed entry adjustments."
+            },
+            {
+                section: "Tourist Management",
+                question: "What is the optimal recall period for measuring tourist expenditure patterns?",
+                options: [
+                    "24-hour diary method",
+                    "7-day recall",
+                    "Entire trip recall",
+                    "Monthly expenditure estimation"
+                ],
+                explanation: "The 24-hour diary method minimizes recall bias while capturing detailed expenditure patterns."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which psychological factor most strongly influences repeat visitation to a destination?",
+                options: [
+                    "Emotional attachment formed during visit",
+                    "Price competitiveness",
+                    "Ease of access",
+                    "Availability of familiar brands"
+                ],
+                explanation: "Research shows emotional connections outweigh practical factors in driving repeat visitation."
+            },
+            // Section 2: Hotel Management (Questions 21-40)
+            {
+                section: "Hotel Management",
+                question: "What is the optimal room inventory allocation strategy when implementing a hybrid of BAR (Best Available Rate) and dynamic pricing models?",
+                options: [
+                    "Nested allocation with protection levels",
+                    "First-come-first-served allocation",
+                    "Complete segmentation by channel",
+                    "Randomized controlled allocation"
+                ],
+                explanation: "Nested allocation with protection levels allows for optimal revenue management while maintaining rate integrity across different distribution channels."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which housekeeping productivity metric provides the most comprehensive measure of efficiency?",
+                options: [
+                    "Rooms cleaned per man-hour including inspection time",
+                    "Total rooms cleaned per shift",
+                    "Time per room excluding inspection",
+                    "Guest satisfaction scores alone"
+                ],
+                explanation: "Rooms per man-hour including all tasks provides the truest measure of overall productivity."
+            },
+            {
+                section: "Hotel Management",
+                question: "When calculating GOPPAR (Gross Operating Profit Per Available Room), which expense category is always excluded?",
+                options: [
+                    "Capital expenditures",
+                    "Labor costs",
+                    "Utility expenses",
+                    "Distribution costs"
+                ],
+                explanation: "GOPPAR focuses on operational profitability before capital investments."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which staffing model optimizes labor costs while maintaining service levels in fluctuating demand periods?",
+                options: [
+                    "Core staff plus flexible part-time pool",
+                    "All full-time staff with overtime",
+                    "Complete outsourcing",
+                    "Fixed minimal staff regardless of occupancy"
+                ],
+                explanation: "The core-plus-flex model provides stability while allowing demand-based adjustments."
+            },
+            {
+                section: "Hotel Management",
+                question: "In hotel asset management, which capitalization rate typically applies to luxury full-service properties in prime urban locations?",
+                options: [
+                    "5.5-7.5%",
+                    "8-10%",
+                    "10-12%",
+                    "12-15%"
+                ],
+                explanation: "Prime urban luxury hotels typically command lower cap rates due to perceived stability."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which technology implementation shows the highest ROI for improving guest experience in luxury hotels?",
+                options: [
+                    "Mobile key and service request integration",
+                    "In-room virtual assistants",
+                    "Robotic room service delivery",
+                    "AI-powered dynamic pricing"
+                ],
+                explanation: "Mobile integration addresses key pain points while requiring relatively modest investment."
+            },
+            {
+                section: "Hotel Management",
+                question: "What is the optimal RevPAR index benchmark for evaluating competitive set performance?",
+                options: [
+                    "100",
+                    "80",
+                    "120",
+                    "50"
+                ],
+                explanation: "An index of 100 represents parity with the competitive set."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which food cost control method provides the most accurate measurement without disrupting operations?",
+                options: [
+                    "Periodic spot checks with variance analysis",
+                    "Daily full inventory",
+                    "Theoretical costing only",
+                    "Monthly estimation"
+                ],
+                explanation: "Spot checks with analysis provide balance between accuracy and practicality."
+            },
+            {
+                section: "Hotel Management",
+                question: "When implementing a hotel sustainability program, which initiative typically shows the fastest ROI?",
+                options: [
+                    "LED lighting retrofits",
+                    "Solar panel installation",
+                    "Greywater recycling",
+                    "Organic linen programs"
+                ],
+                explanation: "LED retrofits offer rapid payback through immediate energy savings."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which loyalty program structure is most effective for driving direct bookings in the luxury segment?",
+                options: [
+                    "Tiered benefits with experiential rewards",
+                    "Flat-rate point accumulation",
+                    "Cash-back equivalents",
+                    "Discount-based programs"
+                ],
+                explanation: "Luxury travelers respond best to tiered programs offering unique experiences."
+            },
+            {
+                section: "Hotel Management",
+                question: "In hotel development feasibility studies, which occupancy projection method is most reliable?",
+                options: [
+                    "Competitive set analysis with regression modeling",
+                    "Market average projections",
+                    "Developer estimates",
+                    "Construction lender benchmarks"
+                ],
+                explanation: "Regression-based competitive analysis provides the most scientifically valid projections."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which room type typically generates the highest RevPAR in urban business hotels?",
+                options: [
+                    "Executive floor rooms",
+                    "Standard king rooms",
+                    "Suites",
+                    "Connecting rooms"
+                ],
+                explanation: "Executive floors command premium rates while maintaining high occupancy."
+            },
+            {
+                section: "Hotel Management",
+                question: "What is the optimal group rooms allocation strategy when forecasting attrition?",
+                options: [
+                    "80% pickup with 20% release",
+                    "100% firm commitment",
+                    "50% pickup with 50% release",
+                    "No allocation until final numbers"
+                ],
+                explanation: "The 80/20 rule balances risk management with sales flexibility."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which distribution channel typically has the lowest cost of acquisition for independent hotels?",
+                options: [
+                    "Direct bookings through hotel website",
+                    "Online travel agencies",
+                    "Global distribution systems",
+                    "Wholesalers"
+                ],
+                explanation: "Direct bookings avoid third-party commissions."
+            },
+            {
+                section: "Hotel Management",
+                question: "When implementing a hotel CRM system, which data integration is most critical for personalization?",
+                options: [
+                    "PMS stay history with marketing preferences",
+                    "Social media feeds",
+                    "Competitor rate shopping data",
+                    "Employment history"
+                ],
+                explanation: "Stay history combined with preferences enables true personalization."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which revenue management metric is most important for extended stay properties?",
+                options: [
+                    "RevPAC (Revenue Per Available Customer)",
+                    "Traditional RevPAR",
+                    "ADR alone",
+                    "Occupancy percentage"
+                ],
+                explanation: "RevPAC accounts for ancillary revenues critical in extended stay."
+            },
+            {
+                section: "Hotel Management",
+                question: "What is the optimal spa treatment room utilization rate for profitability?",
+                options: [
+                    "65-75%",
+                    "85-95%",
+                    "50-60%",
+                    "100%"
+                ],
+                explanation: "65-75% allows for proper maintenance and staff breaks while maximizing revenue."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which F&B concept typically achieves the highest profit margins in urban hotels?",
+                options: [
+                    "Specialty cocktail bar",
+                    "All-day dining restaurant",
+                    "Room service",
+                    "Banquet operations"
+                ],
+                explanation: "Specialty bars achieve high margins through beverage sales."
+            },
+            {
+                section: "Hotel Management",
+                question: "When valuing hotel management contracts, which multiple typically applies to base fees?",
+                options: [
+                    "10-12x",
+                    "5-7x",
+                    "15-20x",
+                    "2-3x"
+                ],
+                explanation: "Base fees are typically valued at 10-12x multiples."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which security measure is most effective against credit card fraud in hotels?",
+                options: [
+                    "EMV chip reader implementation",
+                    "PCI compliance audits",
+                    "Staff training alone",
+                    "Manual verification calls"
+                ],
+                explanation: "EMV chip technology provides the strongest fraud prevention."
+            },
+            // Section 3: Finance Management (Questions 41-55)
+            {
+                section: "Finance Management",
+                question: "When calculating the weighted average cost of capital (WACC) for a hotel acquisition, which of the following adjustments is most critical for accurate valuation?",
+                options: [
+                    "Incorporating the target's debt tax shield",
+                    "Using historical rather than projected cash flows",
+                    "Ignoring intangible asset valuation",
+                    "Applying a uniform discount rate across all properties"
+                ],
+                explanation: "The debt tax shield significantly impacts WACC calculations in hospitality due to the capital-intensive nature of the industry and typical leverage ratios."
+            },
+            {
+                section: "Finance Management",
+                question: "Which working capital ratio is most indicative of a hotel's short-term financial health?",
+                options: [
+                    "Current ratio",
+                    "Quick ratio",
+                    "Cash ratio",
+                    "Debt-to-equity ratio"
+                ],
+                explanation: "The current ratio best reflects a hotel's ability to meet short-term obligations."
+            },
+            {
+                section: "Finance Management",
+                question: "When performing a discounted cash flow analysis for a resort property, which time horizon typically provides the most accurate valuation?",
+                options: [
+                    "10-year detailed projection with terminal value",
+                    "5-year projection only",
+                    "20-year straight-line projection",
+                    "3-year rolling projection"
+                ],
+                explanation: "10 years with terminal value balances detail with long-term perspective."
+            },
+            {
+                section: "Finance Management",
+                question: "Which lease structure typically provides the highest risk-adjusted returns for hotel owners?",
+                options: [
+                    "Hybrid participating lease",
+                    "Pure percentage lease",
+                    "Absolute net lease",
+                    "Gross lease"
+                ],
+                explanation: "Hybrid structures balance base security with upside participation."
+            },
+            {
+                section: "Finance Management",
+                question: "When analyzing a hotel's capital structure, which leverage ratio is most closely monitored by lenders?",
+                options: [
+                    "Debt service coverage ratio",
+                    "Current ratio",
+                    "Inventory turnover",
+                    "Gross operating profit percentage"
+                ],
+                explanation: "DSCR directly measures debt repayment capacity."
+            },
+            {
+                section: "Finance Management",
+                question: "Which hotel valuation approach is most appropriate for a recently renovated property in a stable market?",
+                options: [
+                    "Income capitalization approach",
+                    "Cost approach",
+                    "Sales comparison approach",
+                    "Book value approach"
+                ],
+                explanation: "Income approach best reflects value of recent improvements."
+            },
+            {
+                section: "Finance Management",
+                question: "What is the typical loan-to-value ratio for senior hotel construction financing?",
+                options: [
+                    "60-65%",
+                    "75-80%",
+                    "50-55%",
+                    "85-90%"
+                ],
+                explanation: "60-65% is standard for construction loans due to risk."
+            },
+            {
+                section: "Finance Management",
+                question: "Which financial metric is most important in hotel management contract negotiations?",
+                options: [
+                    "Gross operating profit",
+                    "Total revenue",
+                    "Occupancy percentage",
+                    "Average daily rate"
+                ],
+                explanation: "GOP directly impacts management fees and owner returns."
+            },
+            {
+                section: "Finance Management",
+                question: "When performing a hotel feasibility study, which capitalization rate typically applies to limited-service properties?",
+                options: [
+                    "8.5-10.5%",
+                    "6-7%",
+                    "12-15%",
+                    "4-5%"
+                ],
+                explanation: "Limited-service hotels typically command higher cap rates than full-service."
+            },
+            {
+                section: "Finance Management",
+                question: "Which financing structure is most common for hotel acquisitions in emerging markets?",
+                options: [
+                    "Mezzanine debt with equity participation",
+                    "Traditional senior debt only",
+                    "100% equity financing",
+                    "Convertible bonds"
+                ],
+                explanation: "Mezzanine structures fill financing gaps in riskier markets."
+            },
+            {
+                section: "Finance Management",
+                question: "What is the optimal debt service coverage ratio for hotel refinancing?",
+                options: [
+                    "1.35-1.50x",
+                    "1.00-1.10x",
+                    "2.00-2.50x",
+                    "0.85-0.95x"
+                ],
+                explanation: "1.35-1.50x provides comfortable cushion for lenders."
+            },
+            {
+                section: "Finance Management",
+                question: "Which financial statement is most critical for analyzing hotel operational efficiency?",
+                options: [
+                    "Statement of income",
+                    "Balance sheet",
+                    "Cash flow statement",
+                    "Owners' equity statement"
+                ],
+                explanation: "Income statement shows operational performance."
+            },
+            {
+                section: "Finance Management",
+                question: "When evaluating a hotel investment, which IRR hurdle rate is typically applied by institutional investors?",
+                options: [
+                    "12-15%",
+                    "8-10%",
+                    "18-20%",
+                    "5-7%"
+                ],
+                explanation: "12-15% reflects institutional return expectations."
+            },
+            {
+                section: "Finance Management",
+                question: "Which expense category is typically the largest for full-service hotels?",
+                options: [
+                    "Labor costs",
+                    "Utility expenses",
+                    "Marketing costs",
+                    "Property taxes"
+                ],
+                explanation: "Labor consistently represents the largest expense category."
+            },
+            {
+                section: "Finance Management",
+                question: "What is the typical hold period for hotel private equity investments?",
+                options: [
+                    "3-5 years",
+                    "10-15 years",
+                    "1-2 years",
+                    "Permanent hold"
+                ],
+                explanation: "3-5 years aligns with value-add investment strategies."
+            },
+            // Section 4: Tourist Law (Questions 56-70)
+            {
+                section: "Tourist Law",
+                question: "Under the Montreal Convention 1999, what is the precise liability limit for delay in international carriage of passengers by air?",
+                options: [
+                    "4,150 Special Drawing Rights (SDR) per passenger",
+                    "No specified limit - determined by national laws",
+                    "100,000 SDR for all passengers collectively",
+                    "Equal to the ticket price plus 50% compensation"
+                ],
+                explanation: "Article 22 of the Montreal Convention establishes the carrier's limit of liability for damage occasioned by delay at 4,150 SDR per passenger."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal principle establishes a hotel's liability for guest property in most common law jurisdictions?",
+                options: [
+                    "Innkeeper's liability doctrine",
+                    "Bailment theory",
+                    "Strict liability standard",
+                    "Negligence per se"
+                ],
+                explanation: "The ancient innkeeper's liability doctrine imposes special responsibilities on hotels."
+            },
+            {
+                section: "Tourist Law",
+                question: "Under the Package Travel Directive (EU) 2015/2302, what is the minimum refund timeframe for package holiday cancellations?",
+                options: [
+                    "14 days",
+                    "7 days",
+                    "30 days",
+                    "48 hours"
+                ],
+                explanation: "The directive mandates 14-day refund timelines for package cancellations."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which international convention governs liability for cruise ship passenger injuries?",
+                options: [
+                    "Athens Convention 1974",
+                    "Montreal Convention 1999",
+                    "Hague-Visby Rules",
+                    "Warsaw Convention 1929"
+                ],
+                explanation: "The Athens Convention specifically addresses maritime passenger liabilities."
+            },
+            {
+                section: "Tourist Law",
+                question: "What is the statute of limitations for filing a wrongful death claim against a foreign tour operator in U.S. federal courts?",
+                options: [
+                    "3 years",
+                    "1 year",
+                    "5 years",
+                    "6 months"
+                ],
+                explanation: "The standard 3-year limitation applies to most wrongful death claims."
+            },
+            {
+                section: "Tourist Law",
+                question: "Under the ADA, what is the minimum percentage of hotel rooms required to be accessible?",
+                options: [
+                    "5%",
+                    "2%",
+                    "10%",
+                    "15%"
+                ],
+                explanation: "ADA regulations mandate 5% accessible rooms minimum."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal doctrine may protect a hotel from liability for crimes committed by third parties on its premises?",
+                options: [
+                    "Foreseeability standard",
+                    "Res ipsa loquitur",
+                    "Absolute liability",
+                    "Strict scrutiny"
+                ],
+                explanation: "The foreseeability test determines premises liability limits."
+            },
+            {
+                section: "Tourist Law",
+                question: "What is the maximum penalty for IATA tariff violations by airlines?",
+                options: [
+                    "$25,000 per violation",
+                    "$100,000 per violation",
+                    "$5,000 per violation",
+                    "1% of annual revenue"
+                ],
+                explanation: "IATA can impose penalties up to $25,000 per tariff violation."
+            },
+            {
+                section: "Tourist Law",
+                question: "Under EU data protection laws, what is the maximum fine for hotel guest data breaches?",
+                options: [
+                    "4% of global turnover",
+                    "$10 million",
+                    "1% of annual revenue",
+                    "No maximum fine"
+                ],
+                explanation: "GDPR allows fines up to 4% of global turnover."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal concept allows airlines to deny boarding to passengers with valid tickets?",
+                options: [
+                    "Overbooking provisions",
+                    "Force majeure",
+                    "Sovereign immunity",
+                    "Act of God defense"
+                ],
+                explanation: "Overbooking is a legal though regulated practice."
+            },
+            {
+                section: "Tourist Law",
+                question: "What is the minimum liability coverage required for US tour operators under the Motor Carrier Act?",
+                options: [
+                    "$5 million",
+                    "$1 million",
+                    "$500,000",
+                    "$250,000"
+                ],
+                explanation: "$5 million is the required minimum coverage."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal principle establishes a tour operator's duty to warn about destination risks?",
+                options: [
+                    "Reasonable care standard",
+                    "Caveat emptor",
+                    "Absolute liability",
+                    "Respondeat superior"
+                ],
+                explanation: "The reasonable care standard applies to risk disclosures."
+            },
+            {
+                section: "Tourist Law",
+                question: "Under the EC Regulation 261/2004, what compensation is due for 4-hour flight delays within Europe?",
+                options: [
+                    "€250-€600 depending on distance",
+                    "No compensation for delays under 5 hours",
+                    "Full ticket refund only",
+                    "Voucher for future travel"
+                ],
+                explanation: "EU regulations mandate cash compensation for significant delays."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal document is most critical for establishing hotel management company liability?",
+                options: [
+                    "Management agreement",
+                    "Franchise disclosure document",
+                    "Brand standards manual",
+                    "Operating budget"
+                ],
+                explanation: "The management agreement defines liability parameters."
+            },
+            {
+                section: "Tourist Law",
+                question: "What is the typical statute of limitations for filing a hotel slip-and-fall lawsuit?",
+                options: [
+                    "2-3 years",
+                    "6 months",
+                    "5 years",
+                    "1 year"
+                ],
+                explanation: "Most jurisdictions allow 2-3 years for personal injury claims."
+            },
+            // Section 5: Language Proficiency (Questions 71-100)
+            {
+                section: "Language Proficiency",
+                question: "Which sentence demonstrates correct use of the subjunctive mood in a formal hospitality context?",
+                options: [
+                    "We recommend that the guest be notified immediately of any changes.",
+                    "We recommend that the guest is notified immediately of any changes.",
+                    "We recommend that the guest should be notified immediately of any changes.",
+                    "We recommend the guest to be notified immediately of any changes."
+                ],
+                explanation: "The subjunctive mood requires the base form of the verb ('be') rather than the indicative form ('is') in clauses following verbs like 'recommend'."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best maintains a professional tone while diplomatically addressing a guest complaint?",
+                options: [
+                    "We sincerely regret any inconvenience this may have caused.",
+                    "We're sorry you feel that way about the situation.",
+                    "Mistakes sometimes happen in busy periods.",
+                    "This wasn't really our fault but we'll help."
+                ],
+                explanation: "The first option acknowledges concern without assigning blame."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses industry terminology in a hotel context?",
+                options: [
+                    "The room attendant will service your suite during the turndown.",
+                    "The room boy will clean your room in the evening.",
+                    "The maid will do your bed in the night.",
+                    "The cleaner will fix your room later."
+                ],
+                explanation: "The first option uses proper industry terminology."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which closing phrase is most appropriate for a formal email to a corporate client?",
+                options: [
+                    "We look forward to welcoming you to our property.",
+                    "See you soon at our hotel!",
+                    "Come stay with us whenever!",
+                    "Your visit will be awesome with us."
+                ],
+                explanation: "The first option maintains professional tone."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'comprise' in a hotel description?",
+                options: [
+                    "The property comprises 250 guest rooms and 3 restaurants.",
+                    "The property is comprised of 250 guest rooms and 3 restaurants.",
+                    "The property is comprising 250 guest rooms and 3 restaurants.",
+                    "The property had comprised 250 guest rooms and 3 restaurants."
+                ],
+                explanation: "'Comprise' is correctly used in active voice here."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best conveys empathy in a service recovery situation?",
+                options: [
+                    "I understand how frustrating this must be for you.",
+                    "I know exactly how you feel right now.",
+                    "You're right to be upset about this.",
+                    "This kind of thing happens sometimes."
+                ],
+                explanation: "The first option validates feelings without assumptions."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence demonstrates correct parallel structure in listing hotel amenities?",
+                options: [
+                    "The resort features a spa, an infinity pool, and a golf course.",
+                    "The resort features a spa, has an infinity pool, and golfing is available.",
+                    "The resort features a spa, with an infinity pool, and a golf course.",
+                    "The resort features a spa, infinity pool, and playing golf."
+                ],
+                explanation: "The first option maintains consistent grammatical structure."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best maintains professional boundaries with guests?",
+                options: [
+                    "We're pleased to offer you our assistance.",
+                    "We'd love to help you with anything you need!",
+                    "I'm here for you 24/7, whatever you want!",
+                    "Just call me anytime about anything at all."
+                ],
+                explanation: "The first option is professionally appropriate."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'affect' and 'effect' in a hospitality context?",
+                options: [
+                    "The renovation will affect guest satisfaction, with positive effects on reviews.",
+                    "The renovation will effect guest satisfaction, with positive affects on reviews.",
+                    "The renovation will affect guest satisfaction, with positive affects on reviews.",
+                    "The renovation will effect guest satisfaction, with positive effects on reviews."
+                ],
+                explanation: "'Affect' as verb and 'effect' as noun are correctly used here."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates active listening in a guest interaction?",
+                options: [
+                    "If I understand correctly, you're concerned about...",
+                    "I hear what you're saying but...",
+                    "You're wrong about that because...",
+                    "That's not really our policy so..."
+                ],
+                explanation: "The first option demonstrates reflective listening."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence avoids common redundancy in business communication?",
+                options: [
+                    "The meeting will begin at 3 p.m.",
+                    "The meeting will begin at 3 p.m. in the afternoon.",
+                    "The meeting will commence at 3 p.m. in the afternoon.",
+                    "The 3 p.m. meeting time will be when we start."
+                ],
+                explanation: "The first option avoids redundant 'p.m.' and 'afternoon'."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best conveys urgency without causing alarm?",
+                options: [
+                    "We should address this matter promptly.",
+                    "This is a huge emergency that must be fixed now!",
+                    "We're all going to be in trouble if this isn't done.",
+                    "You need to take care of this immediately."
+                ],
+                explanation: "The first option conveys appropriate urgency."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'complement' and 'compliment'?",
+                options: [
+                    "The wine selection complements our menu, and we often receive compliments about it.",
+                    "The wine selection compliments our menu, and we often receive complements about it.",
+                    "The wine selection complements our menu, and we often receive complements about it.",
+                    "The wine selection compliments our menu, and we often receive compliments about it."
+                ],
+                explanation: "'Complement' means to complete, 'compliment' means to praise."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates cultural sensitivity in international hospitality?",
+                options: [
+                    "Would you prefer a traditional greeting from your culture?",
+                    "Where are you really from originally?",
+                    "You must miss your home country's customs.",
+                    "Your cultural traditions are so interesting!"
+                ],
+                explanation: "The first option shows respect without assumptions."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence demonstrates correct use of articles in English?",
+                options: [
+                    "The concierge can arrange a tour of the city's historical district.",
+                    "A concierge can arrange the tour of a city's historical district.",
+                    "Concierge can arrange tour of city's historical district.",
+                    "The concierge can arrange the tour of the city's the historical district."
+                ],
+                explanation: "The first option uses articles correctly."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates professional assertiveness?",
+                options: [
+                    "I recommend we proceed with the standard protocol in this situation.",
+                    "I guess we could maybe do what you're suggesting.",
+                    "Whatever you think is probably fine with me.",
+                    "I'm not really sure but we might try something."
+                ],
+                explanation: "The first option shows confident professionalism."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'who' and 'whom' in a service context?",
+                options: [
+                    "The guest whom you assisted is the CEO who recommended our hotel.",
+                    "The guest who you assisted is the CEO whom recommended our hotel.",
+                    "The guest whom you assisted is the CEO whom recommended our hotel.",
+                    "The guest who you assisted is the CEO who recommended our hotel."
+                ],
+                explanation: "'Whom' is object, 'who' is subject - correctly used here."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates cross-cultural communication skills?",
+                options: [
+                    "Please let me know if any of our services don't meet your expectations.",
+                    "You probably don't understand how we do things here.",
+                    "Your customs are very different from ours.",
+                    "This is how we always handle such requests."
+                ],
+                explanation: "The first option shows cultural sensitivity."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence avoids common business jargon?",
+                options: [
+                    "We'll implement the new procedures next month.",
+                    "We'll leverage our synergies to circle back on this going forward.",
+                    "Let's take this offline and drill down to the granular level.",
+                    "We need to ideate a paradigm shift in our core competencies."
+                ],
+                explanation: "The first option uses clear, straightforward language."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates professional email etiquette?",
+                options: [
+                    "Dear Mr. Patel, I hope this email finds you well.",
+                    "Hey there! What's up with your reservation?",
+                    "To whom it may concern: Your request is noted.",
+                    "Hi Rajesh!!! Got your message and WOW!!!"
+                ],
+                explanation: "The first option maintains appropriate professional tone."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'farther' and 'further'?",
+                options: [
+                    "The beach is farther away, but we can discuss this further.",
+                    "The beach is further away, but we can discuss this farther.",
+                    "The beach is farther away, but we can discuss this farther.",
+                    "The beach is further away, but we can discuss this further."
+                ],
+                explanation: "'Farther' for physical distance, 'further' for metaphorical."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates active voice in business writing?",
+                options: [
+                    "Our team will complete the renovation by Friday.",
+                    "The renovation will be completed by Friday by our team.",
+                    "Completion of the renovation will occur by Friday.",
+                    "There will be a renovation completion by Friday."
+                ],
+                explanation: "The first option uses strong active voice."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'principal' and 'principle'?",
+                options: [
+                    "The principal reason for our policy is the principle of guest safety.",
+                    "The principle reason for our policy is the principal of guest safety.",
+                    "The principal reason for our policy is the principal of guest safety.",
+                    "The principle reason for our policy is the principle of guest safety."
+                ],
+                explanation: "'Principal' = main, 'principle' = fundamental truth."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates diplomatic language for sensitive topics?",
+                options: [
+                    "We respectfully disagree with that assessment.",
+                    "You're completely wrong about that.",
+                    "That's the dumbest idea I've heard.",
+                    "No offense, but that won't work."
+                ],
+                explanation: "The first option maintains professionalism."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'lie' and 'lay' in past tense?",
+                options: [
+                    "The guest lay down to rest while housekeeping laid out fresh towels.",
+                    "The guest laid down to rest while housekeeping lay out fresh towels.",
+                    "The guest lied down to rest while housekeeping laid out fresh towels.",
+                    "The guest lay down to rest while housekeeping lied out fresh towels."
+                ],
+                explanation: "'Lay' requires an object, 'lie' does not - correctly used here."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates concise business writing?",
+                options: [
+                    "Please submit your request by Friday.",
+                    "At this point in time, we would respectfully request that you consider submitting your application no later than the end of the business day on Friday.",
+                    "Kindly be advised that the deadline for submission of all requests is Friday at close of business.",
+                    "We're writing to inform you that Friday is when we need your request submitted by."
+                ],
+                explanation: "The first option is most concise."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'fewer' and 'less'?",
+                options: [
+                    "We have fewer guest complaints and less noise disturbance this quarter.",
+                    "We have less guest complaints and fewer noise disturbance this quarter.",
+                    "We have fewer guest complaints and fewer noise disturbance this quarter.",
+                    "We have less guest complaints and less noise disturbance this quarter."
+                ],
+                explanation: "'Fewer' for countable items, 'less' for uncountable."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates professional telephone etiquette?",
+                options: [
+                    "Thank you for calling Alpana Group. How may I assist you today?",
+                    "Yeah, Alpana Group, what do you want?",
+                    "Hello? Who's this?",
+                    "You've reached us. Go ahead."
+                ],
+                explanation: "The first option demonstrates professional phone manners."
             }
         ];
 
-        // Background Images
-        const bgImages = [
-            "url('hotel1.jpg')",
-            "url('hotel2.jpg')",
-            "url('hotel3.jpg')",
-            "url('hotel4.jpg')",
-            "url('hotel5.jpg')"
-        ];
-
-        // System State
+        // User data and state
         let userAnswers = {};
         let currentQuestion = 1;
         let timerInterval;
-        let timeLeft = 120 * 60;
+        let timeLeft = 120 * 60; // 120 minutes (in seconds)
         let examSubmitted = false;
         let permissionsGranted = false;
-        let cameraStream;
-        let micStream;
 
-        // DOM Elements
-        const elements = {
-            splashScreen: document.getElementById('splashScreen'),
-            permissionModal: document.getElementById('permissionModal'),
-            instructionScreen: document.getElementById('instructionScreen'),
-            examContainer: document.getElementById('examContainer'),
-            questionDisplay: document.getElementById('questionDisplay'),
-            questionNav: document.getElementById('questionNav'),
-            timeDisplay: document.getElementById('timeDisplay'),
-            questionCount: document.getElementById('questionCount'),
-            resultModal: document.getElementById('resultModal'),
-            printBtn: document.getElementById('printBtn')
-        };
+        // DOM elements
+        const permissionModal = document.getElementById('permissionModal');
+        const splashScreen = document.getElementById('splashScreen');
+        const examContainer = document.getElementById('examContainer');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const resultModal = document.getElementById('resultModal');
+        const questionDisplay = document.getElementById('questionDisplay');
+        const questionNav = document.getElementById('questionNav');
+        const timerDisplay = document.getElementById('timeDisplay');
+        const currentQuestionDisplay = document.getElementById('currentQuestion');
+        const correctAnswersDisplay = document.getElementById('correctAnswers');
+        const incorrectAnswersDisplay = document.getElementById('incorrectAnswers');
+        const unansweredDisplay = document.getElementById('unanswered');
+        const percentageDisplay = document.getElementById('percentage');
+        const verdictDisplay = document.getElementById('verdict');
+        const answersheetContent = document.getElementById('answersheetContent');
+        const printResultsBtn = document.getElementById('printResults');
+        const downloadResultsBtn = document.getElementById('downloadResults');
+        const closeModal = document.getElementById('closeModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('errorMessage');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
 
-        // Initialize Exam
-        function initExam() {
-            // Start background image rotation
-            let currentBg = 0;
-            setInterval(() => {
-                currentBg = (currentBg + 1) % bgImages.length;
-                document.body.style.backgroundImage = bgImages[currentBg];
-            }, 10000);
-
-            // Start timer
-            startTimer();
-            
-            // Load first question
-            loadQuestion(currentQuestion);
-            
-            // Request full screen
-            document.documentElement.requestFullscreen().catch(err => {
-                console.log("Fullscreen error: ", err);
-            });
-        }
-
-        // Permission Handling
+        // Permission management
         document.getElementById('grantPermissions').addEventListener('click', async () => {
             try {
-                // Request camera access
-                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                
-                // Request microphone access
-                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                // Request camera and microphone access
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                stream.getTracks().forEach(track => track.stop());
                 
                 // Request location access
                 await new Promise((resolve, reject) => {
@@ -402,41 +2212,55 @@
                 });
                 
                 permissionsGranted = true;
-                elements.permissionModal.style.display = 'none';
-                showInstructions();
-                
+                permissionModal.style.display = 'none';
+                splashScreen.style.display = 'flex';
             } catch (error) {
-                alert("All permissions are required to take this exam. You will now be logged out.");
-                window.location.reload();
+                document.getElementById('permissionError').style.display = 'block';
             }
         });
 
-        document.getElementById('denyPermissions').addEventListener('click', () => {
-            alert("You cannot take the exam without granting permissions.");
-            window.location.reload();
+        // Login process
+        loginBtn.addEventListener('click', () => {
+            if (!permissionsGranted) {
+                alert("Please grant all permissions");
+                return;
+            }
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (username === "mtest@alpnagroup.com" && password === "MTS95068") {
+                errorMessage.style.display = 'none';
+                splashScreen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    examContainer.style.display = 'block';
+                    startTimer();
+                    loadQuestion(currentQuestion);
+                    createNavigationButtons();
+                    
+                    // Prevent back button
+                    history.pushState(null, null, location.href);
+                    window.onpopstate = () => history.pushState(null, null, location.href);
+                }, 500);
+            } else {
+                errorMessage.style.display = 'block';
+                usernameInput.value = '';
+                passwordInput.value = '';
+            }
         });
 
-        // Show Instructions
-        function showInstructions() {
-            elements.instructionScreen.style.display = 'flex';
-        }
-
-        document.getElementById('startExam').addEventListener('click', () => {
-            elements.instructionScreen.style.display = 'none';
-            elements.examContainer.style.display = 'block';
-            initExam();
-        });
-
-        // Timer Functions
+        // Timer management
         function startTimer() {
             updateTimerDisplay();
             timerInterval = setInterval(() => {
                 timeLeft--;
                 updateTimerDisplay();
+                
                 if (timeLeft <= 0 && !examSubmitted) {
                     clearInterval(timerInterval);
                     submitExam();
-                    alert("Time's up! Your exam has been automatically submitted.");
                 }
             }, 1000);
         }
@@ -444,63 +2268,146 @@
         function updateTimerDisplay() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            elements.timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            
+            if (timeLeft <= 300) { // 5 minutes remaining
+                timerDisplay.style.color = 'var(--accent-color)';
+            }
         }
 
-        // Question Loading
+        // Question navigation
+        function createNavigationButtons() {
+            questionNav.innerHTML = '';
+            
+            for (let i = 1; i <= 100; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = i;
+                btn.dataset.question = i;
+                
+                if (i === 1) btn.classList.add('current');
+                
+                btn.addEventListener('click', () => {
+                    if (!examSubmitted) {
+                        navigateToQuestion(parseInt(btn.dataset.question));
+                    }
+                });
+                
+                questionNav.appendChild(btn);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const buttons = questionNav.querySelectorAll('.nav-btn');
+            
+            buttons.forEach(btn => {
+                const questionNum = parseInt(btn.dataset.question);
+                btn.classList.remove('current', 'visited', 'answered');
+                
+                if (questionNum === currentQuestion) {
+                    btn.classList.add('current');
+                } else if (userAnswers[questionNum] !== undefined) {
+                    btn.classList.add('answered');
+                } else if (questionNum < currentQuestion) {
+                    btn.classList.add('visited');
+                }
+            });
+        }
+
+        function navigateToQuestion(questionNum) {
+            if (questionNum >= 1 && questionNum <= 100) {
+                currentQuestion = questionNum;
+                loadQuestion(questionNum);
+                updateNavigationButtons();
+                currentQuestionDisplay.textContent = questionNum;
+            }
+        }
+
+        // Load question
         function loadQuestion(questionNum) {
             const questionData = examQuestions[questionNum - 1];
             
             let questionHTML = `
                 <div class="question">
-                    <div class="question-text">${questionNum}. ${questionData.question}</div>
+                    <div class="question-text">
+                        ${questionNum}. ${questionData.question}
+                    </div>
                     <div class="options">
             `;
             
-            ['a', 'b', 'c', 'd'].forEach((option, index) => {
-                const isSelected = userAnswers[questionNum] === option;
+            ['a', 'b', 'c', 'd'].forEach((optionLetter, index) => {
+                const isSelected = userAnswers[questionNum] === optionLetter;
+                const isLocked = userAnswers[questionNum] !== undefined;
+                
                 questionHTML += `
-                    <div class="option ${isSelected ? 'selected' : ''}" 
-                         onclick="selectOption(${questionNum}, '${option}')">
-                        <input type="radio" name="q${questionNum}" 
-                               ${isSelected ? 'checked' : ''}>
-                        ${questionData.options[index]}
+                    <div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" 
+                         data-option="${optionLetter}" onclick="selectOption(${questionNum}, '${optionLetter}')">
+                        <input type="radio" name="q${questionNum}" id="q${questionNum}${optionLetter}" 
+                               ${isSelected ? 'checked' : ''} ${isLocked ? 'disabled' : ''}>
+                        <label for="q${questionNum}${optionLetter}">${questionData.options[index]}</label>
                     </div>
                 `;
             });
             
             questionHTML += `</div></div>`;
-            elements.questionDisplay.innerHTML = questionHTML;
-            elements.questionCount.textContent = `${questionNum}/100`;
+            questionDisplay.innerHTML = questionHTML;
+            
+            prevBtn.disabled = questionNum === 1;
+            nextBtn.disabled = questionNum === 100;
         }
 
-        // Option Selection
+        // Option selection
         window.selectOption = function(questionNum, optionLetter) {
-            if (!examSubmitted && !userAnswers[questionNum]) {
+            if (!examSubmitted && userAnswers[questionNum] === undefined) {
                 userAnswers[questionNum] = optionLetter;
-                loadQuestion(questionNum);
+                
+                const options = document.querySelectorAll(`#questionDisplay .option`);
+                options.forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.dataset.option === optionLetter) opt.classList.add('selected');
+                    opt.classList.add('locked');
+                    opt.querySelector('input').disabled = true;
+                });
+                
+                updateNavigationButtons();
+                saveProgress();
             }
         };
 
-        // Exam Submission
+        // Save progress
+        function saveProgress() {
+            localStorage.setItem('examProgress', JSON.stringify({
+                answers: userAnswers,
+                currentQuestion,
+                timeLeft
+            }));
+        }
+
+        // Submit exam
         function submitExam() {
+            if (examSubmitted) return;
+
             examSubmitted = true;
             clearInterval(timerInterval);
             
-            // Stop camera and microphone
-            if (cameraStream) cameraStream.getTracks().forEach(track => track.stop());
-            if (micStream) micStream.getTracks().forEach(track => track.stop());
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.disabled = true;
+            });
             
-            // Show results immediately
-            showResults();
+            examContainer.style.display = 'none';
+            loadingScreen.style.display = 'flex';
+            
+            // Show results immediately (without loading screen)
+            setTimeout(showResults, 500);
         }
 
-        // Results Calculation
+        // Calculate results
         function calculateResults() {
-            let correct = 0, incorrect = 0, unanswered = 0, score = 0;
+            let correct = 0, incorrect = 0, unanswered = 0;
+            let score = 0;
             
             for (let i = 1; i <= 100; i++) {
-                if (!userAnswers[i]) {
+                if (userAnswers[i] === undefined) {
                     unanswered++;
                 } else if (userAnswers[i] === answerKey[i]) {
                     correct++;
@@ -511,86 +2418,166 @@
                 }
             }
             
-            return {
-                correct,
-                incorrect,
-                unanswered,
-                score: Math.max(0, score),
-                percentage: Math.round((score / 100) * 100),
-                passed: score >= 55
-            };
+            score = Math.max(0, score);
+            const percentage = Math.round((score / 100) * 100);
+            const passed = percentage >= 55;
+            
+            return { correct, incorrect, unanswered, score, percentage, passed };
         }
 
-        // Show Results
+        // Show results
         function showResults() {
-            elements.examContainer.style.display = 'none';
-            
+            loadingScreen.style.display = 'none';
             const results = calculateResults();
             
-            document.getElementById('correctAnswers').textContent = results.correct;
-            document.getElementById('incorrectAnswers').textContent = results.incorrect;
-            document.getElementById('unanswered').textContent = results.unanswered;
-            document.getElementById('percentage').textContent = `${results.percentage}%`;
+            correctAnswersDisplay.textContent = results.correct;
+            incorrectAnswersDisplay.textContent = results.incorrect;
+            unansweredDisplay.textContent = results.unanswered;
+            percentageDisplay.textContent = `${results.percentage}%`;
             
-            const verdict = document.getElementById('verdict');
-            verdict.textContent = results.passed 
-                ? `Congratulations! You passed with ${results.score.toFixed(2)}/100` 
-                : `You scored ${results.score.toFixed(2)}/100. Please try again.`;
-            verdict.className = results.passed ? "verdict pass" : "verdict fail";
+            verdictDisplay.textContent = results.passed 
+                ? `Congratulations! You scored ${results.score.toFixed(2)}/100 (${results.percentage}%) and passed the exam.` 
+                : `You scored ${results.score.toFixed(2)}/100 (${results.percentage}%). Minimum 55% required to pass.`;
+            verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
             
-            // Generate answer sheet
-            const answersheet = document.getElementById('answersheetContent');
-            answersheet.innerHTML = '';
-            for (let i = 1; i <= 100; i++) {
-                const item = document.createElement('div');
-                item.className = 'answer-item';
-                item.innerHTML = `
-                    <div class="answer-status ${userAnswers[i] === answerKey[i] ? 'correct' : 'incorrect'}">
-                        Q${i}: ${userAnswers[i] || 'Not Attempted'} (Correct: ${answerKey[i]})
+            // Prepare answer sheet
+            answersheetContent.innerHTML = '';
+            examQuestions.forEach((questionData, index) => {
+                const questionNum = index + 1;
+                const userAnswer = userAnswers[questionNum];
+                const isCorrect = userAnswer === answerKey[questionNum];
+                const correctAnswer = answerKey[questionNum]?.toUpperCase() || '-';
+                
+                const answerItem = document.createElement('div');
+                answerItem.className = 'answer-item';
+                answerItem.innerHTML = `
+                    <div class="answer-status ${isCorrect ? 'correct' : 'incorrect'}">
+                        Question ${questionNum}: ${isCorrect ? 'Correct' : 'Incorrect'} 
+                        (Your answer: ${userAnswer?.toUpperCase() || 'Unanswered'}, 
+                        Correct answer: ${correctAnswer})
                     </div>
-                    <p>${examQuestions[i-1].explanation}</p>
+                    <p class="answer-explanation">${questionData.explanation}</p>
                 `;
-                answersheet.appendChild(item);
-            }
+                answersheetContent.appendChild(answerItem);
+            });
             
-            // Show modal
-            elements.resultModal.style.display = 'flex';
+            resultModal.classList.add('active');
         }
 
-        // Print Results
-        elements.printBtn.addEventListener('click', () => {
-            window.print();
+        // Print results
+        printResultsBtn.addEventListener('click', () => {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Alpana Group - Exam Results</title>
+                        <style>
+                            body { font-family: Arial; padding: 20px; }
+                            h1 { color: #2563eb; text-align: center; }
+                            .score-card { display: flex; justify-content: space-around; margin: 20px 0; }
+                            .verdict { padding: 15px; margin: 20px 0; text-align: center; border-radius: 5px; }
+                            .answer-item { margin-bottom: 15px; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>Alpana Group - Exam Results</h1>
+                        <div>Date: ${new Date().toLocaleDateString()}</div>
+                        
+                        <div class="score-card">
+                            <div>
+                                <h3>${correctAnswersDisplay.textContent}</h3>
+                                <p>Correct Answers</p>
+                            </div>
+                            <div>
+                                <h3>${incorrectAnswersDisplay.textContent}</h3>
+                                <p>Incorrect Answers</p>
+                            </div>
+                            <div>
+                                <h3>${unansweredDisplay.textContent}</h3>
+                                <p>Unanswered</p>
+                            </div>
+                            <div>
+                                <h3>${percentageDisplay.textContent}</h3>
+                                <p>Percentage</p>
+                            </div>
+                        </div>
+                        
+                        <div class="verdict ${verdictDisplay.className}">
+                            ${verdictDisplay.textContent}
+                        </div>
+                        
+                        <h2>Answer Sheet</h2>
+                        ${answersheetContent.innerHTML}
+                        
+                        <script>
+                            window.onload = function() {
+                                setTimeout(function() {
+                                    window.print();
+                                    window.close();
+                                }, 500);
+                            };
+                        </script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
         });
 
-        // Close Modal
-        document.getElementById('closeModal').addEventListener('click', () => {
-            elements.resultModal.style.display = 'none';
-        });
-
-        // Start with splash screen
-        setTimeout(() => {
-            elements.splashScreen.style.display = 'none';
-            elements.permissionModal.style.display = 'flex';
-        }, 3000);
-
-        // Anti-cheating measures
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden' && !examSubmitted) {
-                alert("Warning: Tab switch detected. This incident has been recorded.");
-                submitExam();
+        // Download PDF
+        downloadResultsBtn.addEventListener('click', () => {
+            const password = prompt("Enter password to download results:");
+            if (password === "Alpana@2025") {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFontSize(18);
+                doc.setTextColor(37, 99, 235);
+                doc.text('Alpana Group - Exam Results', 105, 20, { align: 'center' });
+                
+                doc.setFontSize(12);
+                doc.text(`Date: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+                
+                doc.setFontSize(14);
+                doc.text('Score Summary', 14, 45);
+                
+                doc.setFontSize(12);
+                doc.text(`Correct Answers: ${correctAnswersDisplay.textContent}`, 14, 55);
+                doc.text(`Incorrect Answers: ${incorrectAnswersDisplay.textContent}`, 14, 65);
+                doc.text(`Unanswered: ${unansweredDisplay.textContent}`, 14, 75);
+                doc.text(`Percentage: ${percentageDisplay.textContent}`, 14, 85);
+                
+                doc.setFontSize(14);
+                doc.text('Verdict', 14, 100);
+                doc.setFontSize(12);
+                doc.text(verdictDisplay.textContent, 14, 110, { maxWidth: 180 });
+                
+                doc.save('Alpana_Group_Exam_Results.pdf');
+            } else {
+                alert("Incorrect password! Please contact administrator.");
             }
         });
 
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            alert("Right-click is disabled during the exam.");
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            resultModal.classList.remove('active');
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
-                e.preventDefault();
-                alert("Copying is disabled during the exam.");
+        // On page load
+        window.addEventListener('load', () => {
+            permissionModal.style.display = 'flex';
+            
+            const savedProgress = localStorage.getItem('examProgress');
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                userAnswers = progress.answers || {};
+                currentQuestion = progress.currentQuestion || 1;
+                timeLeft = progress.timeLeft || 120 * 60;
             }
+            
+            // Navigation buttons
+            prevBtn.addEventListener('click', () => navigateToQuestion(currentQuestion - 1));
+            nextBtn.addEventListener('click', () => navigateToQuestion(currentQuestion + 1));
+            submitBtn.addEventListener('click', submitExam);
         });
     </script>
 </body>
