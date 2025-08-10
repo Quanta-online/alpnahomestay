@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpana Homestay & Travels - परीक्षा पोर्टल</title>
+    <title>Alpana Homestay & Travels - Exam Portal</title>
     <style>
         * {
             margin: 0;
@@ -17,7 +17,7 @@
             background-color: #f5f5f5;
         }
 
-        /* स्प्लैश स्क्रीन स्टाइल */
+        /* Splash Screen Styles */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -57,7 +57,7 @@
             opacity: 0.8;
         }
 
-        /* परमिशन स्क्रीन स्टाइल */
+        /* Permission Screen Styles */
         .permission-screen {
             position: fixed;
             top: 0;
@@ -82,6 +82,7 @@
             backdrop-filter: blur(10px);
             max-width: 600px;
             width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .permission-title {
@@ -96,11 +97,24 @@
             padding: 15px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .permission-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .permission-icon {
             font-size: 1.5rem;
             margin-right: 15px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
         }
 
         .permission-text {
@@ -128,7 +142,14 @@
             box-shadow: 0 6px 8px rgba(0,0,0,0.15);
         }
 
-        /* निर्देश स्क्रीन स्टाइल */
+        .permission-status {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            font-style: italic;
+            display: none;
+        }
+
+        /* Instructions Screen Styles */
         .instructions-screen {
             position: fixed;
             top: 0;
@@ -155,6 +176,7 @@
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .instructions-title {
@@ -177,12 +199,16 @@
             display: flex;
             align-items: center;
             margin: 25px 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
         }
 
         .agree-checkbox {
             margin-right: 15px;
             width: 20px;
             height: 20px;
+            cursor: pointer;
         }
 
         .agree-btn {
@@ -198,6 +224,10 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             opacity: 0.5;
             pointer-events: none;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
         }
 
         .agree-btn.active {
@@ -211,7 +241,7 @@
             box-shadow: 0 6px 8px rgba(0,0,0,0.15);
         }
 
-        /* लोडिंग स्क्रीन स्टाइल */
+        /* Loading Screen Styles */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -243,82 +273,193 @@
 
         .loading-text {
             font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .splash-title {
+                font-size: 2rem;
+            }
+            
+            .permission-box, .instructions-box {
+                padding: 20px;
+            }
+            
+            .permission-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .permission-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- स्प्लैश स्क्रीन -->
+    <!-- Splash Screen -->
     <div class="splash-screen" id="splashScreen">
         <img src="https://via.placeholder.com/200x100?text=Alpana+Logo" alt="Alpana Homestay & Travels Logo" class="splash-logo">
         <h1 class="splash-title">Alpana Homestay & Travels</h1>
-        <p class="splash-subtitle">प्रबंधकीय योग्यता परीक्षा</p>
+        <p class="splash-subtitle">Managerial Aptitude Test</p>
     </div>
 
-    <!-- परमिशन स्क्रीन -->
+    <!-- Permission Screen -->
     <div class="permission-screen" id="permissionScreen">
         <div class="permission-box">
-            <h2 class="permission-title">अनुमति आवश्यक</h2>
-            <p style="margin-bottom: 25px;">परीक्षा की निगरानी के लिए निम्नलिखित अनुमतियाँ आवश्यक हैं:</p>
+            <h2 class="permission-title">Exam Monitoring Requirements</h2>
+            <p style="margin-bottom: 25px;">To ensure exam integrity, we need the following permissions:</p>
             
-            <div class="permission-item">
-                <i class="fas fa-map-marker-alt permission-icon"></i>
+            <div class="permission-item" id="locationPermission">
+                <div class="permission-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
                 <div class="permission-text">
-                    <strong>स्थान (Location)</strong><br>
-                    परीक्षा के दौरान आपके स्थान की पुष्टि के लिए
+                    <strong>Location Access</strong>
+                    <p>To verify your exam location and prevent proxy test-taking</p>
+                    <p class="permission-status" id="locationStatus"></p>
                 </div>
             </div>
             
-            <div class="permission-item">
-                <i class="fas fa-microphone permission-icon"></i>
+            <div class="permission-item" id="microphonePermission">
+                <div class="permission-icon">
+                    <i class="fas fa-microphone"></i>
+                </div>
                 <div class="permission-text">
-                    <strong>माइक्रोफोन</strong><br>
-                    परीक्षा वातावरण की निगरानी के लिए
+                    <strong>Microphone Access</strong>
+                    <p>To monitor your exam environment for suspicious sounds</p>
+                    <p class="permission-status" id="microphoneStatus"></p>
                 </div>
             </div>
             
-            <div class="permission-item">
-                <i class="fas fa-camera permission-icon"></i>
+            <div class="permission-item" id="cameraPermission">
+                <div class="permission-icon">
+                    <i class="fas fa-camera"></i>
+                </div>
                 <div class="permission-text">
-                    <strong>कैमरा</strong><br>
-                    परीक्षा के दौरान वीडियो निगरानी के लिए
+                    <strong>Camera Access</strong>
+                    <p>To monitor your exam session via video feed</p>
+                    <p class="permission-status" id="cameraStatus"></p>
                 </div>
             </div>
             
-            <button class="permission-btn" id="permissionBtn">अनुमति प्रदान करें</button>
+            <button class="permission-btn" id="permissionBtn">Grant Permissions</button>
         </div>
     </div>
 
-    <!-- निर्देश स्क्रीन -->
+    <!-- Instructions Screen -->
     <div class="instructions-screen" id="instructionsScreen">
         <div class="instructions-box">
-            <h2 class="instructions-title">परीक्षा निर्देश</h2>
+            <h2 class="instructions-title">Exam Instructions</h2>
             
             <ol class="instructions-list">
-                <li>परीक्षा की कुल अवधि 120 मिनट (2 घंटे) है।</li>
-                <li>परीक्षा में कुल 100 बहुविकल्पीय प्रश्न हैं।</li>
-                <li>प्रत्येक सही उत्तर के लिए 1 अंक मिलेगा और प्रत्येक गलत उत्तर के लिए 0.33 अंक काटे जाएंगे।</li>
-                <li>परीक्षा के दौरान किसी भी प्रकार की नकल करना सख्त वर्जित है।</li>
-                <li>परीक्षा के दौरान ब्राउज़र टैब बदलने या अन्य एप्लिकेशन खोलने पर परीक्षा स्वतः समाप्त हो जाएगी।</li>
-                <li>परीक्षा के दौरान आपके स्थान, माइक्रोफोन और कैमरे की निगरानी की जाएगी।</li>
-                <li>परीक्षा समाप्त होने से पहले सबमिट बटन दबाने पर ही आपके उत्तर सुरक्षित होंगे।</li>
-                <li>परीक्षा पूरी करने के बाद आपको तुरंत परिणाम प्रदर्शित किया जाएगा।</li>
-                <li>परीक्षा के दौरान किसी भी तकनीकी समस्या के लिए कृपया तुरंत संपर्क करें।</li>
+                <li><strong>Exam Duration:</strong> The total duration of the exam is 120 minutes (2 hours). The timer will begin when you start the exam and cannot be paused.</li>
+                
+                <li><strong>Exam Structure:</strong> The test consists of 100 multiple-choice questions divided into 5 sections:
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Tourist Management (20 questions)</li>
+                        <li>Hospitality Management (20 questions)</li>
+                        <li>Travel Management (20 questions)</li>
+                        <li>Managerial Aptitude (20 questions)</li>
+                        <li>General Knowledge (20 questions)</li>
+                    </ul>
+                </li>
+                
+                <li><strong>Scoring System:</strong>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Each correct answer: +1 point</li>
+                        <li>Each incorrect answer: -0.33 points (negative marking)</li>
+                        <li>Unanswered questions: 0 points</li>
+                    </ul>
+                </li>
+                
+                <li><strong>Exam Monitoring:</strong> Your exam session will be monitored through:
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Live video feed via your webcam</li>
+                        <li>Audio monitoring via your microphone</li>
+                        <li>Location verification via GPS</li>
+                        <li>Browser activity tracking</li>
+                    </ul>
+                </li>
+                
+                <li><strong>Prohibited Activities:</strong> The following actions are strictly prohibited and may result in exam termination:
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Switching browser tabs or opening new windows</li>
+                        <li>Using any secondary devices (phones, tablets, etc.)</li>
+                        <li>Communicating with others during the exam</li>
+                        <li>Accessing study materials or external resources</li>
+                        <li>Attempting to copy or screenshot exam questions</li>
+                    </ul>
+                </li>
+                
+                <li><strong>Technical Requirements:</strong>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Stable internet connection (minimum 2Mbps recommended)</li>
+                        <li>Modern browser (Chrome 90+, Firefox 85+, Edge 90+)</li>
+                        <li>Webcam (720p resolution minimum)</li>
+                        <li>Microphone (built-in or external)</li>
+                        <li>Enable JavaScript and cookies</li>
+                    </ul>
+                </li>
+                
+                <li><strong>Before Starting:</strong>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Ensure proper lighting in your room</li>
+                        <li>Close all unnecessary applications</li>
+                        <li>Keep your government-issued ID ready for verification</li>
+                        <li>Use a quiet, private space with no interruptions</li>
+                    </ul>
+                </li>
+                
+                <li><strong>During the Exam:</strong>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Keep your face visible to the camera at all times</li>
+                        <li>Do not cover your mouth or look away frequently</li>
+                        <li>Remain in the camera frame throughout the session</li>
+                        <li>Do not use headphones unless explicitly permitted</li>
+                    </ul>
+                </li>
+                
+                <li><strong>After Completion:</strong> Your results will be displayed immediately after submission. Official score reports will be emailed within 3 business days.</li>
+                
+                <li><strong>Malpractice Consequences:</strong> Any violation of exam rules will result in automatic disqualification and may lead to permanent blacklisting from future Alpana Group recruitment processes.</li>
             </ol>
             
             <div class="agree-box">
                 <input type="checkbox" id="agreeCheckbox" class="agree-checkbox">
-                <label for="agreeCheckbox">मैं उपरोक्त सभी निर्देशों को पढ़कर समझ चुका/चुकी हूँ और परीक्षा नियमों से सहमत हूँ</label>
+                <label for="agreeCheckbox">I have read and understood all the exam instructions and agree to comply with all examination rules and monitoring requirements.</label>
             </div>
             
-            <button class="agree-btn" id="agreeBtn">परीक्षा प्रारंभ करें</button>
+            <button class="agree-btn" id="agreeBtn">Start Exam</button>
         </div>
     </div>
 
-    <!-- लोडिंग स्क्रीन -->
+    <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-spinner"></div>
-        <p class="loading-text">परीक्षा तैयार की जा रही है...</p>
+        <p class="loading-text">Preparing your exam environment</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
     </div>
 
     <script>
@@ -330,8 +471,14 @@
             const permissionBtn = document.getElementById('permissionBtn');
             const agreeCheckbox = document.getElementById('agreeCheckbox');
             const agreeBtn = document.getElementById('agreeBtn');
+            const progressFill = document.getElementById('progressFill');
 
-            // 5 सेकंड बाद स्प्लैश स्क्रीन हटाएं और परमिशन स्क्रीन दिखाएं
+            // Status elements
+            const locationStatus = document.getElementById('locationStatus');
+            const microphoneStatus = document.getElementById('microphoneStatus');
+            const cameraStatus = document.getElementById('cameraStatus');
+
+            // 5 seconds splash screen then show permissions
             setTimeout(() => {
                 splashScreen.style.opacity = '0';
                 
@@ -341,32 +488,59 @@
                 }, 1000);
             }, 5000);
 
-            // परमिशन बटन क्लिक इवेंट
+            // Permission button click event
             permissionBtn.addEventListener('click', async () => {
+                permissionBtn.disabled = true;
+                permissionBtn.textContent = 'Processing...';
+                
                 try {
-                    // स्थान (Location) की अनुमति मांगें
-                    const locationStatus = await requestLocationPermission();
+                    // Request location permission
+                    const locationGranted = await requestLocationPermission();
+                    updatePermissionStatus('location', locationGranted);
                     
-                    // माइक्रोफोन की अनुमति मांगें
-                    const micStatus = await requestMicrophonePermission();
+                    // Request microphone permission
+                    const microphoneGranted = await requestMicrophonePermission();
+                    updatePermissionStatus('microphone', microphoneGranted);
                     
-                    // कैमरा की अनुमति मांगें
-                    const cameraStatus = await requestCameraPermission();
+                    // Request camera permission
+                    const cameraGranted = await requestCameraPermission();
+                    updatePermissionStatus('camera', cameraGranted);
                     
-                    // सभी अनुमतियाँ मिलने पर निर्देश स्क्रीन दिखाएं
-                    if (locationStatus && micStatus && cameraStatus) {
+                    // Show instructions if all permissions granted
+                    if (locationGranted && microphoneGranted && cameraGranted) {
                         permissionScreen.style.display = 'none';
                         instructionsScreen.style.display = 'flex';
                     } else {
-                        alert('सभी अनुमतियाँ आवश्यक हैं। कृपया सभी अनुमतियाँ प्रदान करें।');
+                        permissionBtn.disabled = false;
+                        permissionBtn.textContent = 'Grant Permissions';
+                        alert('All permissions are required to proceed with the exam. Please grant all requested permissions.');
                     }
                 } catch (error) {
                     console.error('Permission error:', error);
-                    alert('अनुमति प्रक्रिया में त्रुटि: ' + error.message);
+                    permissionBtn.disabled = false;
+                    permissionBtn.textContent = 'Grant Permissions';
+                    alert('Error requesting permissions: ' + error.message);
                 }
             });
 
-            // चेकबॉक्स परिवर्तन इवेंट
+            // Update permission status UI
+            function updatePermissionStatus(type, granted) {
+                const statusElement = document.getElementById(`${type}Status`);
+                const permissionItem = document.getElementById(`${type}Permission`);
+                
+                statusElement.style.display = 'block';
+                if (granted) {
+                    statusElement.textContent = 'Permission granted';
+                    statusElement.style.color = '#4CAF50';
+                    permissionItem.style.background = 'rgba(76, 175, 80, 0.1)';
+                } else {
+                    statusElement.textContent = 'Permission denied';
+                    statusElement.style.color = '#F44336';
+                    permissionItem.style.background = 'rgba(244, 67, 54, 0.1)';
+                }
+            }
+
+            // Checkbox change event
             agreeCheckbox.addEventListener('change', function() {
                 if (this.checked) {
                     agreeBtn.classList.add('active');
@@ -375,76 +549,116 @@
                 }
             });
 
-            // सहमति बटन क्लिक इवेंट
+            // Start exam button click event
             agreeBtn.addEventListener('click', function() {
                 instructionsScreen.style.display = 'none';
                 loadingScreen.style.display = 'flex';
                 
-                // 5 सेकंड लोडिंग के बाद index.html पर रीडायरेक्ट
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 5000);
+                // Simulate loading progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressFill.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        // Redirect to exam page after 5 seconds
+                        setTimeout(() => {
+                            window.location.href = 'alpna-exam-online.html';
+                        }, 500);
+                    }
+                }, 250);
             });
 
-            // अनुमति अनुरोध फंक्शन
+            // Permission request functions
             async function requestLocationPermission() {
-                try {
-                    if (navigator.geolocation) {
-                        const status = await new Promise((resolve, reject) => {
-                            navigator.geolocation.getCurrentPosition(
-                                () => resolve(true),
-                                (error) => {
-                                    if (error.code === error.PERMISSION_DENIED) {
-                                        resolve(false);
-                                    } else {
-                                        reject(error);
-                                    }
-                                }
-                            );
-                        });
-                        return status;
-                    }
+                if (!navigator.geolocation) {
+                    console.warn('Geolocation not supported');
                     return false;
+                }
+                
+                try {
+                    const status = await new Promise((resolve) => {
+                        navigator.geolocation.getCurrentPosition(
+                            () => resolve(true),
+                            (error) => {
+                                console.warn('Location permission denied:', error);
+                                resolve(false);
+                            },
+                            { timeout: 5000 }
+                        );
+                    });
+                    return status;
                 } catch (error) {
-                    console.error('Location permission error:', error);
+                    console.error('Location error:', error);
                     return false;
                 }
             }
 
             async function requestMicrophonePermission() {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    console.warn('MediaDevices not supported');
+                    return false;
+                }
+                
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     if (stream) {
+                        // Immediately stop the stream (we just needed permission)
                         stream.getTracks().forEach(track => track.stop());
                         return true;
                     }
                     return false;
                 } catch (error) {
-                    console.error('Microphone permission error:', error);
+                    console.warn('Microphone permission denied:', error);
                     return false;
                 }
             }
 
             async function requestCameraPermission() {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    console.warn('MediaDevices not supported');
+                    return false;
+                }
+                
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     if (stream) {
+                        // Immediately stop the stream (we just needed permission)
                         stream.getTracks().forEach(track => track.stop());
                         return true;
                     }
                     return false;
                 } catch (error) {
-                    console.error('Camera permission error:', error);
+                    console.warn('Camera permission denied:', error);
                     return false;
                 }
             }
         });
 
-        // ब्राउज़र टैब स्विच करने या अनफोकस होने पर चेतावनी
+        // Tab switching detection
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState !== 'visible') {
-                alert('चेतावनी: परीक्षा के दौरान ब्राउज़र टैब बदलना या अन्य एप्लिकेशन खोलना वर्जित है। इस प्रकार की किसी भी गतिविधि के परिणामस्वरूप आपकी परीक्षा समाप्त हो सकती है।');
+                alert('WARNING: Switching tabs or minimizing the browser window is prohibited during the exam. Repeated violations may result in exam termination.');
             }
+        });
+
+        // Prevent keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
+                e.preventDefault();
+                alert('Copying exam content is strictly prohibited.');
+            }
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J'))) {
+                e.preventDefault();
+                alert('Developer tools are disabled during the exam.');
+            }
+        });
+
+        // Prevent right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('Right-click is disabled during the exam to maintain integrity.');
         });
     </script>
 </body>
