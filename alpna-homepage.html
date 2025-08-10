@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpana Homestay & Travels - परीक्षा पोर्टल</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        /* स्प्लैश स्क्रीन स्टाइल */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            transition: opacity 1s ease;
+        }
+
+        .splash-logo {
+            width: 200px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .splash-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .splash-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        /* परमिशन स्क्रीन स्टाइल */
+        .permission-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: white;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .permission-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .permission-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .permission-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .permission-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .permission-btn {
+            background: white;
+            color: #1e3c72;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .permission-btn:hover {
+            background: #f1f1f1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        /* निर्देश स्क्रीन स्टाइल */
+        .instructions-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 998;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .instructions-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .instructions-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .instructions-list {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        .instructions-list li {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .agree-box {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+
+        .agree-checkbox {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .agree-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .agree-btn.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .agree-btn:hover {
+            background: #f1f1f1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        /* लोडिंग स्क्रीन स्टाइल */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #5b86e5, #36d1dc);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 997;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- स्प्लैश स्क्रीन -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="https://via.placeholder.com/200x100?text=Alpana+Logo" alt="Alpana Homestay & Travels Logo" class="splash-logo">
+        <h1 class="splash-title">Alpana Homestay & Travels</h1>
+        <p class="splash-subtitle">प्रबंधकीय योग्यता परीक्षा</p>
+    </div>
+
+    <!-- परमिशन स्क्रीन -->
+    <div class="permission-screen" id="permissionScreen">
+        <div class="permission-box">
+            <h2 class="permission-title">अनुमति आवश्यक</h2>
+            <p style="margin-bottom: 25px;">परीक्षा की निगरानी के लिए निम्नलिखित अनुमतियाँ आवश्यक हैं:</p>
+            
+            <div class="permission-item">
+                <i class="fas fa-map-marker-alt permission-icon"></i>
+                <div class="permission-text">
+                    <strong>स्थान (Location)</strong><br>
+                    परीक्षा के दौरान आपके स्थान की पुष्टि के लिए
+                </div>
+            </div>
+            
+            <div class="permission-item">
+                <i class="fas fa-microphone permission-icon"></i>
+                <div class="permission-text">
+                    <strong>माइक्रोफोन</strong><br>
+                    परीक्षा वातावरण की निगरानी के लिए
+                </div>
+            </div>
+            
+            <div class="permission-item">
+                <i class="fas fa-camera permission-icon"></i>
+                <div class="permission-text">
+                    <strong>कैमरा</strong><br>
+                    परीक्षा के दौरान वीडियो निगरानी के लिए
+                </div>
+            </div>
+            
+            <button class="permission-btn" id="permissionBtn">अनुमति प्रदान करें</button>
+        </div>
+    </div>
+
+    <!-- निर्देश स्क्रीन -->
+    <div class="instructions-screen" id="instructionsScreen">
+        <div class="instructions-box">
+            <h2 class="instructions-title">परीक्षा निर्देश</h2>
+            
+            <ol class="instructions-list">
+                <li>परीक्षा की कुल अवधि 120 मिनट (2 घंटे) है।</li>
+                <li>परीक्षा में कुल 100 बहुविकल्पीय प्रश्न हैं।</li>
+                <li>प्रत्येक सही उत्तर के लिए 1 अंक मिलेगा और प्रत्येक गलत उत्तर के लिए 0.33 अंक काटे जाएंगे।</li>
+                <li>परीक्षा के दौरान किसी भी प्रकार की नकल करना सख्त वर्जित है।</li>
+                <li>परीक्षा के दौरान ब्राउज़र टैब बदलने या अन्य एप्लिकेशन खोलने पर परीक्षा स्वतः समाप्त हो जाएगी।</li>
+                <li>परीक्षा के दौरान आपके स्थान, माइक्रोफोन और कैमरे की निगरानी की जाएगी।</li>
+                <li>परीक्षा समाप्त होने से पहले सबमिट बटन दबाने पर ही आपके उत्तर सुरक्षित होंगे।</li>
+                <li>परीक्षा पूरी करने के बाद आपको तुरंत परिणाम प्रदर्शित किया जाएगा।</li>
+                <li>परीक्षा के दौरान किसी भी तकनीकी समस्या के लिए कृपया तुरंत संपर्क करें।</li>
+            </ol>
+            
+            <div class="agree-box">
+                <input type="checkbox" id="agreeCheckbox" class="agree-checkbox">
+                <label for="agreeCheckbox">मैं उपरोक्त सभी निर्देशों को पढ़कर समझ चुका/चुकी हूँ और परीक्षा नियमों से सहमत हूँ</label>
+            </div>
+            
+            <button class="agree-btn" id="agreeBtn">परीक्षा प्रारंभ करें</button>
+        </div>
+    </div>
+
+    <!-- लोडिंग स्क्रीन -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">परीक्षा तैयार की जा रही है...</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const splashScreen = document.getElementById('splashScreen');
+            const permissionScreen = document.getElementById('permissionScreen');
+            const instructionsScreen = document.getElementById('instructionsScreen');
+            const loadingScreen = document.getElementById('loadingScreen');
+            const permissionBtn = document.getElementById('permissionBtn');
+            const agreeCheckbox = document.getElementById('agreeCheckbox');
+            const agreeBtn = document.getElementById('agreeBtn');
+
+            // 5 सेकंड बाद स्प्लैश स्क्रीन हटाएं और परमिशन स्क्रीन दिखाएं
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    permissionScreen.style.display = 'flex';
+                }, 1000);
+            }, 5000);
+
+            // परमिशन बटन क्लिक इवेंट
+            permissionBtn.addEventListener('click', async () => {
+                try {
+                    // स्थान (Location) की अनुमति मांगें
+                    const locationStatus = await requestLocationPermission();
+                    
+                    // माइक्रोफोन की अनुमति मांगें
+                    const micStatus = await requestMicrophonePermission();
+                    
+                    // कैमरा की अनुमति मांगें
+                    const cameraStatus = await requestCameraPermission();
+                    
+                    // सभी अनुमतियाँ मिलने पर निर्देश स्क्रीन दिखाएं
+                    if (locationStatus && micStatus && cameraStatus) {
+                        permissionScreen.style.display = 'none';
+                        instructionsScreen.style.display = 'flex';
+                    } else {
+                        alert('सभी अनुमतियाँ आवश्यक हैं। कृपया सभी अनुमतियाँ प्रदान करें।');
+                    }
+                } catch (error) {
+                    console.error('Permission error:', error);
+                    alert('अनुमति प्रक्रिया में त्रुटि: ' + error.message);
+                }
+            });
+
+            // चेकबॉक्स परिवर्तन इवेंट
+            agreeCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    agreeBtn.classList.add('active');
+                } else {
+                    agreeBtn.classList.remove('active');
+                }
+            });
+
+            // सहमति बटन क्लिक इवेंट
+            agreeBtn.addEventListener('click', function() {
+                instructionsScreen.style.display = 'none';
+                loadingScreen.style.display = 'flex';
+                
+                // 5 सेकंड लोडिंग के बाद index.html पर रीडायरेक्ट
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 5000);
+            });
+
+            // अनुमति अनुरोध फंक्शन
+            async function requestLocationPermission() {
+                try {
+                    if (navigator.geolocation) {
+                        const status = await new Promise((resolve, reject) => {
+                            navigator.geolocation.getCurrentPosition(
+                                () => resolve(true),
+                                (error) => {
+                                    if (error.code === error.PERMISSION_DENIED) {
+                                        resolve(false);
+                                    } else {
+                                        reject(error);
+                                    }
+                                }
+                            );
+                        });
+                        return status;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error('Location permission error:', error);
+                    return false;
+                }
+            }
+
+            async function requestMicrophonePermission() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                        return true;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error('Microphone permission error:', error);
+                    return false;
+                }
+            }
+
+            async function requestCameraPermission() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                        return true;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error('Camera permission error:', error);
+                    return false;
+                }
+            }
+        });
+
+        // ब्राउज़र टैब स्विच करने या अनफोकस होने पर चेतावनी
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState !== 'visible') {
+                alert('चेतावनी: परीक्षा के दौरान ब्राउज़र टैब बदलना या अन्य एप्लिकेशन खोलना वर्जित है। इस प्रकार की किसी भी गतिविधि के परिणामस्वरूप आपकी परीक्षा समाप्त हो सकती है।');
+            }
+        });
+    </script>
+</body>
+</html>
