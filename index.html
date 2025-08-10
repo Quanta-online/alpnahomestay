@@ -2579,368 +2579,334 @@
             }
         ];
         
-        // User data
-        let userAnswers = {};
-        let markedQuestions = {};
-        let currentQuestion = 1;
-        let timerInterval;
-        let timeLeft = 120 * 60; // 120 minutes in seconds
         
-        // DOM Elements
-        const splashScreen = document.getElementById('splashScreen');
-        const examContainer = document.getElementById('examContainer');
-        const loginBtn = document.getElementById('loginBtn');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const errorMessage = document.getElementById('errorMessage');
-        const questionDisplay = document.getElementById('questionDisplay');
-        const questionNav = document.getElementById('questionNav');
-        const currentQuestionDisplay = document.getElementById('currentQuestion');
-        const currentSectionDisplay = document.getElementById('currentSection');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const markBtn = document.getElementById('markBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        const timerDisplay = document.getElementById('timer');
-        const timeDisplay = document.getElementById('timeDisplay');
-        const answeredCount = document.getElementById('answeredCount');
-        const progressPercent = document.getElementById('progressPercent');
-        const progressFill = document.getElementById('progressFill');
-        const resultModal = document.getElementById('resultModal');
-        const closeModal = document.getElementById('closeModal');
-        const correctAnswersDisplay = document.getElementById('correctAnswers');
-        const incorrectAnswersDisplay = document.getElementById('incorrectAnswers');
-        const unansweredDisplay = document.getElementById('unanswered');
-        const percentageDisplay = document.getElementById('percentage');
-        const verdictDisplay = document.getElementById('verdict');
-        const answersheetContent = document.getElementById('answersheetContent');
-        const downloadBtn = document.getElementById('downloadBtn');
+// User data
+let userAnswers = {};
+let markedQuestions = {};
+let currentQuestion = 1;
+let timerInterval;
+let timeLeft = 120 * 60; // 120 minutes in seconds
+
+// DOM Elements
+const splashScreen = document.getElementById('splashScreen');
+const examContainer = document.getElementById('examContainer');
+const loginBtn = document.getElementById('loginBtn');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const errorMessage = document.getElementById('errorMessage');
+const questionDisplay = document.getElementById('questionDisplay');
+const questionNav = document.getElementById('questionNav');
+const currentQuestionDisplay = document.getElementById('currentQuestion');
+const currentSectionDisplay = document.getElementById('currentSection');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const markBtn = document.getElementById('markBtn');
+const submitBtn = document.getElementById('submitBtn');
+const timerDisplay = document.getElementById('timer');
+const timeDisplay = document.getElementById('timeDisplay');
+const answeredCount = document.getElementById('answeredCount');
+const progressPercent = document.getElementById('progressPercent');
+const progressFill = document.getElementById('progressFill');
+const resultModal = document.getElementById('resultModal');
+const closeModal = document.getElementById('closeModal');
+const correctAnswersDisplay = document.getElementById('correctAnswers');
+const incorrectAnswersDisplay = document.getElementById('incorrectAnswers');
+const unansweredDisplay = document.getElementById('unanswered');
+const percentageDisplay = document.getElementById('percentage');
+const verdictDisplay = document.getElementById('verdict');
+const answersheetContent = document.getElementById('answersheetContent');
+const downloadBtn = document.getElementById('downloadBtn');
+
+// Login Functionality
+loginBtn.addEventListener('click', () => {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    if (username === "mtest@alpnagroup.com" && password === "MTAGU00576") {
+        // Correct credentials
+        errorMessage.style.display = 'none';
+        splashScreen.style.opacity = '0';
+        splashScreen.style.pointerEvents = 'none';
         
-        // Login Functionality
-        loginBtn.addEventListener('click', () => {
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
-            
-            if (username === "mtest@alpnagroup.com" && password === "MTAGU00621") {
-                // Correct credentials
-                errorMessage.style.display = 'none';
-                splashScreen.style.opacity = '0';
-                splashScreen.style.pointerEvents = 'none';
-                
-                setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                    examContainer.style.display = 'block';
-                    startTimer();
-                    loadQuestion(currentQuestion);
-                    createNavigationButtons();
-                    updateProgress();
-                }, 500);
-            } else {
-                // Incorrect credentials
-                errorMessage.style.display = 'block';
-                usernameInput.value = '';
-                passwordInput.value = '';
-            }
-        });
+        setTimeout(() => {
+            splashScreen.style.display = 'none';
+            examContainer.style.display = 'block';
+            startTimer();
+            loadQuestion(currentQuestion);
+            createNavigationButtons();
+            updateProgress();
+        }, 500);
+    } else {
+        // Incorrect credentials
+        errorMessage.style.display = 'block';
+        usernameInput.value = '';
+        passwordInput.value = '';
+    }
+});
+
+// Timer Functionality
+function startTimer() {
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
         
-        // Timer Functionality
-        function startTimer() {
-            updateTimerDisplay();
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                
-                if (timeLeft <= 300) { // 5 minutes left
-                    timerDisplay.classList.add('warning');
-                }
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    submitExam();
-                }
-            }, 1000);
+        if (timeLeft <= 300) { // 5 minutes left
+            timerDisplay.classList.add('warning');
         }
         
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        }
-        
-        // Progress Tracking
-        function updateProgress() {
-            const answered = Object.keys(userAnswers).length;
-            const percent = Math.round((answered / 100) * 100);
-            
-            answeredCount.textContent = answered;
-            progressPercent.textContent = `${percent}%`;
-            progressFill.style.width = `${percent}%`;
-        }
-        
-        // Question Navigation
-        function createNavigationButtons() {
-            questionNav.innerHTML = '';
-            
-            for (let i = 1; i <= 100; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'nav-btn';
-                btn.textContent = i;
-                btn.dataset.question = i;
-                
-                if (i === 1) {
-                    btn.classList.add('current');
-                }
-                
-                btn.addEventListener('click', () => {
-                    navigateToQuestion(parseInt(btn.dataset.question));
-                });
-                
-                questionNav.appendChild(btn);
-            }
-        }
-        
-        function updateNavigationButtons() {
-            const buttons = questionNav.querySelectorAll('.nav-btn');
-            
-            buttons.forEach(btn => {
-                btn.classList.remove('current', 'visited', 'answered', 'marked');
-                
-                const questionNum = parseInt(btn.dataset.question);
-                
-                if (questionNum === currentQuestion) {
-                    btn.classList.add('current');
-                }
-                
-                if (markedQuestions[questionNum]) {
-                    btn.classList.add('marked');
-                }
-                
-                if (userAnswers[questionNum]) {
-                    btn.classList.add('answered');
-                } else if (questionNum < currentQuestion) {
-                    btn.classList.add('visited');
-                }
-            });
-        }
-        
-        function navigateToQuestion(questionNum) {
-            if (questionNum >= 1 && questionNum <= 100) {
-                currentQuestion = questionNum;
-                loadQuestion(currentQuestion);
-                updateNavigationButtons();
-                currentQuestionDisplay.textContent = currentQuestion;
-                
-                // Update section header
-                const questionData = examQuestions[currentQuestion - 1];
-                currentSectionDisplay.textContent = questionData.section;
-                
-                // Scroll to top of question
-                window.scrollTo({
-                    top: questionDisplay.offsetTop - 20,
-                    behavior: 'smooth'
-                });
-            }
-        }
-        
-        // Question Loading
-        function loadQuestion(questionNum) {
-            const questionData = examQuestions[questionNum - 1]; // Adjust for 0-based index
-            
-            let questionHTML = `
-                <div class="question" data-question="${questionNum}">
-                    <div class="question-text">
-                        ${questionData.question}
-                    </div>
-            `;
-            
-            // Add visual aid if needed
-            if (questionData.hasChart) {
-                questionHTML += `
-                    <div class="visual-aid">
-                        <div class="visual-aid-title">Data Visualization:</div>
-                        <div class="chart-container">
-                            <canvas id="chart-${questionNum}"></canvas>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            if (questionData.hasTable) {
-                questionHTML += `
-                    <div class="visual-aid">
-                        <div class="visual-aid-title">Reference Table:</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    ${questionData.tableData.headers.map(header => `<th>${header}</th>`).join('')}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${questionData.tableData.rows.map(row => `
-                                    <tr>
-                                        ${row.map(cell => `<td>${cell}</td>`).join('')}
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-            
-            // Add options
-            questionHTML += `<div class="options">`;
-            
-            const optionLetters = ['a', 'b', 'c', 'd'];
-            
-            questionData.options.forEach((option, index) => {
-                const optionLetter = optionLetters[index];
-                const isSelected = userAnswers[questionNum] === optionLetter;
-                const isLocked = userAnswers[questionNum] !== undefined;
-                
-                questionHTML += `
-                    <div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" 
-                         data-option="${optionLetter}" onclick="selectOption(${questionNum}, '${optionLetter}')">
-                        <input type="radio" name="q${questionNum}" id="q${questionNum}${optionLetter}" 
-                               ${isSelected ? 'checked' : ''} ${isLocked ? 'disabled' : ''}>
-                        <label for="q${questionNum}${optionLetter}">${option}</label>
-                    </div>
-                `;
-            });
-            
-            questionHTML += `</div></div>`;
-            
-            questionDisplay.innerHTML = questionHTML;
-            
-            // Update mark button state
-            updateMarkButton();
-            
-            // Render chart if needed
-            if (questionData.hasChart) {
-                const ctx = document.getElementById(`chart-${questionNum}`).getContext('2d');
-                new Chart(ctx, {
-                    type: questionData.chartType || 'bar',
-                    data: questionData.chartData,
-                    options: questionData.chartOptions || {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Update button states
-            prevBtn.disabled = questionNum === 1;
-            nextBtn.disabled = questionNum === 100;
-        }
-        
-        // Mark Question
-        function updateMarkButton() {
-            if (markedQuestions[currentQuestion]) {
-                markBtn.innerHTML = '<i class="fas fa-star"></i> Unmark';
-                markBtn.classList.add('marked');
-            } else {
-                markBtn.innerHTML = '<i class="far fa-star"></i> Mark';
-                markBtn.classList.remove('marked');
-            }
-        }
-        
-        markBtn.addEventListener('click', () => {
-            markedQuestions[currentQuestion] = !markedQuestions[currentQuestion];
-            updateMarkButton();
-            updateNavigationButtons();
-        });
-        
-        // Option Selection
-        window.selectOption = function(questionNum, optionLetter) {
-            if (!userAnswers[questionNum]) {
-                userAnswers[questionNum] = optionLetter;
-                
-                // Update UI
-                const options = document.querySelectorAll(`.question[data-question="${questionNum}"] .option`);
-                options.forEach(opt => {
-                    opt.classList.remove('selected');
-                    if (opt.dataset.option === optionLetter) {
-                        opt.classList.add('selected');
-                    }
-                    opt.classList.add('locked');
-                    opt.querySelector('input').disabled = true;
-                });
-                
-                // Update navigation and progress
-                updateNavigationButtons();
-                updateProgress();
-            }
-        };
-        
-        // Navigation Controls
-        prevBtn.addEventListener('click', () => {
-            navigateToQuestion(currentQuestion - 1);
-        });
-        
-        nextBtn.addEventListener('click', () => {
-            navigateToQuestion(currentQuestion + 1);
-        });
-        
-        // Keyboard Navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' && currentQuestion > 1) {
-                navigateToQuestion(currentQuestion - 1);
-            } else if (e.key === 'ArrowRight' && currentQuestion < 100) {
-                navigateToQuestion(currentQuestion + 1);
-            }
-        });
-        
-        // Submit Exam
-        submitBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to submit your exam? You won't be able to make changes after submission.")) {
-                submitExam();
-            }
-        });
-        
-        function submitExam() {
+        if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            calculateResults();
-            showResults();
+            submitExam();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
+// Progress Tracking
+function updateProgress() {
+    const answered = Object.keys(userAnswers).length;
+    const percent = Math.round((answered / 100) * 100);
+    
+    answeredCount.textContent = answered;
+    progressPercent.textContent = `${percent}%`;
+    progressFill.style.width = `${percent}%`;
+}
+
+// Question Navigation
+function createNavigationButtons() {
+    questionNav.innerHTML = '';
+    
+    for (let i = 1; i <= 100; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.textContent = i;
+        btn.dataset.question = i;
+        
+        if (i === 1) {
+            btn.classList.add('current');
         }
         
-        // Results Calculation
-        function calculateResults() {
-            let correct = 0;
-            let incorrect = 0;
-            let unanswered = 0;
-            
-            for (let i = 1; i <= 100; i++) {
-                if (userAnswers[i] === undefined) {
-                    unanswered++;
-                } else if (userAnswers[i] === answerKey[i]) {
-                    correct++;
-                } else {
-                    incorrect++;
+        btn.addEventListener('click', () => {
+            navigateToQuestion(parseInt(btn.dataset.question));
+        });
+        
+        questionNav.appendChild(btn);
+    }
+}
+
+function updateNavigationButtons() {
+    const buttons = questionNav.querySelectorAll('.nav-btn');
+    
+    buttons.forEach(btn => {
+        btn.classList.remove('current', 'visited', 'answered', 'marked');
+        
+        const questionNum = parseInt(btn.dataset.question);
+        
+        if (questionNum === currentQuestion) {
+            btn.classList.add('current');
+        }
+        
+        if (markedQuestions[questionNum]) {
+            btn.classList.add('marked');
+        }
+        
+        if (userAnswers[questionNum]) {
+            btn.classList.add('answered');
+        } else if (questionNum < currentQuestion) {
+            btn.classList.add('visited');
+        }
+    });
+}
+
+function navigateToQuestion(questionNum) {
+    if (questionNum >= 1 && questionNum <= 100) {
+        currentQuestion = questionNum;
+        loadQuestion(currentQuestion);
+        updateNavigationButtons();
+        currentQuestionDisplay.textContent = currentQuestion;
+        
+        // Update section header
+        const questionData = examQuestions[currentQuestion - 1];
+        currentSectionDisplay.textContent = questionData.section;
+        
+        // Scroll to top of question
+        window.scrollTo({
+            top: questionDisplay.offsetTop - 20,
+            behavior: 'smooth'
+        });
+    }
+}
+
+// Question Loading
+function loadQuestion(questionNum) {
+    const questionData = examQuestions[questionNum - 1]; // Adjust for 0-based index
+    
+    let questionHTML = `
+        <div class="question" data-question="${questionNum}">
+            <div class="question-text">
+                ${questionData.question}
+            </div>
+    `;
+    
+    // Add visual aid if needed
+    if (questionData.hasChart) {
+        questionHTML += `
+            <div class="visual-aid">
+                <div class="visual-aid-title">Data Visualization:</div>
+                <div class="chart-container">
+                    <canvas id="chart-${questionNum}"></canvas>
+                </div>
+            </div>
+        `;
+    }
+    
+    if (questionData.hasTable) {
+        questionHTML += `
+            <div class="visual-aid">
+                <div class="visual-aid-title">Reference Table:</div>
+                <table>
+                    <thead>
+                        <tr>
+                            ${questionData.tableData.headers.map(header => `<th>${header}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${questionData.tableData.rows.map(row => `
+                            <tr>
+                                ${row.map(cell => `<td>${cell}</td>`).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    // Add options
+    questionHTML += `<div class="options">`;
+    
+    const optionLetters = ['a', 'b', 'c', 'd'];
+    
+    questionData.options.forEach((option, index) => {
+        const optionLetter = optionLetters[index];
+        const isSelected = userAnswers[questionNum] === optionLetter;
+        const isLocked = userAnswers[questionNum] !== undefined;
+        
+        questionHTML += `
+            <div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" 
+                 data-option="${optionLetter}" onclick="selectOption(${questionNum}, '${optionLetter}')">
+                <input type="radio" name="q${questionNum}" id="q${questionNum}${optionLetter}" 
+                       ${isSelected ? 'checked' : ''} ${isLocked ? 'disabled' : ''}>
+                <label for="q${questionNum}${optionLetter}">${option}</label>
+            </div>
+        `;
+    });
+    
+    questionHTML += `</div></div>`;
+    
+    questionDisplay.innerHTML = questionHTML;
+    
+    // Update mark button state
+    updateMarkButton();
+    
+    // Render chart if needed
+    if (questionData.hasChart) {
+        const ctx = document.getElementById(`chart-${questionNum}`).getContext('2d');
+        new Chart(ctx, {
+            type: questionData.chartType || 'bar',
+            data: questionData.chartData,
+            options: questionData.chartOptions || {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-            
-            const percentage = Math.round((correct / 100) * 100);
-            const passed = correct >= 55;
-            
-            return {
-                correct,
-                incorrect,
-                unanswered,
-                percentage,
-                passed
-            };
-        }
+        });
+    }
+    
+    // Update button states
+    prevBtn.disabled = questionNum === 1;
+    nextBtn.disabled = questionNum === 100;
+}
+
+// Mark Question
+function updateMarkButton() {
+    if (markedQuestions[currentQuestion]) {
+        markBtn.innerHTML = '<i class="fas fa-star"></i> Unmark';
+        markBtn.classList.add('marked');
+    } else {
+        markBtn.innerHTML = '<i class="far fa-star"></i> Mark';
+        markBtn.classList.remove('marked');
+    }
+}
+
+markBtn.addEventListener('click', () => {
+    markedQuestions[currentQuestion] = !markedQuestions[currentQuestion];
+    updateMarkButton();
+    updateNavigationButtons();
+});
+
+// Option Selection
+window.selectOption = function(questionNum, optionLetter) {
+    if (!userAnswers[questionNum]) {
+        userAnswers[questionNum] = optionLetter;
         
+        // Update UI
+        const options = document.querySelectorAll(`.question[data-question="${questionNum}"] .option`);
+        options.forEach(opt => {
+            opt.classList.remove('selected');
+            if (opt.dataset.option === optionLetter) {
+                opt.classList.add('selected');
+            }
+            opt.classList.add('locked');
+            opt.querySelector('input').disabled = true;
+        });
+        
+        // Update navigation and progress
+        updateNavigationButtons();
+        updateProgress();
+    }
+};
 
+// Navigation Controls
+prevBtn.addEventListener('click', () => {
+    navigateToQuestion(currentQuestion - 1);
+});
 
+nextBtn.addEventListener('click', () => {
+    navigateToQuestion(currentQuestion + 1);
+});
 
+// Keyboard Navigation
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' && currentQuestion > 1) {
+        navigateToQuestion(currentQuestion - 1);
+    } else if (e.key === 'ArrowRight' && currentQuestion < 100) {
+        navigateToQuestion(currentQuestion + 1);
+    }
+});
 
+// Submit Exam
+submitBtn.addEventListener('click', () => {
+    if (confirm("Are you sure you want to submit your exam? You won't be able to make changes after submission.")) {
+        submitExam();
+    }
+});
 
-
+function submitExam() {
+    clearInterval(timerInterval);
+    calculateResults();
+    showResults();
+}
 
 // Results Calculation with Negative Marking
 function calculateResults() {
@@ -2991,7 +2957,7 @@ function showResults() {
     
     verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
     
-    // Rest of the showResults function remains the same...
+    // Generate answersheet
     answersheetContent.innerHTML = '';
     
     for (let i = 1; i <= 100; i++) {
@@ -3035,110 +3001,42 @@ function showResults() {
         answersheetContent.appendChild(answerItem);
     }
     
+    // Show modal
     resultModal.classList.add('active');
 }
 
+// Close Modal
+closeModal.addEventListener('click', () => {
+    resultModal.classList.remove('active');
+});
 
+// Download Results
+downloadBtn.addEventListener('click', () => {
+    html2canvas(document.querySelector('.modal-content')).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Alpana-Managerial-Test-Results-${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+});
 
+// Prevent copying
+document.addEventListener('copy', (e) => {
+    e.preventDefault();
+    alert('Copying content from this exam is not allowed.');
+});
 
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+});
 
-
-
-        // Show Results
-        function showResults() {
-            const results = calculateResults();
-            
-            correctAnswersDisplay.textContent = results.correct;
-            incorrectAnswersDisplay.textContent = results.incorrect;
-            unansweredDisplay.textContent = results.unanswered;
-            percentageDisplay.textContent = `${results.percentage}%`;
-            
-            verdictDisplay.textContent = results.passed 
-                ? "Congratulations! You have passed the Managerial Aptitude Test with a score of " + results.correct + "/100." 
-                : "Unfortunately, you did not pass the exam. You scored " + results.correct + "/100 (minimum 55 required to pass).";
-            
-            verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
-            
-            // Generate answersheet
-            answersheetContent.innerHTML = '';
-            
-            for (let i = 1; i <= 100; i++) {
-                const questionData = examQuestions[i - 1];
-                const userAnswer = userAnswers[i];
-                const correctAnswer = answerKey[i];
-                const isCorrect = userAnswer === correctAnswer;
-                
-                const answerItem = document.createElement('div');
-                answerItem.className = 'answer-item';
-                
-                let statusClass, statusText;
-                if (userAnswer === undefined) {
-                    statusClass = 'unanswered';
-                    statusText = 'Unanswered';
-                } else if (isCorrect) {
-                    statusClass = 'correct';
-                    statusText = 'Correct';
-                } else {
-                    statusClass = 'incorrect';
-                    statusText = 'Incorrect';
-                }
-                
-                answerItem.innerHTML = `
-                    <div class="answer-status ${statusClass}">
-                        Question ${i}: ${statusText}
-                    </div>
-                    <div class="answer-question">${questionData.question}</div>
-                    <div class="answer-details">
-                        <div class="answer-detail">
-                            <strong>Your Answer</strong>
-                            <span>${userAnswer ? userAnswer.toUpperCase() : 'Not answered'}</span>
-                        </div>
-                        <div class="answer-detail">
-                            <strong>Correct Answer</strong>
-                            <span>${correctAnswer.toUpperCase()}</span>
-                        </div>
-                    </div>
-                `;
-                
-                answersheetContent.appendChild(answerItem);
-            }
-            
-            // Show modal
-            resultModal.classList.add('active');
-        }
-        
-        // Close Modal
-        closeModal.addEventListener('click', () => {
-            resultModal.classList.remove('active');
-        });
-        
-        // Download Results
-        downloadBtn.addEventListener('click', () => {
-            html2canvas(document.querySelector('.modal-content')).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Alpana-Managerial-Test-Results-${new Date().toISOString().slice(0,10)}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
-        });
-        
-        // Prevent copying
-        document.addEventListener('copy', (e) => {
-            e.preventDefault();
-            alert('Copying content from this exam is not allowed.');
-        });
-        
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
-        
-        // Disable keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
-                e.preventDefault();
-                alert('Copying content from this exam is not allowed.');
-            }
-        });
+// Disable keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        alert('Copying content from this exam is not allowed.');
+    }
+});
     </script>
 </body>
 </html>
