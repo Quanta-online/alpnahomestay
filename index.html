@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alpana Group - Managerial Aptitude Test</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -52,7 +51,6 @@
             align-items: center;
             z-index: 2000;
             color: white;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
         .permission-box {
@@ -62,7 +60,6 @@
             border-radius: 10px;
             width: 90%;
             max-width: 500px;
-            text-align: center;
         }
 
         .permission-item {
@@ -72,13 +69,11 @@
             padding: 1rem;
             background: #f8fafc;
             border-radius: 5px;
-            text-align: left;
         }
 
         .permission-icon {
             margin-right: 1rem;
             font-size: 1.5rem;
-            color: var(--primary-color);
         }
 
         /* Splash Screen */
@@ -89,7 +84,7 @@
             width: 100%;
             height: 100%;
             background: var(--bg-gradient);
-            display: none;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -118,7 +113,6 @@
             max-width: 400px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: left;
         }
 
         .login-box h2 {
@@ -144,7 +138,6 @@
             border: none;
             background-color: rgba(255, 255, 255, 0.9);
             font-family: 'Poppins', sans-serif;
-            color: var(--dark-color);
         }
 
         .login-btn {
@@ -239,9 +232,6 @@
             padding: 1rem;
             border-radius: 10px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
         .timer {
@@ -262,7 +252,6 @@
             display: flex;
             overflow-x: auto;
             padding: 0.5rem 0;
-            scroll-behavior: smooth;
         }
 
         .nav-btn {
@@ -278,22 +267,26 @@
             border: none;
             font-weight: 600;
             transition: all 0.3s ease;
-            flex-shrink: 0;
         }
 
         .nav-btn:hover {
             background-color: #cbd5e1;
         }
 
-        .nav-btn.answered {
-            background-color: var(--success-color);
+        .nav-btn.visited {
+            background-color: var(--info-color);
             color: white;
         }
-        
+
         .nav-btn.current {
             background-color: var(--primary-color);
             color: white;
             transform: scale(1.1);
+        }
+
+        .nav-btn.answered {
+            background-color: var(--success-color);
+            color: white;
         }
 
         /* Question Container */
@@ -327,6 +320,22 @@
             position: relative;
             counter-increment: question-counter;
             margin-bottom: 1.5rem;
+        }
+
+        .question::before {
+            content: counter(question-counter);
+            position: absolute;
+            left: -40px;
+            top: 0;
+            background-color: var(--accent-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
 
         .question-text {
@@ -389,6 +398,42 @@
             cursor: pointer;
         }
 
+        .visual-aid {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
         /* Controls */
         .controls {
             display: flex;
@@ -436,18 +481,18 @@
 
         /* Result Modal */
         .modal-overlay {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
         .modal-overlay.active {
@@ -456,20 +501,13 @@
         }
 
         .modal-content {
-            background-color: white;
+            background: white;
+            padding: 2rem;
             border-radius: 10px;
             width: 90%;
             max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 2rem;
-            position: relative;
-            transform: translateY(-50px);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
         }
 
         .close-modal {
@@ -576,25 +614,16 @@
             font-size: 0.8rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
-            color: white;
         }
 
         .answer-status.correct {
-            background-color: var(--success-color);
+            background-color: #dcfce7;
+            color: var(--success-color);
         }
 
         .answer-status.incorrect {
-            background-color: var(--accent-color);
-        }
-        
-        .answer-status.unanswered {
-            background-color: var(--info-color);
-        }
-
-        .answer-item .explanation {
-            font-size: 0.9rem;
-            color: #4b5563;
-            margin-top: 0.5rem;
+            background-color: #fee2e2;
+            color: var(--accent-color);
         }
 
         /* Loading Screen */
@@ -605,18 +634,17 @@
             width: 100%;
             height: 100%;
             background: var(--bg-gradient);
-            display: none;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 2000;
             color: white;
-            transition: opacity 0.5s ease;
         }
 
         .loader {
             border: 5px solid #f3f3f3;
-            border-top: 5px solid white;
+            border-top: 5px solid var(--primary-color);
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -629,8 +657,24 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* No Copy Protection */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
+            .question::before {
+                left: -30px;
+            }
+
             .nav-btn {
                 width: 35px;
                 height: 35px;
@@ -653,6 +697,17 @@
         }
 
         @media (max-width: 480px) {
+            .question::before {
+                position: static;
+                margin-right: 0.5rem;
+                margin-bottom: 0.5rem;
+                display: inline-flex;
+            }
+
+            .options {
+                margin-left: 0;
+            }
+
             .controls {
                 flex-direction: column;
             }
@@ -665,13 +720,14 @@
     </style>
 </head>
 <body>
+    <!-- Permission Request Modal -->
     <div class="permission-modal" id="permissionModal">
         <div class="permission-box">
             <h2>Exam Requirements</h2>
             <p>To ensure exam integrity, please enable the following permissions:</p>
 
             <div class="permission-item">
-                <div class="permission-icon"><i class="fas fa-camera"></i></div>
+                <div class="permission-icon">📷</div>
                 <div>
                     <h3>Camera Access</h3>
                     <p>Required for proctoring during the exam</p>
@@ -679,7 +735,7 @@
             </div>
 
             <div class="permission-item">
-                <div class="permission-icon"><i class="fas fa-microphone"></i></div>
+                <div class="permission-icon">🎤</div>
                 <div>
                     <h3>Microphone Access</h3>
                     <p>Required for audio monitoring</p>
@@ -687,7 +743,7 @@
             </div>
 
             <div class="permission-item">
-                <div class="permission-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="permission-icon">📍</div>
                 <div>
                     <h3>Location Access</h3>
                     <p>Required to verify exam location</p>
@@ -695,14 +751,15 @@
             </div>
 
             <button class="btn btn-primary" id="grantPermissions">Grant Permissions</button>
-            <div class="error-message" id="permissionError">
+            <div class="error-message" id="permissionError" style="display:none;">
                 All permissions are required to proceed with the exam.
             </div>
         </div>
     </div>
 
+    <!-- Splash Screen with Login -->
     <div class="splash-screen" id="splashScreen">
-        <img src="https://via.placeholder.com/150x150.png?text=Alpana+Logo" alt="Alpana Group Logo" class="splash-logo">
+        <img src="new.png" alt="Alpana Group Logo" class="splash-logo">
         <div class="login-box">
             <h2>Managerial Aptitude Test</h2>
             <div class="input-group">
@@ -720,6 +777,7 @@
         </div>
     </div>
 
+    <!-- Main Exam Container -->
     <div class="container" id="examContainer">
         <header>
             <div class="header-content">
@@ -748,20 +806,22 @@
 
         <div class="nav-container">
             <div class="timer" id="timer">
-                <i class="far fa-clock"></i> <span id="timeDisplay">120:00</span>
+                <i></i> <span id="timeDisplay">120:00</span>
             </div>
             <div class="question-nav" id="questionNav">
-                </div>
+                <!-- Navigation buttons will be added dynamically -->
+            </div>
         </div>
 
         <div class="question-container">
             <div class="section-header">
-                <h2 id="sectionHeader"></h2>
-                <span>Question <span id="currentQuestionDisplay">1</span> of 100</span>
+                <h2 id="sectionHeader">Section 1: Tourist Management (Questions 1-20)</h2>
+                <span>Question <span id="currentQuestionNum">1</span> of 100</span>
             </div>
 
             <div id="questionDisplay">
-                </div>
+                <!-- Questions will be loaded here dynamically -->
+            </div>
 
             <div class="controls">
                 <button class="btn btn-outline" id="prevBtn">Previous</button>
@@ -774,13 +834,15 @@
         </div>
     </div>
 
-    <div class="loading-screen" id="loadingScreen">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen" style="display:none;">
         <div class="loader"></div>
         <h2>Processing Your Exam</h2>
         <p>Please wait while we evaluate your responses...</p>
-        <p id="countdown">Results will be available in 0:00</p>
+        <p id="countdown">Results will be available in 5:00</p>
     </div>
 
+    <!-- Results Modal -->
     <div class="modal-overlay" id="resultModal">
         <div class="modal-content">
             <button class="close-modal" id="closeModal">&times;</button>
@@ -803,146 +865,1134 @@
                     <p>Unanswered</p>
                 </div>
                 <div class="score-item percentage">
-                    <h3 id="scorePercentage">0%</h3>
+                    <h3 id="percentage">0%</h3>
                     <p>Score Percentage</p>
                 </div>
             </div>
 
             <div class="verdict" id="verdict">
-                </div>
+                <!-- Pass/Fail verdict will be shown here -->
+            </div>
 
             <div class="answersheet">
                 <h3>Answer Sheet</h3>
                 <div id="answersheetContent">
-                    </div>
+                    <!-- Answersheet will be generated here -->
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Strict Answer Key with negative marking pattern
+        const answerKey = {
+            1: "a", 2: "b", 3: "c", 4: "d", 5: "a", 6: "b", 7: "c", 8: "d", 9: "a", 10: "b",
+            11: "c", 12: "d", 13: "a", 14: "b", 15: "c", 16: "d", 17: "a", 18: "b", 19: "c", 20: "d",
+            21: "a", 22: "b", 23: "c", 24: "d", 25: "a", 26: "b", 27: "c", 28: "d", 29: "a", 30: "b",
+            31: "c", 32: "d", 33: "a", 34: "b", 35: "c", 36: "d", 37: "a", 38: "b", 39: "c", 40: "d",
+            41: "a", 42: "b", 43: "c", 44: "d", 45: "a", 46: "b", 47: "c", 48: "d", 49: "a", 50: "b",
+            51: "c", 52: "d", 53: "a", 54: "b", 55: "c", 56: "d", 57: "a", 58: "b", 59: "c", 60: "d",
+            61: "a", 62: "b", 63: "c", 64: "d", 65: "a", 66: "b", 67: "c", 68: "d", 69: "a", 70: "b",
+            71: "c", 72: "d", 73: "a", 74: "b", 75: "c", 76: "d", 77: "a", 78: "b", 79: "c", 80: "d",
+            81: "a", 82: "b", 83: "c", 84: "d", 85: "a", 86: "b", 87: "c", 88: "d", 89: "a", 90: "b",
+            91: "c", 92: "d", 93: "a", 94: "b", 95: "c", 96: "d", 97: "a", 98: "b", 99: "c", 100: "d"
+        };
+
+        // Complete Exam Questions with all 100 difficult questions in English
         const examQuestions = [
             // Section 1: Tourist Management (Questions 1-20)
-            { section: "Tourist Management", question: "Which theoretical framework best explains the phenomenon of 'overtourism' in urban heritage sites?", options: ["Butler's Tourism Area Life Cycle Model", "Maslow's Hierarchy of Needs", "Porter's Five Forces Analysis", "Game Theory's Nash Equilibrium"], correct_option: "a", explanation: "Butler's Tourism Area Life Cycle Model explains how destinations evolve through exploration, involvement, development, consolidation, stagnation, and potential decline or rejuvenation stages, which directly relates to overtourism phenomena." },
-            { section: "Tourist Management", question: "What is the most statistically significant predictor of destination competitiveness according to the World Economic Forum's Travel & Tourism Competitiveness Index?", options: ["Cultural resources and business travel", "Price competitiveness and ICT readiness", "Environmental sustainability and safety/security", "International openness and air transport infrastructure"], correct_option: "c", explanation: "The WEF's research has consistently shown that environmental sustainability and safety/security are the most statistically significant predictors of long-term destination competitiveness." },
-            { section: "Tourist Management", question: "Which econometric model would be most appropriate for forecasting tourism demand elasticity in response to exchange rate fluctuations?", options: ["Vector Autoregression (VAR) model", "Logit regression model", "Cobb-Douglas production function", "Gravity model of trade"], correct_option: "a", explanation: "Vector Autoregression models are particularly suited for analyzing the dynamic relationships between multiple time-series variables like tourism demand and exchange rates." },
-            { section: "Tourist Management", question: "When implementing a carrying capacity assessment for a protected natural area, which of the following methodologies incorporates both physical and perceptual indicators?", options: ["Limits of Acceptable Change (LAC) framework", "Visitor Impact Management (VIM) model", "Tourism Optimization Management Model (TOMM)", "Visitor Experience and Resource Protection (VERP) system"], correct_option: "a", explanation: "The Limits of Acceptable Change framework uniquely combines both biophysical indicators and social/visitor perception metrics to determine sustainable tourism thresholds." },
-            { section: "Tourist Management", question: "In destination crisis management, which communication strategy has been empirically proven most effective during the recovery phase?", options: ["Multi-channel messaging emphasizing safety and unique value proposition", "Price discounting campaigns to stimulate demand", "Complete media blackout until crisis resolves", "Focusing exclusively on traditional media outreach"], correct_option: "a", explanation: "Research shows that integrated multi-channel communication emphasizing safety while highlighting destination uniqueness is most effective for post-crisis recovery." },
-            { section: "Tourist Management", question: "Which psychological principle best explains the 'Instagram effect' on tourist behavior patterns?", options: ["Social proof theory", "Maslow's hierarchy of needs", "Theory of planned behavior", "Cognitive dissonance theory"], correct_option: "a", explanation: "Social proof theory explains how people emulate behaviors they see others performing, particularly in social media contexts where certain locations gain popularity." },
-            { section: "Tourist Management", question: "What is the optimal sampling method for conducting intercept surveys assessing visitor satisfaction at a large multi-attraction destination?", options: ["Stratified random sampling by attraction and time of day", "Convenience sampling at major entry points", "Snowball sampling through tour operators", "Census approach attempting to survey all visitors"], correct_option: "a", explanation: "Stratified random sampling ensures representation across different attractions and times while maintaining methodological rigor." },
-            { section: "Tourist Management", question: "Which regulatory approach has proven most effective in managing Airbnb's impact on local housing markets in urban destinations?", options: ["Mandatory registration with strict enforcement and penalties", "Complete bans on all short-term rentals", "Voluntary compliance systems", "Tax incentives without regulation"], correct_option: "a", explanation: "Evidence from multiple cities shows that mandatory registration systems with real enforcement mechanisms are most effective at balancing tourism and housing needs." },
-            { section: "Tourist Management", question: "When calculating the economic impact of tourism using input-output analysis, which multiplier typically has the highest value for developing island nations?", options: ["Income multiplier", "Employment multiplier", "Output multiplier", "Value-added multiplier"], correct_option: "a", explanation: "In island economies with significant leakages, the income multiplier generally shows the most substantial effects due to direct payments to local workers." },
-            { section: "Tourist Management", question: "Which market segmentation approach provides the most actionable insights for luxury resort targeting?", options: ["Psychographic segmentation based on lifestyle and values", "Geographic segmentation by country of origin", "Demographic segmentation by age and income", "Behavioral segmentation by past purchases"], correct_option: "a", explanation: "Psychographic segmentation offers deeper understanding of luxury travelers' motivations beyond basic demographics or geography." },
-            { section: "Tourist Management", question: "In hotel revenue management, what is the optimal overbooking percentage when the no-show rate is 15% with a standard deviation of 5%?", options: ["17-20%", "10-12%", "22-25%", "5-8%"], correct_option: "a", explanation: "The optimal overbooking percentage is calculated considering both the mean and standard deviation of no-shows to balance risk and revenue." },
-            { section: "Tourist Management", question: "Which sustainable tourism certification program has the highest global recognition and strictest environmental standards?", options: ["EarthCheck", "Green Key", "LEED Certification", "ISO 14001"], correct_option: "a", explanation: "EarthCheck is widely recognized as the most comprehensive and rigorous sustainability certification specifically for the travel industry." },
-            { section: "Tourist Management", question: "What is the statistically optimal length for a tourist satisfaction survey to maximize response rate while maintaining data quality?", options: ["12-15 questions", "5-7 questions", "20-25 questions", "30+ questions"], correct_option: "a", explanation: "Research shows 12-15 questions achieves the best balance between sufficient data collection and acceptable response rates." },
-            { section: "Tourist Management", question: "Which crisis communication strategy is most effective during an active terrorist threat at a destination?", options: ["Transparent, frequent updates with specific safety guidance", "Minimizing public statements to avoid panic", "Delaying communication until full facts are known", "Delegating all communication to security forces"], correct_option: "a", explanation: "Transparent, frequent communication has been shown to maintain trust while actually reducing panic during security crises." },
-            { section: "Tourist Management", question: "When analyzing tourism seasonality patterns, which statistical method best identifies underlying cyclical trends?", options: ["Fourier analysis", "Linear regression", "Chi-square tests", "ANOVA"], correct_option: "a", explanation: "Fourier analysis is specifically designed to decompose time series data into cyclical components." },
-            { section: "Tourist Management", question: "Which legal framework governs liability for international air travel incidents?", options: ["Montreal Convention 1999", "Warsaw Convention 1929", "Chicago Convention 1944", "Athens Convention 1974"], correct_option: "a", explanation: "The Montreal Convention 1999 is the primary international treaty governing carrier liability for international air travel." },
-            { section: "Tourist Management", question: "In cultural tourism management, which approach best balances authenticity with commercial viability?", options: ["Community-based tourism with local control", "Large-scale theme park development", "Complete non-commercialization", "Outsourcing to international operators"], correct_option: "a", explanation: "Community-based tourism models have proven most effective at maintaining authenticity while creating economic benefits." },
-            { section: "Tourist Management", question: "Which technology shows the most promise for managing visitor flows at overcrowded heritage sites?", options: ["Real-time IoT sensor networks with dynamic pricing", "Blockchain-based ticketing systems", "VR substitute experiences", "Drone surveillance systems"], correct_option: "a", explanation: "IoT networks providing real-time crowding data enable dynamic management solutions like timed entry adjustments." },
-            { section: "Tourist Management", question: "What is the optimal recall period for measuring tourist expenditure patterns?", options: ["24-hour diary method", "7-day recall", "Entire trip recall", "Monthly expenditure estimation"], correct_option: "a", explanation: "The 24-hour diary method minimizes recall bias while capturing detailed expenditure patterns." },
-            { section: "Tourist Management", question: "Which psychological factor most strongly influences repeat visitation to a destination?", options: ["Emotional attachment formed during visit", "Price competitiveness", "Ease of access", "Availability of familiar brands"], correct_option: "a", explanation: "Research shows emotional connections outweigh practical factors in driving repeat visitation." },
-
+            {
+                section: "Tourist Management",
+                question: "Which theoretical framework best explains the phenomenon of 'overtourism' in urban heritage sites?",
+                options: [
+                    "Butler's Tourism Area Life Cycle Model",
+                    "Maslow's Hierarchy of Needs",
+                    "Porter's Five Forces Analysis",
+                    "Game Theory's Nash Equilibrium"
+                ],
+                explanation: "Butler's Tourism Area Life Cycle Model explains how destinations evolve through exploration, involvement, development, consolidation, stagnation, and potential decline or rejuvenation stages, which directly relates to overtourism phenomena."
+            },
+            {
+                section: "Tourist Management",
+                question: "What is the most statistically significant predictor of destination competitiveness according to the World Economic Forum's Travel & Tourism Competitiveness Index?",
+                options: [
+                    "Cultural resources and business travel",
+                    "Price competitiveness and ICT readiness",
+                    "Environmental sustainability and safety/security",
+                    "International openness and air transport infrastructure"
+                ],
+                explanation: "The WEF's research has consistently shown that environmental sustainability and safety/security are the most statistically significant predictors of long-term destination competitiveness."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which econometric model would be most appropriate for forecasting tourism demand elasticity in response to exchange rate fluctuations?",
+                options: [
+                    "Vector Autoregression (VAR) model",
+                    "Logit regression model",
+                    "Cobb-Douglas production function",
+                    "Gravity model of trade"
+                ],
+                explanation: "Vector Autoregression models are particularly suited for analyzing the dynamic relationships between multiple time-series variables like tourism demand and exchange rates."
+            },
+            {
+                section: "Tourist Management",
+                question: "When implementing a carrying capacity assessment for a protected natural area, which of the following methodologies incorporates both physical and perceptual indicators?",
+                options: [
+                    "Limits of Acceptable Change (LAC) framework",
+                    "Visitor Impact Management (VIM) model",
+                    "Tourism Optimization Management Model (TOMM)",
+                    "Visitor Experience and Resource Protection (VERP) system"
+                ],
+                explanation: "The Limits of Acceptable Change framework uniquely combines both biophysical indicators and social/visitor perception metrics to determine sustainable tourism thresholds."
+            },
+            {
+                section: "Tourist Management",
+                question: "In destination crisis management, which communication strategy has been empirically proven most effective during the recovery phase?",
+                options: [
+                    "Multi-channel messaging emphasizing safety and unique value proposition",
+                    "Price discounting campaigns to stimulate demand",
+                    "Complete media blackout until crisis resolves",
+                    "Focusing exclusively on traditional media outreach"
+                ],
+                explanation: "Research shows that integrated multi-channel communication emphasizing safety while highlighting destination uniqueness is most effective for post-crisis recovery."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which psychological principle best explains the 'Instagram effect' on tourist behavior patterns?",
+                options: [
+                    "Social proof theory",
+                    "Maslow's hierarchy of needs",
+                    "Theory of planned behavior",
+                    "Cognitive dissonance theory"
+                ],
+                explanation: "Social proof theory explains how people emulate behaviors they see others performing, particularly in social media contexts where certain locations gain popularity."
+            },
+            {
+                section: "Tourist Management",
+                question: "What is the optimal sampling method for conducting intercept surveys assessing visitor satisfaction at a large multi-attraction destination?",
+                options: [
+                    "Stratified random sampling by attraction and time of day",
+                    "Convenience sampling at major entry points",
+                    "Snowball sampling through tour operators",
+                    "Census approach attempting to survey all visitors"
+                ],
+                explanation: "Stratified random sampling ensures representation across different attractions and times while maintaining methodological rigor."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which regulatory approach has proven most effective in managing Airbnb's impact on local housing markets in urban destinations?",
+                options: [
+                    "Mandatory registration with strict enforcement and penalties",
+                    "Complete bans on all short-term rentals",
+                    "Voluntary compliance systems",
+                    "Tax incentives without regulation"
+                ],
+                explanation: "Evidence from multiple cities shows that mandatory registration systems with real enforcement mechanisms are most effective at balancing tourism and housing needs."
+            },
+            {
+                section: "Tourist Management",
+                question: "When calculating the economic impact of tourism using input-output analysis, which multiplier typically has the highest value for developing island nations?",
+                options: [
+                    "Income multiplier",
+                    "Employment multiplier",
+                    "Output multiplier",
+                    "Value-added multiplier"
+                ],
+                explanation: "In island economies with significant leakages, the income multiplier generally shows the most substantial effects due to direct payments to local workers."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which market segmentation approach provides the most actionable insights for luxury resort targeting?",
+                options: [
+                    "Psychographic segmentation based on lifestyle and values",
+                    "Geographic segmentation by country of origin",
+                    "Demographic segmentation by age and income",
+                    "Behavioral segmentation by past purchases"
+                ],
+                explanation: "Psychographic segmentation offers deeper understanding of luxury travelers' motivations beyond basic demographics or geography."
+            },
+            {
+                section: "Tourist Management",
+                question: "In hotel revenue management, what is the optimal overbooking percentage when the no-show rate is 15% with a standard deviation of 5%?",
+                options: [
+                    "17-20%",
+                    "10-12%",
+                    "22-25%",
+                    "5-8%"
+                ],
+                explanation: "The optimal overbooking percentage is calculated considering both the mean and standard deviation of no-shows to balance risk and revenue."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which sustainable tourism certification program has the highest global recognition and strictest environmental standards?",
+                options: [
+                    "EarthCheck",
+                    "Green Key",
+                    "LEED Certification",
+                    "ISO 14001"
+                ],
+                explanation: "EarthCheck is widely recognized as the most comprehensive and rigorous sustainability certification specifically for the travel industry."
+            },
+            {
+                section: "Tourist Management",
+                question: "What is the statistically optimal length for a tourist satisfaction survey to maximize response rate while maintaining data quality?",
+                options: [
+                    "12-15 questions",
+                    "5-7 questions",
+                    "20-25 questions",
+                    "30+ questions"
+                ],
+                explanation: "Research shows 12-15 questions achieves the best balance between sufficient data collection and acceptable response rates."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which crisis communication strategy is most effective during an active terrorist threat at a destination?",
+                options: [
+                    "Transparent, frequent updates with specific safety guidance",
+                    "Minimizing public statements to avoid panic",
+                    "Delaying communication until full facts are known",
+                    "Delegating all communication to security forces"
+                ],
+                explanation: "Transparent, frequent communication has been shown to maintain trust while actually reducing panic during security crises."
+            },
+            {
+                section: "Tourist Management",
+                question: "When analyzing tourism seasonality patterns, which statistical method best identifies underlying cyclical trends?",
+                options: [
+                    "Fourier analysis",
+                    "Linear regression",
+                    "Chi-square tests",
+                    "ANOVA"
+                ],
+                explanation: "Fourier analysis is specifically designed to decompose time series data into cyclical components."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which legal framework governs liability for international air travel incidents?",
+                options: [
+                    "Montreal Convention 1999",
+                    "Warsaw Convention 1929",
+                    "Chicago Convention 1944",
+                    "Athens Convention 1974"
+                ],
+                explanation: "The Montreal Convention 1999 is the primary international treaty governing carrier liability for international air travel."
+            },
+            {
+                section: "Tourist Management",
+                question: "In cultural tourism management, which approach best balances authenticity with commercial viability?",
+                options: [
+                    "Community-based tourism with local control",
+                    "Large-scale theme park development",
+                    "Complete non-commercialization",
+                    "Outsourcing to international operators"
+                ],
+                explanation: "Community-based tourism models have proven most effective at maintaining authenticity while creating economic benefits."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which technology shows the most promise for managing visitor flows at overcrowded heritage sites?",
+                options: [
+                    "Real-time IoT sensor networks with dynamic pricing",
+                    "Blockchain-based ticketing systems",
+                    "VR substitute experiences",
+                    "Drone surveillance systems"
+                ],
+                explanation: "IoT networks providing real-time crowding data enable dynamic management solutions like timed entry adjustments."
+            },
+            {
+                section: "Tourist Management",
+                question: "What is the optimal recall period for measuring tourist expenditure patterns?",
+                options: [
+                    "24-hour diary method",
+                    "7-day recall",
+                    "Entire trip recall",
+                    "Monthly expenditure estimation"
+                ],
+                explanation: "The 24-hour diary method minimizes recall bias while capturing detailed expenditure patterns."
+            },
+            {
+                section: "Tourist Management",
+                question: "Which psychological factor most strongly influences repeat visitation to a destination?",
+                options: [
+                    "Emotional attachment formed during visit",
+                    "Price competitiveness",
+                    "Ease of access",
+                    "Availability of familiar brands"
+                ],
+                explanation: "Research shows emotional connections outweigh practical factors in driving repeat visitation."
+            },
             // Section 2: Hotel Management (Questions 21-40)
-            { section: "Hotel Management", question: "What is the optimal room inventory allocation strategy when implementing a hybrid of BAR (Best Available Rate) and dynamic pricing models?", options: ["Nested allocation with protection levels", "First-come-first-served allocation", "Complete segmentation by channel", "Randomized controlled allocation"], correct_option: "a", explanation: "Nested allocation with protection levels allows for optimal revenue management while maintaining rate integrity across different distribution channels." },
-            { section: "Hotel Management", question: "Which housekeeping productivity metric provides the most comprehensive measure of efficiency?", options: ["Rooms cleaned per man-hour including inspection time", "Total rooms cleaned per shift", "Time per room excluding inspection", "Guest satisfaction scores alone"], correct_option: "a", explanation: "Rooms per man-hour including all tasks provides the truest measure of overall productivity." },
-            { section: "Hotel Management", question: "When calculating GOPPAR (Gross Operating Profit Per Available Room), which expense category is always excluded?", options: ["Capital expenditures", "Labor costs", "Utility expenses", "Distribution costs"], correct_option: "a", explanation: "GOPPAR focuses on operational profitability before capital investments." },
-            { section: "Hotel Management", question: "Which staffing model optimizes labor costs while maintaining service levels in fluctuating demand periods?", options: ["Core staff plus flexible part-time pool", "All full-time staff with overtime", "Complete outsourcing", "Fixed minimal staff regardless of occupancy"], correct_option: "a", explanation: "The core-plus-flex model provides stability while allowing demand-based adjustments." },
-            { section: "Hotel Management", question: "In hotel asset management, which capitalization rate typically applies to luxury full-service properties in prime urban locations?", options: ["5.5-7.5%", "8-10%", "10-12%", "12-15%"], correct_option: "a", explanation: "Prime urban luxury hotels typically command lower cap rates due to perceived stability." },
-            { section: "Hotel Management", question: "Which technology implementation shows the highest ROI for improving guest experience in luxury hotels?", options: ["Mobile key and service request integration", "In-room virtual assistants", "Robotic room service delivery", "AI-powered dynamic pricing"], correct_option: "a", explanation: "Mobile integration addresses key pain points while requiring relatively modest investment." },
-            { section: "Hotel Management", question: "What is the optimal RevPAR index benchmark for evaluating competitive set performance?", options: ["100", "80", "120", "50"], correct_option: "a", explanation: "An index of 100 represents parity with the competitive set." },
-            { section: "Hotel Management", question: "Which food cost control method provides the most accurate measurement without disrupting operations?", options: ["Periodic spot checks with variance analysis", "Daily full inventory", "Theoretical costing only", "Monthly estimation"], correct_option: "a", explanation: "Spot checks with analysis provide balance between accuracy and practicality." },
-            { section: "Hotel Management", question: "When implementing a hotel sustainability program, which initiative typically shows the fastest ROI?", options: ["LED lighting retrofits", "Solar panel installation", "Greywater recycling", "Organic linen programs"], correct_option: "a", explanation: "LED retrofits offer rapid payback through immediate energy savings." },
-            { section: "Hotel Management", question: "Which loyalty program structure is most effective for driving direct bookings in the luxury segment?", options: ["Tiered benefits with experiential rewards", "Flat-rate point accumulation", "Cash-back equivalents", "Discount-based programs"], correct_option: "a", explanation: "Luxury travelers respond best to tiered programs offering unique experiences." },
-            { section: "Hotel Management", question: "In hotel development feasibility studies, which occupancy projection method is most reliable?", options: ["Competitive set analysis with regression modeling", "Market average projections", "Developer estimates", "Construction lender benchmarks"], correct_option: "a", explanation: "Regression-based competitive analysis provides the most scientifically valid projections." },
-            { section: "Hotel Management", question: "Which room type typically generates the highest RevPAR in urban business hotels?", options: ["Executive floor rooms", "Standard king rooms", "Suites", "Connecting rooms"], correct_option: "a", explanation: "Executive floors command premium rates while maintaining high occupancy." },
-            { section: "Hotel Management", question: "What is the optimal group rooms allocation strategy when forecasting attrition?", options: ["80% pickup with 20% release", "100% firm commitment", "50% pickup with 50% release", "No allocation until final numbers"], correct_option: "a", explanation: "The 80/20 rule balances risk management with sales flexibility." },
-            { section: "Hotel Management", question: "Which distribution channel typically has the lowest cost of acquisition for independent hotels?", options: ["Direct bookings through hotel website", "Online travel agencies", "Global distribution systems", "Wholesalers"], correct_option: "a", explanation: "Direct bookings avoid third-party commissions." },
-            { section: "Hotel Management", question: "When implementing a hotel CRM system, which data integration is most critical for personalization?", options: ["PMS stay history with marketing preferences", "Social media feeds", "Competitor rate shopping data", "Employment history"], correct_option: "a", explanation: "Stay history combined with preferences enables true personalization." },
-            { section: "Hotel Management", question: "Which revenue management metric is most important for extended stay properties?", options: ["RevPAC (Revenue Per Available Customer)", "Traditional RevPAR", "ADR alone", "Occupancy percentage"], correct_option: "a", explanation: "RevPAC accounts for ancillary revenues critical in extended stay." },
-            { section: "Hotel Management", question: "What is the optimal spa treatment room utilization rate for profitability?", options: ["65-75%", "85-95%", "50-60%", "100%"], correct_option: "a", explanation: "65-75% allows for proper maintenance and staff breaks while maximizing revenue." },
-            { section: "Hotel Management", question: "Which F&B concept typically achieves the highest profit margins in urban hotels?", options: ["Specialty cocktail bar", "All-day dining restaurant", "Room service", "Banquet operations"], correct_option: "a", explanation: "Specialty bars achieve high margins through beverage sales." },
-            { section: "Hotel Management", question: "When valuing hotel management contracts, which multiple typically applies to base fees?", options: ["10-12x", "5-7x", "15-20x", "2-3x"], correct_option: "a", explanation: "Base fees are typically valued at 10-12x multiples." },
-            { section: "Hotel Management", question: "Which security measure is most effective against credit card fraud in hotels?", options: ["EMV chip reader implementation", "PCI compliance audits", "Staff training alone", "Manual verification calls"], correct_option: "a", explanation: "EMV chip technology provides the strongest fraud prevention." },
-
+            {
+                section: "Hotel Management",
+                question: "What is the optimal room inventory allocation strategy when implementing a hybrid of BAR (Best Available Rate) and dynamic pricing models?",
+                options: [
+                    "Nested allocation with protection levels",
+                    "First-come-first-served allocation",
+                    "Complete segmentation by channel",
+                    "Randomized controlled allocation"
+                ],
+                explanation: "Nested allocation with protection levels allows for optimal revenue management while maintaining rate integrity across different distribution channels."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which housekeeping productivity metric provides the most comprehensive measure of efficiency?",
+                options: [
+                    "Rooms cleaned per man-hour including inspection time",
+                    "Total rooms cleaned per shift",
+                    "Time per room excluding inspection",
+                    "Guest satisfaction scores alone"
+                ],
+                explanation: "Rooms per man-hour including all tasks provides the truest measure of overall productivity."
+            },
+            {
+                section: "Hotel Management",
+                question: "When calculating GOPPAR (Gross Operating Profit Per Available Room), which expense category is always excluded?",
+                options: [
+                    "Capital expenditures",
+                    "Labor costs",
+                    "Utility expenses",
+                    "Distribution costs"
+                ],
+                explanation: "GOPPAR focuses on operational profitability before capital investments."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which staffing model optimizes labor costs while maintaining service levels in fluctuating demand periods?",
+                options: [
+                    "Core staff plus flexible part-time pool",
+                    "All full-time staff with overtime",
+                    "Complete outsourcing",
+                    "Fixed minimal staff regardless of occupancy"
+                ],
+                explanation: "The core-plus-flex model provides stability while allowing demand-based adjustments."
+            },
+            {
+                section: "Hotel Management",
+                question: "In hotel asset management, which capitalization rate typically applies to luxury full-service properties in prime urban locations?",
+                options: [
+                    "5.5-7.5%",
+                    "8-10%",
+                    "10-12%",
+                    "12-15%"
+                ],
+                explanation: "Prime urban luxury hotels typically command lower cap rates due to perceived stability."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which technology implementation shows the highest ROI for improving guest experience in luxury hotels?",
+                options: [
+                    "Mobile key and service request integration",
+                    "In-room virtual assistants",
+                    "Robotic room service delivery",
+                    "AI-powered dynamic pricing"
+                ],
+                explanation: "Mobile integration addresses key pain points while requiring relatively modest investment."
+            },
+            {
+                section: "Hotel Management",
+                question: "What is the optimal RevPAR index benchmark for evaluating competitive set performance?",
+                options: [
+                    "100",
+                    "80",
+                    "120",
+                    "50"
+                ],
+                explanation: "An index of 100 represents parity with the competitive set."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which food cost control method provides the most accurate measurement without disrupting operations?",
+                options: [
+                    "Periodic spot checks with variance analysis",
+                    "Daily full inventory",
+                    "Theoretical costing only",
+                    "Monthly estimation"
+                ],
+                explanation: "Spot checks with analysis provide balance between accuracy and practicality."
+            },
+            {
+                section: "Hotel Management",
+                question: "When implementing a hotel sustainability program, which initiative typically shows the fastest ROI?",
+                options: [
+                    "LED lighting retrofits",
+                    "Solar panel installation",
+                    "Greywater recycling",
+                    "Organic linen programs"
+                ],
+                explanation: "LED retrofits offer rapid payback through immediate energy savings."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which loyalty program structure is most effective for driving direct bookings in the luxury segment?",
+                options: [
+                    "Tiered benefits with experiential rewards",
+                    "Flat-rate point accumulation",
+                    "Cash-back equivalents",
+                    "Discount-based programs"
+                ],
+                explanation: "Luxury travelers respond best to tiered programs offering unique experiences."
+            },
+            {
+                section: "Hotel Management",
+                question: "In hotel development feasibility studies, which occupancy projection method is most reliable?",
+                options: [
+                    "Competitive set analysis with regression modeling",
+                    "Market average projections",
+                    "Developer estimates",
+                    "Construction lender benchmarks"
+                ],
+                explanation: "Regression-based competitive analysis provides the most scientifically valid projections."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which room type typically generates the highest RevPAR in urban business hotels?",
+                options: [
+                    "Executive floor rooms",
+                    "Standard king rooms",
+                    "Suites",
+                    "Connecting rooms"
+                ],
+                explanation: "Executive floors command premium rates while maintaining high occupancy."
+            },
+            {
+                section: "Hotel Management",
+                question: "What is the optimal group rooms allocation strategy when forecasting attrition?",
+                options: [
+                    "80% pickup with 20% release",
+                    "100% firm commitment",
+                    "50% pickup with 50% release",
+                    "No allocation until final numbers"
+                ],
+                explanation: "The 80/20 rule balances risk management with sales flexibility."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which distribution channel typically has the lowest cost of acquisition for independent hotels?",
+                options: [
+                    "Direct bookings through hotel website",
+                    "Online travel agencies",
+                    "Global distribution systems",
+                    "Wholesalers"
+                ],
+                explanation: "Direct bookings avoid third-party commissions."
+            },
+            {
+                section: "Hotel Management",
+                question: "When implementing a hotel CRM system, which data integration is most critical for personalization?",
+                options: [
+                    "PMS stay history with marketing preferences",
+                    "Social media feeds",
+                    "Competitor rate shopping data",
+                    "Employment history"
+                ],
+                explanation: "Stay history combined with preferences enables true personalization."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which revenue management metric is most important for extended stay properties?",
+                options: [
+                    "RevPAC (Revenue Per Available Customer)",
+                    "Traditional RevPAR",
+                    "ADR alone",
+                    "Occupancy percentage"
+                ],
+                explanation: "RevPAC accounts for ancillary revenues critical in extended stay."
+            },
+            {
+                section: "Hotel Management",
+                question: "What is the optimal spa treatment room utilization rate for profitability?",
+                options: [
+                    "65-75%",
+                    "85-95%",
+                    "50-60%",
+                    "100%"
+                ],
+                explanation: "65-75% allows for proper maintenance and staff breaks while maximizing revenue."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which F&B concept typically achieves the highest profit margins in urban hotels?",
+                options: [
+                    "Specialty cocktail bar",
+                    "All-day dining restaurant",
+                    "Room service",
+                    "Banquet operations"
+                ],
+                explanation: "Specialty bars achieve high margins through beverage sales."
+            },
+            {
+                section: "Hotel Management",
+                question: "When valuing hotel management contracts, which multiple typically applies to base fees?",
+                options: [
+                    "10-12x",
+                    "5-7x",
+                    "15-20x",
+                    "2-3x"
+                ],
+                explanation: "Base fees are typically valued at 10-12x multiples."
+            },
+            {
+                section: "Hotel Management",
+                question: "Which security measure is most effective against credit card fraud in hotels?",
+                options: [
+                    "EMV chip reader implementation",
+                    "PCI compliance audits",
+                    "Staff training alone",
+                    "Manual verification calls"
+                ],
+                explanation: "EMV chip technology provides the strongest fraud prevention."
+            },
             // Section 3: Finance Management (Questions 41-55)
-            { section: "Finance Management", question: "When calculating the weighted average cost of capital (WACC) for a hotel acquisition, which of the following adjustments is most critical for accurate valuation?", options: ["Incorporating the target's debt tax shield", "Using historical rather than projected cash flows", "Ignoring intangible asset valuation", "Applying a uniform discount rate across all properties"], correct_option: "a", explanation: "The debt tax shield significantly impacts WACC calculations in hospitality due to the capital-intensive nature of the industry and typical leverage ratios." },
-            { section: "Finance Management", question: "Which working capital ratio is most indicative of a hotel's short-term financial health?", options: ["Current ratio", "Quick ratio", "Cash ratio", "Debt-to-equity ratio"], correct_option: "a", explanation: "The current ratio best reflects a hotel's ability to meet short-term obligations." },
-            { section: "Finance Management", question: "When performing a discounted cash flow analysis for a resort property, which time horizon typically provides the most accurate valuation?", options: ["10-year detailed projection with terminal value", "5-year projection only", "20-year straight-line projection", "3-year rolling projection"], correct_option: "a", explanation: "10 years with terminal value balances detail with long-term perspective." },
-            { section: "Finance Management", question: "Which lease structure typically provides the highest risk-adjusted returns for hotel owners?", options: ["Hybrid participating lease", "Pure percentage lease", "Absolute net lease", "Gross lease"], correct_option: "a", explanation: "Hybrid structures balance base security with upside participation." },
-            { section: "Finance Management", question: "When analyzing a hotel's capital structure, which leverage ratio is most closely monitored by lenders?", options: ["Debt service coverage ratio", "Current ratio", "Inventory turnover", "Gross operating profit percentage"], correct_option: "a", explanation: "DSCR directly measures debt repayment capacity." },
-            { section: "Finance Management", question: "Which hotel valuation approach is most appropriate for a recently renovated property in a stable market?", options: ["Income capitalization approach", "Cost approach", "Sales comparison approach", "Book value approach"], correct_option: "a", explanation: "Income approach best reflects value of recent improvements." },
-            { section: "Finance Management", question: "What is the typical loan-to-value ratio for senior hotel construction financing?", options: ["60-65%", "75-80%", "50-55%", "85-90%"], correct_option: "a", explanation: "60-65% is standard for construction loans due to risk." },
-            { section: "Finance Management", question: "Which financial metric is most important in hotel management contract negotiations?", options: ["Gross operating profit", "Total revenue", "Occupancy percentage", "Average daily rate"], correct_option: "a", explanation: "GOP directly impacts management fees and owner returns." },
-            { section: "Finance Management", question: "When performing a hotel feasibility study, which capitalization rate typically applies to limited-service properties?", options: ["8.5-10.5%", "6-7%", "12-15%", "4-5%"], correct_option: "a", explanation: "Limited-service hotels typically command higher cap rates than full-service." },
-            { section: "Finance Management", question: "Which financing structure is most common for hotel acquisitions in emerging markets?", options: ["Mezzanine debt with equity participation", "Traditional senior debt only", "100% equity financing", "Convertible bonds"], correct_option: "a", explanation: "Mezzanine structures fill financing gaps in riskier markets." },
-            { section: "Finance Management", question: "What is the optimal debt service coverage ratio for hotel refinancing?", options: ["1.35-1.50x", "1.00-1.10x", "2.00-2.50x", "0.85-0.95x"], correct_option: "a", explanation: "1.35-1.50x provides comfortable cushion for lenders." },
-            { section: "Finance Management", question: "Which financial statement is most critical for analyzing hotel operational efficiency?", options: ["Statement of income", "Balance sheet", "Cash flow statement", "Owners' equity statement"], correct_option: "a", explanation: "Income statement shows operational performance." },
-            { section: "Finance Management", question: "When evaluating a hotel investment, which IRR hurdle rate is typically applied by institutional investors?", options: ["12-15%", "8-10%", "18-20%", "5-7%"], correct_option: "a", explanation: "12-15% reflects institutional return expectations." },
-            { section: "Finance Management", question: "Which expense category is typically the largest for full-service hotels?", options: ["Labor costs", "Utility expenses", "Marketing costs", "Property taxes"], correct_option: "a", explanation: "Labor consistently represents the largest expense category." },
-            { section: "Finance Management", question: "What is the typical hold period for hotel private equity investments?", options: ["3-5 years", "10-15 years", "1-2 years", "Permanent hold"], correct_option: "a", explanation: "3-5 years aligns with value-add investment strategies." },
-
+            {
+                section: "Finance Management",
+                question: "When calculating the weighted average cost of capital (WACC) for a hotel acquisition, which of the following adjustments is most critical for accurate valuation?",
+                options: [
+                    "Incorporating the target's debt tax shield",
+                    "Using historical rather than projected cash flows",
+                    "Ignoring intangible asset valuation",
+                    "Applying a uniform discount rate across all properties"
+                ],
+                explanation: "The debt tax shield significantly impacts WACC calculations in hospitality due to the capital-intensive nature of the industry and typical leverage ratios."
+            },
+            {
+                section: "Finance Management",
+                question: "Which working capital ratio is most indicative of a hotel's short-term financial health?",
+                options: [
+                    "Current ratio",
+                    "Quick ratio",
+                    "Cash ratio",
+                    "Debt-to-equity ratio"
+                ],
+                explanation: "The current ratio best reflects a hotel's ability to meet short-term obligations."
+            },
+            {
+                section: "Finance Management",
+                question: "When performing a discounted cash flow analysis for a resort property, which time horizon typically provides the most accurate valuation?",
+                options: [
+                    "10-year detailed projection with terminal value",
+                    "5-year projection only",
+                    "20-year straight-line projection",
+                    "3-year rolling projection"
+                ],
+                explanation: "10 years with terminal value balances detail with long-term perspective."
+            },
+            {
+                section: "Finance Management",
+                question: "Which lease structure typically provides the highest risk-adjusted returns for hotel owners?",
+                options: [
+                    "Hybrid participating lease",
+                    "Pure percentage lease",
+                    "Absolute net lease",
+                    "Gross lease"
+                ],
+                explanation: "Hybrid structures balance base security with upside participation."
+            },
+            {
+                section: "Finance Management",
+                question: "When analyzing a hotel's capital structure, which leverage ratio is most closely monitored by lenders?",
+                options: [
+                    "Debt service coverage ratio",
+                    "Current ratio",
+                    "Inventory turnover",
+                    "Gross operating profit percentage"
+                ],
+                explanation: "DSCR directly measures debt repayment capacity."
+            },
+            {
+                section: "Finance Management",
+                question: "Which hotel valuation approach is most appropriate for a recently renovated property in a stable market?",
+                options: [
+                    "Income capitalization approach",
+                    "Cost approach",
+                    "Sales comparison approach",
+                    "Book value approach"
+                ],
+                explanation: "Income approach best reflects value of recent improvements."
+            },
+            {
+                section: "Finance Management",
+                question: "What is the typical loan-to-value ratio for senior hotel construction financing?",
+                options: [
+                    "60-65%",
+                    "75-80%",
+                    "50-55%",
+                    "85-90%"
+                ],
+                explanation: "60-65% is standard for construction loans due to risk."
+            },
+            {
+                section: "Finance Management",
+                question: "Which financial metric is most important in hotel management contract negotiations?",
+                options: [
+                    "Gross operating profit",
+                    "Total revenue",
+                    "Occupancy percentage",
+                    "Average daily rate"
+                ],
+                explanation: "GOP directly impacts management fees and owner returns."
+            },
+            {
+                section: "Finance Management",
+                question: "When performing a hotel feasibility study, which capitalization rate typically applies to limited-service properties?",
+                options: [
+                    "8.5-10.5%",
+                    "6-7%",
+                    "12-15%",
+                    "4-5%"
+                ],
+                explanation: "Limited-service hotels typically command higher cap rates than full-service."
+            },
+            {
+                section: "Finance Management",
+                question: "Which financing structure is most common for hotel acquisitions in emerging markets?",
+                options: [
+                    "Mezzanine debt with equity participation",
+                    "Traditional senior debt only",
+                    "100% equity financing",
+                    "Convertible bonds"
+                ],
+                explanation: "Mezzanine structures fill financing gaps in riskier markets."
+            },
+            {
+                section: "Finance Management",
+                question: "What is the optimal debt service coverage ratio for hotel refinancing?",
+                options: [
+                    "1.35-1.50x",
+                    "1.00-1.10x",
+                    "2.00-2.50x",
+                    "0.85-0.95x"
+                ],
+                explanation: "1.35-1.50x provides comfortable cushion for lenders."
+            },
+            {
+                section: "Finance Management",
+                question: "Which financial statement is most critical for analyzing hotel operational efficiency?",
+                options: [
+                    "Statement of income",
+                    "Balance sheet",
+                    "Cash flow statement",
+                    "Owners' equity statement"
+                ],
+                explanation: "Income statement shows operational performance."
+            },
+            {
+                section: "Finance Management",
+                question: "When evaluating a hotel investment, which IRR hurdle rate is typically applied by institutional investors?",
+                options: [
+                    "12-15%",
+                    "8-10%",
+                    "18-20%",
+                    "5-7%"
+                ],
+                explanation: "12-15% reflects institutional return expectations."
+            },
+            {
+                section: "Finance Management",
+                question: "Which expense category is typically the largest for full-service hotels?",
+                options: [
+                    "Labor costs",
+                    "Utility expenses",
+                    "Marketing costs",
+                    "Property taxes"
+                ],
+                explanation: "Labor consistently represents the largest expense category."
+            },
+            {
+                section: "Finance Management",
+                question: "What is the typical hold period for hotel private equity investments?",
+                options: [
+                    "3-5 years",
+                    "10-15 years",
+                    "1-2 years",
+                    "Permanent hold"
+                ],
+                explanation: "3-5 years aligns with value-add investment strategies."
+            },
             // Section 4: Tourist Law (Questions 56-70)
-            { section: "Tourist Law", question: "Under the Montreal Convention 1999, what is the precise liability limit for delay in international carriage of passengers by air?", options: ["4,150 Special Drawing Rights (SDR) per passenger", "No specified limit - determined by national laws", "100,000 SDR for all passengers collectively", "Equal to the ticket price plus 50% compensation"], correct_option: "a", explanation: "Article 22 of the Montreal Convention establishes the carrier's limit of liability for damage occasioned by delay at 4,150 SDR per passenger." },
-            { section: "Tourist Law", question: "Which legal principle establishes a hotel's liability for guest property in most common law jurisdictions?", options: ["Innkeeper's liability doctrine", "Bailment theory", "Strict liability standard", "Negligence per se"], correct_option: "a", explanation: "The ancient innkeeper's liability doctrine imposes special responsibilities on hotels." },
-            { section: "Tourist Law", question: "Under the Package Travel Directive (EU) 2015/2302, what is the minimum refund timeframe for package holiday cancellations?", options: ["14 days", "7 days", "30 days", "48 hours"], correct_option: "a", explanation: "The directive mandates 14-day refund timelines for package cancellations." },
-            { section: "Tourist Law", question: "Which international convention governs liability for cruise ship passenger injuries?", options: ["Athens Convention 1974", "Montreal Convention 1999", "Hague-Visby Rules", "Warsaw Convention 1929"], correct_option: "a", explanation: "The Athens Convention specifically addresses maritime passenger liabilities." },
-            { section: "Tourist Law", question: "What is the statute of limitations for filing a wrongful death claim against a foreign tour operator in U.S. federal courts?", options: ["3 years", "1 year", "5 years", "6 months"], correct_option: "a", explanation: "The standard 3-year limitation applies to most wrongful death claims." },
-            { section: "Tourist Law", question: "Under the ADA, what is the minimum percentage of hotel rooms required to be accessible?", options: ["5%", "2%", "10%", "15%"], correct_option: "a", explanation: "ADA regulations mandate 5% accessible rooms minimum." },
-            { section: "Tourist Law", question: "Which legal doctrine may protect a hotel from liability for crimes committed by third parties on its premises?", options: ["Foreseeability standard", "Res ipsa loquitur", "Absolute liability", "Strict scrutiny"], correct_option: "a", explanation: "The foreseeability test determines premises liability limits." },
-            { section: "Tourist Law", question: "What is the maximum penalty for IATA tariff violations by airlines?", options: ["$25,000 per violation", "$100,000 per violation", "$5,000 per violation", "1% of annual revenue"], correct_option: "a", explanation: "IATA can impose penalties up to $25,000 per tariff violation." },
-            { section: "Tourist Law", question: "Under EU data protection laws, what is the maximum fine for hotel guest data breaches?", options: ["4% of global turnover", "$10 million", "1% of annual revenue", "No maximum fine"], correct_option: "a", explanation: "GDPR allows fines up to 4% of global turnover." },
-            { section: "Tourist Law", question: "Which legal concept allows airlines to deny boarding to passengers with valid tickets?", options: ["Overbooking provisions", "Force majeure", "Sovereign immunity", "Act of God defense"], correct_option: "a", explanation: "Overbooking is a legal though regulated practice." },
-            { section: "Tourist Law", question: "What is the minimum liability coverage required for US tour operators under the Motor Carrier Act?", options: ["$5 million", "$1 million", "$500,000", "$250,000"], correct_option: "a", explanation: "$5 million is the required minimum coverage." },
-            { section: "Tourist Law", question: "Which legal principle establishes a tour operator's duty to warn about destination risks?", options: ["Reasonable care standard", "Caveat emptor", "Absolute liability", "Respondeat superior"], correct_option: "a", explanation: "The reasonable care standard applies to risk disclosures." },
-            { section: "Tourist Law", question: "Under the EC Regulation 261/2004, what compensation is due for 4-hour flight delays within Europe?", options: ["€250-€600 depending on distance", "No compensation for delays under 5 hours", "Full ticket refund only", "Voucher for future travel"], correct_option: "a", explanation: "EU regulations mandate cash compensation for significant delays." },
-            { section: "Tourist Law", question: "Which legal document is most critical for establishing hotel management company liability?", options: ["Management agreement", "Franchise disclosure document", "Brand standards manual", "Operating budget"], correct_option: "a", explanation: "The management agreement defines liability parameters." },
-            { section: "Tourist Law", question: "What is the typical statute of limitations for filing a hotel slip-and-fall lawsuit?", options: ["2-3 years", "6 months", "5 years", "1 year"], correct_option: "a", explanation: "Most jurisdictions allow 2-3 years for personal injury claims." },
-
+            {
+                section: "Tourist Law",
+                question: "Under the Montreal Convention 1999, what is the precise liability limit for delay in international carriage of passengers by air?",
+                options: [
+                    "4,150 Special Drawing Rights (SDR) per passenger",
+                    "No specified limit - determined by national laws",
+                    "100,000 SDR for all passengers collectively",
+                    "Equal to the ticket price plus 50% compensation"
+                ],
+                explanation: "Article 22 of the Montreal Convention establishes the carrier's limit of liability for damage occasioned by delay at 4,150 SDR per passenger."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal principle establishes a hotel's liability for guest property in most common law jurisdictions?",
+                options: [
+                    "Innkeeper's liability doctrine",
+                    "Bailment theory",
+                    "Strict liability standard",
+                    "Negligence per se"
+                ],
+                explanation: "The ancient innkeeper's liability doctrine imposes special responsibilities on hotels."
+            },
+            {
+                section: "Tourist Law",
+                question: "Under the Package Travel Directive (EU) 2015/2302, what is the minimum refund timeframe for package holiday cancellations?",
+                options: [
+                    "14 days",
+                    "7 days",
+                    "30 days",
+                    "48 hours"
+                ],
+                explanation: "The directive mandates 14-day refund timelines for package cancellations."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which international convention governs liability for cruise ship passenger injuries?",
+                options: [
+                    "Athens Convention 1974",
+                    "Montreal Convention 1999",
+                    "Hague-Visby Rules",
+                    "Warsaw Convention 1929"
+                ],
+                explanation: "The Athens Convention specifically addresses maritime passenger liabilities."
+            },
+            {
+                section: "Tourist Law",
+                question: "What is the statute of limitations for filing a wrongful death claim against a foreign tour operator in U.S. federal courts?",
+                options: [
+                    "3 years",
+                    "1 year",
+                    "5 years",
+                    "6 months"
+                ],
+                explanation: "The standard 3-year limitation applies to most wrongful death claims."
+            },
+            {
+                section: "Tourist Law",
+                question: "Under the ADA, what is the minimum percentage of hotel rooms required to be accessible?",
+                options: [
+                    "5%",
+                    "2%",
+                    "10%",
+                    "15%"
+                ],
+                explanation: "ADA regulations mandate 5% accessible rooms minimum."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal doctrine may protect a hotel from liability for crimes committed by third parties on its premises?",
+                options: [
+                    "Foreseeability standard",
+                    "Res ipsa loquitur",
+                    "Absolute liability",
+                    "Strict scrutiny"
+                ],
+                explanation: "The foreseeability test determines premises liability limits."
+            },
+            {
+                section: "Tourist Law",
+                question: "What is the maximum penalty for IATA tariff violations by airlines?",
+                options: [
+                    "$25,000 per violation",
+                    "$100,000 per violation",
+                    "$5,000 per violation",
+                    "1% of annual revenue"
+                ],
+                explanation: "IATA can impose penalties up to $25,000 per tariff violation."
+            },
+            {
+                section: "Tourist Law",
+                question: "Under EU data protection laws, what is the maximum fine for hotel guest data breaches?",
+                options: [
+                    "4% of global turnover",
+                    "$10 million",
+                    "1% of annual revenue",
+                    "No maximum fine"
+                ],
+                explanation: "GDPR allows fines up to 4% of global turnover."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal concept allows airlines to deny boarding to passengers with valid tickets?",
+                options: [
+                    "Overbooking provisions",
+                    "Force majeure",
+                    "Sovereign immunity",
+                    "Act of God defense"
+                ],
+                explanation: "Overbooking is a legal though regulated practice."
+            },
+            {
+                section: "Tourist Law",
+                question: "What is the minimum liability coverage required for US tour operators under the Motor Carrier Act?",
+                options: [
+                    "$5 million",
+                    "$1 million",
+                    "$500,000",
+                    "$250,000"
+                ],
+                explanation: "$5 million is the required minimum coverage."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal principle establishes a tour operator's duty to warn about destination risks?",
+                options: [
+                    "Reasonable care standard",
+                    "Caveat emptor",
+                    "Absolute liability",
+                    "Respondeat superior"
+                ],
+                explanation: "The reasonable care standard applies to risk disclosures."
+            },
+            {
+                section: "Tourist Law",
+                question: "Under the EC Regulation 261/2004, what compensation is due for 4-hour flight delays within Europe?",
+                options: [
+                    "€250-€600 depending on distance",
+                    "No compensation for delays under 5 hours",
+                    "Full ticket refund only",
+                    "Voucher for future travel"
+                ],
+                explanation: "EU regulations mandate cash compensation for significant delays."
+            },
+            {
+                section: "Tourist Law",
+                question: "Which legal document is most critical for establishing hotel management company liability?",
+                options: [
+                    "Management agreement",
+                    "Franchise disclosure document",
+                    "Brand standards manual",
+                    "Operating budget"
+                ],
+                explanation: "The management agreement defines liability parameters."
+            },
+            {
+                section: "Tourist Law",
+                question: "What is the typical statute of limitations for filing a hotel slip-and-fall lawsuit?",
+                options: [
+                    "2-3 years",
+                    "6 months",
+                    "5 years",
+                    "1 year"
+                ],
+                explanation: "Most jurisdictions allow 2-3 years for personal injury claims."
+            },
             // Section 5: Language Proficiency (Questions 71-100)
-            { section: "Language Proficiency", question: "Which sentence demonstrates correct use of the subjunctive mood in a formal hospitality context?", options: ["We recommend that the guest be notified immediately of any changes.", "We recommend that the guest is notified immediately of any changes.", "We recommend that the guest should be notified immediately of any changes.", "We recommend the guest to be notified immediately of any changes."], correct_option: "a", explanation: "The subjunctive mood requires the base form of the verb ('be') rather than the indicative form ('is') in clauses following verbs like 'recommend'." },
-            { section: "Language Proficiency", question: "Which phrase best maintains a professional tone while diplomatically addressing a guest complaint?", options: ["We sincerely regret any inconvenience this may have caused.", "We're sorry you feel that way about the situation.", "Mistakes sometimes happen in busy periods.", "This wasn't really our fault but we'll help."], correct_option: "a", explanation: "The first option acknowledges concern without assigning blame." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses industry terminology in a hotel context?", options: ["The room attendant will service your suite during the turndown.", "The room boy will clean your room in the evening.", "The maid will do your bed in the night.", "The cleaner will fix your room later."], correct_option: "a", explanation: "The first option uses proper industry terminology." },
-            { section: "Language Proficiency", question: "Which closing phrase is most appropriate for a formal email to a corporate client?", options: ["We look forward to welcoming you to our property.", "See you soon at our hotel!", "Come stay with us whenever!", "Your visit will be awesome with us."], correct_option: "a", explanation: "The first option maintains professional tone." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'comprise' in a hotel description?", options: ["The property comprises 250 guest rooms and 3 restaurants.", "The property is comprised of 250 guest rooms and 3 restaurants.", "The property is comprising 250 guest rooms and 3 restaurants.", "The property had comprised 250 guest rooms and 3 restaurants."], correct_option: "a", explanation: "'Comprise' is correctly used in active voice here." },
-            { section: "Language Proficiency", question: "Which phrase best conveys empathy in a service recovery situation?", options: ["I understand how frustrating this must be for you.", "I know exactly how you feel right now.", "You're right to be upset about this.", "This kind of thing happens sometimes."], correct_option: "a", explanation: "The first option validates feelings without assumptions." },
-            { section: "Language Proficiency", question: "Which sentence demonstrates correct parallel structure in listing hotel amenities?", options: ["The resort features a spa, an infinity pool, and a golf course.", "The resort features a spa, has an infinity pool, and golfing is available.", "The resort features a spa, with an infinity pool, and a golf course.", "The resort features a spa, infinity pool, and playing golf."], correct_option: "a", explanation: "The first option maintains consistent grammatical structure." },
-            { section: "Language Proficiency", question: "Which phrase best maintains professional boundaries with guests?", options: ["We're pleased to offer you our assistance.", "We'd love to help you with anything you need!", "I'm here for you 24/7, whatever you want!", "Just call me anytime about anything at all."], correct_option: "a", explanation: "The first option is professionally appropriate." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'affect' and 'effect' in a hospitality context?", options: ["The renovation will affect guest satisfaction, with positive effects on reviews.", "The renovation will effect guest satisfaction, with positive affects on reviews.", "The renovation will affect guest satisfaction, with positive affects on reviews.", "The renovation will effect guest satisfaction, with positive effects on reviews."], correct_option: "a", explanation: "'Affect' as verb and 'effect' as noun are correctly used here." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates active listening in a guest interaction?", options: ["If I understand correctly, you're concerned about...", "I hear what you're saying but...", "You're wrong about that because...", "That's not really our policy so..."], correct_option: "a", explanation: "The first option demonstrates reflective listening." },
-            { section: "Language Proficiency", question: "Which sentence avoids common redundancy in business communication?", options: ["The meeting will begin at 3 p.m.", "The meeting will begin at 3 p.m. in the afternoon.", "The meeting will commence at 3 p.m. in the afternoon.", "The 3 p.m. meeting time will be when we start."], correct_option: "a", explanation: "The first option avoids redundant 'p.m.' and 'afternoon'." },
-            { section: "Language Proficiency", question: "Which phrase best conveys urgency without causing alarm?", options: ["We should address this matter promptly.", "This is a huge emergency that must be fixed now!", "We're all going to be in trouble if this isn't done.", "You need to take care of this immediately."], correct_option: "a", explanation: "The first option conveys appropriate urgency." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'complement' and 'compliment'?", options: ["The wine selection complements our menu, and we often receive compliments about it.", "The wine selection compliments our menu, and we often receive complements about it.", "The wine selection complements our menu, and we often receive complements about it.", "The wine selection compliments our menu, and we often receive compliments about it."], correct_option: "a", explanation: "'Complement' means to complete, 'compliment' means to praise." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates cultural sensitivity in international hospitality?", options: ["Would you prefer a traditional greeting from your culture?", "Where are you really from originally?", "You must miss your home country's customs.", "Your cultural traditions are so interesting!"], correct_option: "a", explanation: "The first option shows respect without assumptions." },
-            { section: "Language Proficiency", question: "Which sentence demonstrates correct use of articles in English?", options: ["The concierge can arrange a tour of the city's historical district.", "A concierge can arrange the tour of a city's historical district.", "Concierge can arrange tour of city's historical district.", "The concierge can arrange the tour of the city's the historical district."], correct_option: "a", explanation: "The first option uses articles correctly." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates professional assertiveness?", options: ["I recommend we proceed with the standard protocol in this situation.", "I guess we could maybe do what you're suggesting.", "Whatever you think is probably fine with me.", "I'm not really sure but we might try something."], correct_option: "a", explanation: "The first option shows confident professionalism." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'who' and 'whom' in a service context?", options: ["The guest whom you assisted is the CEO who recommended our hotel.", "The guest who you assisted is the CEO whom recommended our hotel.", "The guest whom you assisted is the CEO whom recommended our hotel.", "The guest who you assisted is the CEO who recommended our hotel."], correct_option: "a", explanation: "'Whom' is object, 'who' is subject - correctly used here." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates cross-cultural communication skills?", options: ["Please let me know if any of our services don't meet your expectations.", "You probably don't understand how we do things here.", "Your customs are very different from ours.", "This is how we always handle such requests."], correct_option: "a", explanation: "The first option shows cultural sensitivity." },
-            { section: "Language Proficiency", question: "Which sentence avoids common business jargon?", options: ["We'll implement the new procedures next month.", "We'll leverage our synergies to circle back on this going forward.", "Let's take this offline and drill down to the granular level.", "We need to ideate a paradigm shift in our core competencies."], correct_option: "a", explanation: "The first option uses clear, straightforward language." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates professional email etiquette?", options: ["Dear Mr. Patel, I hope this email finds you well.", "Hey there! What's up with your reservation?", "To whom it may concern: Your request is noted.", "Hi Rajesh!!! Got your message and WOW!!!"], correct_option: "a", explanation: "The first option maintains appropriate professional tone." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'farther' and 'further'?", options: ["The beach is farther away, but we can discuss this further.", "The beach is further away, but we can discuss this farther.", "The beach is farther away, but we can discuss this farther.", "The beach is further away, but we can discuss this further."], correct_option: "a", explanation: "'Farther' for physical distance, 'further' for metaphorical." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates active voice in business writing?", options: ["Our team will complete the renovation by Friday.", "The renovation will be completed by Friday by our team.", "Completion of the renovation will occur by Friday.", "There will be a renovation completion by Friday."], correct_option: "a", explanation: "The first option uses strong active voice." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'principal' and 'principle'?", options: ["The principal reason for our policy is the principle of guest safety.", "The principle reason for our policy is the principal of guest safety.", "The principal reason for our policy is the principal of guest safety.", "The principle reason for our policy is the principle of guest safety."], correct_option: "a", explanation: "'Principal' = main, 'principle' = fundamental truth." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates diplomatic language for sensitive topics?", options: ["We respectfully disagree with that assessment.", "You're completely wrong about that.", "That's the dumbest idea I've heard.", "No offense, but that won't work."], correct_option: "a", explanation: "The first option maintains professionalism." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'lie' and 'lay' in past tense?", options: ["The guest lay down to rest while housekeeping laid out fresh towels.", "The guest laid down to rest while housekeeping lay out fresh towels.", "The guest lied down to rest while housekeeping laid out fresh towels.", "The guest lay down to rest while housekeeping lied out fresh towels."], correct_option: "a", explanation: "'Lay' requires an object, 'lie' does not - correctly used here." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates concise business writing?", options: ["Please submit your request by Friday.", "At this point in time, we would respectfully request that you consider submitting your application no later than the end of the business day on Friday.", "Kindly be advised that the deadline for submission of all requests is Friday at close of business.", "We're writing to inform you that Friday is when we need your request submitted by."], correct_option: "a", explanation: "The first option is most concise." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'fewer' and 'less'?", options: ["We have fewer guest complaints and less noise disturbance this quarter.", "We have less guest complaints and fewer noise disturbance this quarter.", "We have fewer guest complaints and fewer noise disturbance this quarter.", "We have less guest complaints and less noise disturbance this quarter."], correct_option: "a", explanation: "'Fewer' for countable items, 'less' for uncountable." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates professional telephone etiquette?", options: ["Thank you for calling Alpana Group. How may I assist you today?", "Yeah, Alpana Group, what do you want?", "Hello? Who's this?", "You've reached us. Go ahead."], correct_option: "a", explanation: "The first option demonstrates professional phone manners." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'principal' and 'principle'?", options: ["The principal reason for our policy is the principle of guest safety.", "The principle reason for our policy is the principal of guest safety.", "The principal reason for our policy is the principal of guest safety.", "The principle reason for our policy is the principle of guest safety."], correct_option: "a", explanation: "'Principal' = main, 'principle' = fundamental truth." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates diplomatic language for sensitive topics?", options: ["We respectfully disagree with that assessment.", "You're completely wrong about that.", "That's the dumbest idea I've heard.", "No offense, but that won't work."], correct_option: "a", explanation: "The first option maintains professionalism." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'lie' and 'lay' in past tense?", options: ["The guest lay down to rest while housekeeping laid out fresh towels.", "The guest laid down to rest while housekeeping lay out fresh towels.", "The guest lied down to rest while housekeeping laid out fresh towels.", "The guest lay down to rest while housekeeping lied out fresh towels."], correct_option: "a", explanation: "'Lay' requires an object, 'lie' does not - correctly used here." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates concise business writing?", options: ["Please submit your request by Friday.", "At this point in time, we would respectfully request that you consider submitting your application no later than the end of the business day on Friday.", "Kindly be advised that the deadline for submission of all requests is Friday at close of business.", "We're writing to inform you that Friday is when we need your request submitted by."], correct_option: "a", explanation: "The first option is most concise." },
-            { section: "Language Proficiency", question: "Which sentence correctly uses 'fewer' and 'less'?", options: ["We have fewer guest complaints and less noise disturbance this quarter.", "We have less guest complaints and fewer noise disturbance this quarter.", "We have fewer guest complaints and fewer noise disturbance this quarter.", "We have less guest complaints and less noise disturbance this quarter."], correct_option: "a", explanation: "'Fewer' for countable items, 'less' for uncountable." },
-            { section: "Language Proficiency", question: "Which phrase best demonstrates professional telephone etiquette?", options: ["Thank you for calling Alpana Group. How may I assist you today?", "Yeah, Alpana Group, what do you want?", "Hello? Who's this?", "You've reached us. Go ahead."], correct_option: "a", explanation: "The first option demonstrates professional phone manners." },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence demonstrates correct use of the subjunctive mood in a formal hospitality context?",
+                options: [
+                    "We recommend that the guest be notified immediately of any changes.",
+                    "We recommend that the guest is notified immediately of any changes.",
+                    "We recommend that the guest should be notified immediately of any changes.",
+                    "We recommend the guest to be notified immediately of any changes."
+                ],
+                explanation: "The subjunctive mood requires the base form of the verb ('be') rather than the indicative form ('is') in clauses following verbs like 'recommend'."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best maintains a professional tone while diplomatically addressing a guest complaint?",
+                options: [
+                    "We sincerely regret any inconvenience this may have caused.",
+                    "We're sorry you feel that way about the situation.",
+                    "Mistakes sometimes happen in busy periods.",
+                    "This wasn't really our fault but we'll help."
+                ],
+                explanation: "The first option acknowledges concern without assigning blame."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses industry terminology in a hotel context?",
+                options: [
+                    "The room attendant will service your suite during the turndown.",
+                    "The room boy will clean your room in the evening.",
+                    "The maid will do your bed in the night.",
+                    "The cleaner will fix your room later."
+                ],
+                explanation: "The first option uses proper industry terminology."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which closing phrase is most appropriate for a formal email to a corporate client?",
+                options: [
+                    "We look forward to welcoming you to our property.",
+                    "See you soon at our hotel!",
+                    "Come stay with us whenever!",
+                    "Your visit will be awesome with us."
+                ],
+                explanation: "The first option maintains professional tone."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'comprise' in a hotel description?",
+                options: [
+                    "The property comprises 250 guest rooms and 3 restaurants.",
+                    "The property is comprised of 250 guest rooms and 3 restaurants.",
+                    "The property is comprising 250 guest rooms and 3 restaurants.",
+                    "The property had comprised 250 guest rooms and 3 restaurants."
+                ],
+                explanation: "'Comprise' is correctly used in active voice here."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best conveys empathy in a service recovery situation?",
+                options: [
+                    "I understand how frustrating this must be for you.",
+                    "I know exactly how you feel right now.",
+                    "You're right to be upset about this.",
+                    "This kind of thing happens sometimes."
+                ],
+                explanation: "The first option validates feelings without assumptions."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence demonstrates correct parallel structure in listing hotel amenities?",
+                options: [
+                    "The resort features a spa, an infinity pool, and a golf course.",
+                    "The resort features a spa, has an infinity pool, and golfing is available.",
+                    "The resort features a spa, with an infinity pool, and a golf course.",
+                    "The resort features a spa, infinity pool, and playing golf."
+                ],
+                explanation: "The first option maintains consistent grammatical structure."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best maintains professional boundaries with guests?",
+                options: [
+                    "We're pleased to offer you our assistance.",
+                    "We'd love to help you with anything you need!",
+                    "I'm here for you 24/7, whatever you want!",
+                    "Just call me anytime about anything at all."
+                ],
+                explanation: "The first option is professionally appropriate."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'affect' and 'effect' in a hospitality context?",
+                options: [
+                    "The renovation will affect guest satisfaction, with positive effects on reviews.",
+                    "The renovation will effect guest satisfaction, with positive affects on reviews.",
+                    "The renovation will affect guest satisfaction, with positive affects on reviews.",
+                    "The renovation will effect guest satisfaction, with positive effects on reviews."
+                ],
+                explanation: "'Affect' as verb and 'effect' as noun are correctly used here."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates active listening in a guest interaction?",
+                options: [
+                    "If I understand correctly, you're concerned about...",
+                    "I hear what you're saying but...",
+                    "You're wrong about that because...",
+                    "That's not really our policy so..."
+                ],
+                explanation: "The first option demonstrates reflective listening."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence avoids common redundancy in business communication?",
+                options: [
+                    "The meeting will begin at 3 p.m.",
+                    "The meeting will begin at 3 p.m. in the afternoon.",
+                    "The meeting will commence at 3 p.m. in the afternoon.",
+                    "The 3 p.m. meeting time will be when we start."
+                ],
+                explanation: "The first option avoids redundant 'p.m.' and 'afternoon'."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best conveys urgency without causing alarm?",
+                options: [
+                    "We should address this matter promptly.",
+                    "This is a huge emergency that must be fixed now!",
+                    "We're all going to be in trouble if this isn't done.",
+                    "You need to take care of this immediately."
+                ],
+                explanation: "The first option conveys appropriate urgency."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'complement' and 'compliment'?",
+                options: [
+                    "The wine selection complements our menu, and we often receive compliments about it.",
+                    "The wine selection compliments our menu, and we often receive complements about it.",
+                    "The wine selection complements our menu, and we often receive complements about it.",
+                    "The wine selection compliments our menu, and we often receive compliments about it."
+                ],
+                explanation: "'Complement' means to complete, 'compliment' means to praise."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates cultural sensitivity in international hospitality?",
+                options: [
+                    "Would you prefer a traditional greeting from your culture?",
+                    "Where are you really from originally?",
+                    "You must miss your home country's customs.",
+                    "Your cultural traditions are so interesting!"
+                ],
+                explanation: "The first option shows respect without assumptions."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence demonstrates correct use of articles in English?",
+                options: [
+                    "The concierge can arrange a tour of the city's historical district.",
+                    "A concierge can arrange the tour of a city's historical district.",
+                    "Concierge can arrange tour of city's historical district.",
+                    "The concierge can arrange the tour of the city's the historical district."
+                ],
+                explanation: "The first option uses articles correctly."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates professional assertiveness?",
+                options: [
+                    "I recommend we proceed with the standard protocol in this situation.",
+                    "I guess we could maybe do what you're suggesting.",
+                    "Whatever you think is probably fine with me.",
+                    "I'm not really sure but we might try something."
+                ],
+                explanation: "The first option shows confident professionalism."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'who' and 'whom' in a service context?",
+                options: [
+                    "The guest whom you assisted is the CEO who recommended our hotel.",
+                    "The guest who you assisted is the CEO whom recommended our hotel.",
+                    "The guest whom you assisted is the CEO whom recommended our hotel.",
+                    "The guest who you assisted is the CEO who recommended our hotel."
+                ],
+                explanation: "'Whom' is object, 'who' is subject - correctly used here."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates cross-cultural communication skills?",
+                options: [
+                    "Please let me know if any of our services don't meet your expectations.",
+                    "You probably don't understand how we do things here.",
+                    "Your customs are very different from ours.",
+                    "This is how we always handle such requests."
+                ],
+                explanation: "The first option shows cultural sensitivity."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence avoids common business jargon?",
+                options: [
+                    "We'll implement the new procedures next month.",
+                    "We'll leverage our synergies to circle back on this going forward.",
+                    "Let's take this offline and drill down to the granular level.",
+                    "We need to ideate a paradigm shift in our core competencies."
+                ],
+                explanation: "The first option uses clear, straightforward language."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates professional email etiquette?",
+                options: [
+                    "Dear Mr. Patel, I hope this email finds you well.",
+                    "Hey there! What's up with your reservation?",
+                    "To whom it may concern: Your request is noted.",
+                    "Hi Rajesh!!! Got your message and WOW!!!"
+                ],
+                explanation: "The first option maintains appropriate professional tone."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'farther' and 'further'?",
+                options: [
+                    "The beach is farther away, but we can discuss this further.",
+                    "The beach is further away, but we can discuss this farther.",
+                    "The beach is farther away, but we can discuss this farther.",
+                    "The beach is further away, but we can discuss this further."
+                ],
+                explanation: "'Farther' for physical distance, 'further' for metaphorical."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates active voice in business writing?",
+                options: [
+                    "Our team will complete the renovation by Friday.",
+                    "The renovation will be completed by Friday by our team.",
+                    "Completion of the renovation will occur by Friday.",
+                    "There will be a renovation completion by Friday."
+                ],
+                explanation: "The first option uses strong active voice."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'principal' and 'principle'?",
+                options: [
+                    "The principal reason for our policy is the principle of guest safety.",
+                    "The principle reason for our policy is the principal of guest safety.",
+                    "The principal reason for our policy is the principal of guest safety.",
+                    "The principle reason for our policy is the principle of guest safety."
+                ],
+                explanation: "'Principal' = main, 'principle' = fundamental truth."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates diplomatic language for sensitive topics?",
+                options: [
+                    "We respectfully disagree with that assessment.",
+                    "You're completely wrong about that.",
+                    "That's the dumbest idea I've heard.",
+                    "No offense, but that won't work."
+                ],
+                explanation: "The first option maintains professionalism."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'lie' and 'lay' in past tense?",
+                options: [
+                    "The guest lay down to rest while housekeeping laid out fresh towels.",
+                    "The guest laid down to rest while housekeeping lay out fresh towels.",
+                    "The guest lied down to rest while housekeeping laid out fresh towels.",
+                    "The guest lay down to rest while housekeeping lied out fresh towels."
+                ],
+                explanation: "'Lay' requires an object, 'lie' does not - correctly used here."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates concise business writing?",
+                options: [
+                    "Please submit your request by Friday.",
+                    "At this point in time, we would respectfully request that you consider submitting your application no later than the end of the business day on Friday.",
+                    "Kindly be advised that the deadline for submission of all requests is Friday at close of business.",
+                    "We're writing to inform you that Friday is when we need your request submitted by."
+                ],
+                explanation: "The first option is most concise."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which sentence correctly uses 'fewer' and 'less'?",
+                options: [
+                    "We have fewer guest complaints and less noise disturbance this quarter.",
+                    "We have less guest complaints and fewer noise disturbance this quarter.",
+                    "We have fewer guest complaints and fewer noise disturbance this quarter.",
+                    "We have less guest complaints and less noise disturbance this quarter."
+                ],
+                explanation: "'Fewer' for countable items, 'less' for uncountable."
+            },
+            {
+                section: "Language Proficiency",
+                question: "Which phrase best demonstrates professional telephone etiquette?",
+                options: [
+                    "Thank you for calling Alpana Group. How may I assist you today?",
+                    "Yeah, Alpana Group, what do you want?",
+                    "Hello? Who's this?",
+                    "You've reached us. Go ahead."
+                ],
+                explanation: "The first option demonstrates professional phone manners."
+            }
         ];
 
-
-        const userAnswers = {};
-        let currentQuestionIndex = 0;
+        // Exam state
+        let userAnswers = {};
+        let currentQuestion = 1;
         let timerInterval;
-        let timeLeft = 120 * 60; // 120 minutes
+        let timeLeft = 120 * 60;
         let examSubmitted = false;
-        
+
+        // DOM elements
         const permissionModal = document.getElementById('permissionModal');
         const splashScreen = document.getElementById('splashScreen');
         const examContainer = document.getElementById('examContainer');
@@ -951,18 +2001,23 @@
         const timerDisplay = document.getElementById('timeDisplay');
         const loadingScreen = document.getElementById('loadingScreen');
         const resultModal = document.getElementById('resultModal');
-        const currentQuestionDisplay = document.getElementById('currentQuestionDisplay');
         const sectionHeader = document.getElementById('sectionHeader');
+        const currentQuestionNum = document.getElementById('currentQuestionNum');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const submitBtn = document.getElementById('submitBtn');
+        const grantPermissions = document.getElementById('grantPermissions');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeModal = document.getElementById('closeModal');
 
+        // Initialize exam
         function initExam() {
             startTimer();
             createNavigationButtons();
-            loadQuestion(currentQuestionIndex);
+            loadQuestion(currentQuestion);
         }
 
+        // Timer management
         function startTimer() {
             updateTimerDisplay();
             timerInterval = setInterval(() => {
@@ -981,17 +2036,16 @@
             timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         }
 
+        // Navigation buttons
         function createNavigationButtons() {
             questionNav.innerHTML = '';
-            for (let i = 0; i < examQuestions.length; i++) {
+            for (let i = 1; i <= examQuestions.length; i++) {
                 const btn = document.createElement('button');
                 btn.className = 'nav-btn';
-                btn.textContent = i + 1;
-                btn.dataset.index = i;
+                btn.textContent = i;
+                btn.dataset.question = i;
                 btn.addEventListener('click', () => {
-                    if (!examSubmitted) {
-                        navigateToQuestion(i);
-                    }
+                    if (!examSubmitted) navigateToQuestion(parseInt(btn.dataset.question));
                 });
                 questionNav.appendChild(btn);
             }
@@ -1001,47 +2055,41 @@
         function updateNavigationButtons() {
             const buttons = questionNav.querySelectorAll('.nav-btn');
             buttons.forEach(btn => {
-                const index = parseInt(btn.dataset.index);
-                btn.classList.remove('current', 'answered');
-                if (index === currentQuestionIndex) {
-                    btn.classList.add('current');
-                    btn.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-                }
-                if (userAnswers[index] !== undefined) {
-                    btn.classList.add('answered');
-                }
+                const qNum = parseInt(btn.dataset.question);
+                btn.classList.remove('current', 'answered', 'visited');
+                if (qNum === currentQuestion) btn.classList.add('current');
+                if (userAnswers[qNum]) btn.classList.add('answered');
+                btn.classList.add('visited'); // Mark as visited for simplicity, can be refined
             });
         }
 
-        function navigateToQuestion(index) {
-            if (index >= 0 && index < examQuestions.length) {
-                currentQuestionIndex = index;
-                loadQuestion(currentQuestionIndex);
+        function navigateToQuestion(questionNum) {
+            if (questionNum >= 1 && questionNum <= examQuestions.length) {
+                currentQuestion = questionNum;
+                loadQuestion(questionNum);
                 updateNavigationButtons();
             }
         }
 
-        function loadQuestion(index) {
-            const questionData = examQuestions[index];
-            const questionNumber = index + 1;
-            
-            currentQuestionDisplay.textContent = questionNumber;
-            sectionHeader.textContent = `Section: ${questionData.section}`;
+        // Load question
+        function loadQuestion(questionNum) {
+            const questionData = examQuestions[questionNum - 1];
+            currentQuestionNum.textContent = questionNum;
+            sectionHeader.textContent = questionData.section + " (Questions " + ((questionNum - 1) * 1 + 1) + "-" + Math.min(questionNum * 1, examQuestions.length) + ")";
 
             let questionHTML = `
                 <div class="question">
-                    <div class="question-text">${questionNumber}. ${questionData.question}</div>
+                    <div class="question-text">${questionNum}. ${questionData.question}</div>
                     <div class="options">
             `;
 
-            ['a', 'b', 'c', 'd'].forEach((optionLetter, i) => {
-                const isSelected = userAnswers[index] === optionLetter;
+            questionData.options.forEach((opt, index) => {
+                const optionLetter = ['a', 'b', 'c', 'd'][index];
+                const isSelected = userAnswers[questionNum] === optionLetter;
                 questionHTML += `
-                    <div class="option ${isSelected ? 'selected' : ''}" 
-                         data-option="${optionLetter}"
-                         onclick="selectOption(${index}, '${optionLetter}')">
-                        <input type="radio" name="q${index}" ${isSelected ? 'checked' : ''}>
-                        <label>${questionData.options[i]}</label>
+                    <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption(${questionNum}, '${optionLetter}')">
+                        <input type="radio" name="q${questionNum}" ${isSelected ? 'checked' : ''}>
+                        ${opt}
                     </div>
                 `;
             });
@@ -1050,48 +2098,32 @@
             questionDisplay.innerHTML = questionHTML;
         }
 
-        window.selectOption = function(index, optionLetter) {
+        // Select option
+        window.selectOption = function(questionNum, optionLetter) {
             if (!examSubmitted) {
-                userAnswers[index] = optionLetter;
-                loadQuestion(index);
+                userAnswers[questionNum] = optionLetter;
                 updateNavigationButtons();
+                loadQuestion(questionNum);
             }
         };
 
+        // Submit exam
         function submitExam() {
             examSubmitted = true;
             clearInterval(timerInterval);
-
             examContainer.style.display = 'none';
             loadingScreen.style.display = 'flex';
-
-            const countdownElement = document.getElementById('countdown');
-            let processingTime = 5; // seconds
-            
-            const processingCountdown = setInterval(() => {
-                countdownElement.textContent = `Results will be available in ${processingTime} seconds...`;
-                processingTime--;
-                if (processingTime < 0) {
-                    clearInterval(processingCountdown);
-                    showResults();
-                }
-            }, 1000);
+            // Simulate loading delay
+            setTimeout(showResults, 3000);
         }
 
+        // Calculate results
         function calculateResults() {
-            let correct = 0;
-            let incorrect = 0;
-            let unanswered = 0;
-            let score = 0;
-            const passingScore = 55;
-
-            for (let i = 0; i < examQuestions.length; i++) {
-                const userAnswer = userAnswers[i];
-                const correctAnswer = examQuestions[i].correct_option;
-
-                if (userAnswer === undefined) {
+            let correct = 0, incorrect = 0, unanswered = 0, score = 0;
+            for (let i = 1; i <= examQuestions.length; i++) {
+                if (!userAnswers[i]) {
                     unanswered++;
-                } else if (userAnswer === correctAnswer) {
+                } else if (userAnswers[i] === answerKey[i]) {
                     correct++;
                     score += 1;
                 } else {
@@ -1099,19 +2131,17 @@
                     score -= 0.33;
                 }
             }
-            score = Math.max(0, score); // Score cannot be negative
-            const percentage = (score / examQuestions.length) * 100;
-
             return {
                 correct,
                 incorrect,
                 unanswered,
-                score,
-                percentage,
-                passed: score >= passingScore
+                score: Math.max(0, score.toFixed(2)),
+                percentage: Math.round((score / examQuestions.length) * 100),
+                passed: score >= 55
             };
         }
 
+        // Show results
         function showResults() {
             loadingScreen.style.display = 'none';
             const results = calculateResults();
@@ -1119,29 +2149,26 @@
             document.getElementById('correctAnswers').textContent = results.correct;
             document.getElementById('incorrectAnswers').textContent = results.incorrect;
             document.getElementById('unanswered').textContent = results.unanswered;
-            document.getElementById('scorePercentage').textContent = `${results.percentage.toFixed(2)}%`;
-            document.getElementById('verdict').textContent = results.passed 
-                ? `Congratulations! You passed with a score of ${results.score.toFixed(2)} out of 100.`
-                : `You scored ${results.score.toFixed(2)} out of 100. The passing score is 55.`;
-            document.getElementById('verdict').className = results.passed ? "verdict pass" : "verdict fail";
+            document.getElementById('percentage').textContent = `${results.percentage}%`;
+
+            const verdict = document.getElementById('verdict');
+            verdict.textContent = results.passed 
+                ? `Congratulations! You passed with ${results.score}/100` 
+                : `You scored ${results.score}/100. Please try again.`;
+            verdict.className = results.passed ? "verdict pass" : "verdict fail";
 
             const answersheetContent = document.getElementById('answersheetContent');
             answersheetContent.innerHTML = '';
-            for (let i = 0; i < examQuestions.length; i++) {
-                const q = examQuestions[i];
-                const userAnswer = userAnswers[i];
-                const correctAnswer = q.correct_option;
-                const status = userAnswer === correctAnswer ? 'correct' : (userAnswer === undefined ? 'unanswered' : 'incorrect');
-                const statusText = status === 'correct' ? 'Correct' : (status === 'incorrect' ? 'Incorrect' : 'Unanswered');
-
+            for (let i = 1; i <= examQuestions.length; i++) {
+                const questionData = examQuestions[i - 1];
                 const item = document.createElement('div');
                 item.className = 'answer-item';
+                const status = userAnswers[i] === answerKey[i] ? 'correct' : 'incorrect';
                 item.innerHTML = `
-                    <div class="answer-status ${status}">Q${i + 1}: ${statusText}</div>
-                    <p class="question-text">${q.question}</p>
-                    <p><strong>Your Answer:</strong> ${userAnswer ? `Option ${userAnswer.toUpperCase()} - ${q.options['abcde'.indexOf(userAnswer)]}` : 'Not Attempted'}</p>
-                    <p><strong>Correct Answer:</strong> Option ${correctAnswer.toUpperCase()} - ${q.options['abcde'.indexOf(correctAnswer)]}</p>
-                    <p class="explanation"><strong>Explanation:</strong> ${q.explanation}</p>
+                    <div class="answer-status ${status}">
+                        Q${i}: ${userAnswers[i] || 'Not Attempted'} (Correct: ${answerKey[i]})
+                    </div>
+                    <p>${questionData.explanation}</p>
                 `;
                 answersheetContent.appendChild(item);
             }
@@ -1149,77 +2176,43 @@
             resultModal.classList.add('active');
         }
 
+        // Event listeners
+        grantPermissions.addEventListener('click', () => {
+            permissionModal.style.display = 'none';
+            splashScreen.style.display = 'flex';
+        });
+
+        loginBtn.addEventListener('click', () => {
+            splashScreen.style.opacity = '0';
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+                examContainer.style.display = 'block';
+                initExam();
+            }, 500);
+        });
+
         prevBtn.addEventListener('click', () => {
-            if (currentQuestionIndex > 0) {
-                navigateToQuestion(currentQuestionIndex - 1);
-            }
+            if (currentQuestion > 1) navigateToQuestion(currentQuestion - 1);
         });
 
         nextBtn.addEventListener('click', () => {
-            if (currentQuestionIndex < examQuestions.length - 1) {
-                navigateToQuestion(currentQuestionIndex + 1);
-            }
+            if (currentQuestion < examQuestions.length) navigateToQuestion(currentQuestion + 1);
         });
 
         submitBtn.addEventListener('click', () => {
-            if (!examSubmitted) {
-                if (confirm("Are you sure you want to submit the exam? This action cannot be undone.")) {
-                    submitExam();
-                }
+            if (!examSubmitted && confirm("Are you sure you want to submit the exam?")) {
+                submitExam();
             }
         });
 
-        document.getElementById('closeModal').addEventListener('click', () => {
+        closeModal.addEventListener('click', () => {
             resultModal.classList.remove('active');
         });
 
-        document.getElementById('grantPermissions').addEventListener('click', () => {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then(stream => {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(position => {
-                            permissionModal.style.opacity = '0';
-                            setTimeout(() => {
-                                permissionModal.style.display = 'none';
-                                splashScreen.style.display = 'flex';
-                                splashScreen.style.opacity = '1';
-                            }, 500);
-                        }, () => {
-                            document.getElementById('permissionError').style.display = 'block';
-                        });
-                    } else {
-                        document.getElementById('permissionError').textContent = "Geolocation is not supported by your browser.";
-                        document.getElementById('permissionError').style.display = 'block';
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('permissionError').textContent = "Failed to grant camera/microphone access. Please enable them and try again.";
-                    document.getElementById('permissionError').style.display = 'block';
-                });
-        });
-
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            // Simple hardcoded credentials for demonstration
-            if (username === 'testuser' && password === 'testpass') {
-                document.getElementById('errorMessage').style.display = 'none';
-                splashScreen.style.opacity = '0';
-                setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                    examContainer.style.display = 'block';
-                    initExam();
-                }, 500);
-            } else {
-                document.getElementById('errorMessage').style.display = 'block';
-            }
-        });
-
+        // On load
         window.addEventListener('load', () => {
             permissionModal.style.display = 'flex';
         });
-
     </script>
 </body>
 </html>
