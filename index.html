@@ -1,3042 +1,451 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpana Homestay - Managerial Aptitude Test</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Alpana Homestay & Travels - परीक्षा पोर्टल</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
-        :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-darker: #1e40af;
-            --danger: #ef4444;
-            --danger-dark: #dc2626;
-            --success: #10b981;
-            --success-dark: #059669;
-            --warning: #f59e0b;
-            --info: #06b6d4;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #94a3b8;
-            --bg-gradient: linear-gradient(135deg, var(--primary), var(--primary-darker));
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-            --radius-sm: 0.25rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --transition: all 0.3s ease;
-        }
-        
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            color: var(--dark);
-            background-color: #f1f5f9;
-            overflow-x: hidden;
+            overflow: hidden;
+            background-color: #f5f5f5;
         }
-        
-        /* Splash Screen */
+
+        /* स्प्लैश स्क्रीन स्टाइल */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--bg-gradient);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             color: white;
-            transition: opacity 0.5s ease;
+            transition: opacity 1s ease;
         }
-        
-        .splash-content {
-            text-align: center;
-            max-width: 500px;
-            padding: 2rem;
-            animation: fadeIn 1s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+
         .splash-logo {
-            width: 180px;
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            width: 200px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
         }
-        
-        .login-box {
-            background-color: rgba(255, 255, 255, 0.15);
-            padding: 2.5rem 2rem;
-            border-radius: var(--radius-lg);
-            width: 90%;
-            max-width: 450px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: var(--shadow-lg);
-            margin-top: 2rem;
-        }
-        
-        .login-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .input-group {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .input-group input {
-            width: 100%;
-            padding: 0.9rem 1rem;
-            border-radius: var(--radius-sm);
-            border: none;
-            background-color: rgba(255, 255, 255, 0.95);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-        }
-        
-        .input-group input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-        }
-        
-        .login-btn {
-            width: 100%;
-            padding: 1rem;
-            background-color: white;
-            color: var(--primary-dark);
-            border: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-            margin-top: 0.5rem;
-        }
-        
-        .login-btn:hover {
-            background-color: #f1f5f9;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .login-btn:active {
-            transform: translateY(0);
-        }
-        
-        .error-message {
-            color: #fee2e2;
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.95rem;
-            display: none;
-            background-color: rgba(220, 38, 38, 0.2);
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
-        }
-        
-        /* Main Container */
-        .container {
-            display: none;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .header-card {
-            background: var(--bg-gradient);
-            padding: 2.5rem 2rem;
-            border-radius: var(--radius-lg);
-            color: white;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header-card::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            transform: rotate(30deg);
-        }
-        
-        .logo {
-            width: 120px;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 1.5rem;
-        }
-        
-        .test-info {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .info-card {
-            background-color: rgba(255,255,255,0.15);
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-md);
-            min-width: 160px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .info-card strong {
-            display: block;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 0.25rem;
-        }
-        
-        .info-card span {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        /* Navigation */
-        .nav-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            background-color: white;
-            padding: 1.25rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .timer {
-            background-color: var(--danger);
-            color: white;
-            padding: 0.6rem 1.25rem;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .timer.warning {
-            background-color: var(--warning);
-            animation: pulse 1s infinite;
-        }
-        
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        
-        .progress-container {
-            flex: 1;
-            min-width: 200px;
+
+        .splash-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--dark);
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background-color: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--bg-gradient);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-        
-        .question-nav {
-            display: flex;
-            overflow-x: auto;
-            padding: 0.5rem 0;
-            gap: 0.5rem;
-        }
-        
-        .nav-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            background-color: #e2e8f0;
-            border: none;
-            font-weight: 600;
-            transition: var(--transition);
-            flex-shrink: 0;
-            position: relative;
-        }
-        
-        .nav-btn:hover:not(.current) {
-            background-color: #cbd5e1;
-        }
-        
-        .nav-btn.visited {
-            background-color: var(--info);
-            color: white;
-        }
-        
-        .nav-btn.current {
-            background-color: var(--primary);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-        }
-        
-        .nav-btn.answered {
-            background-color: var(--success);
-            color: white;
-        }
-        
-        .nav-btn.marked {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .nav-btn.marked::after {
-            content: "★";
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            font-size: 12px;
-            color: var(--warning);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        
-        /* Question Container */
-        .question-container {
-            background-color: white;
-            border-radius: var(--radius-lg);
-            padding: 0;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-md);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .section-header {
-            background-color: var(--dark);
-            color: white;
-            padding: 1rem 1.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .section-header h2 {
+
+        .splash-subtitle {
             font-size: 1.2rem;
-            font-weight: 500;
+            opacity: 0.8;
         }
-        
-        .section-info {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        .question-content {
-            padding: 2rem;
-        }
-        
-        .question {
-            position: relative;
-            counter-increment: question-counter;
-            margin-bottom: 2rem;
-            padding-left: 2.5rem;
-        }
-        
-        .question::before {
-            content: counter(question-counter);
-            position: absolute;
-            left: 0;
-            top: 0;
-            background-color: var(--danger);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        .question-text {
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        
-        .question-text img {
-            max-width: 100%;
-            height: auto;
-            border-radius: var(--radius-sm);
-            margin: 1rem 0;
-            box-shadow: var(--shadow-sm);
-            display: block;
-        }
-        
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .option {
-            padding: 1rem;
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-            cursor: pointer;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        
-        .option:hover:not(.locked) {
-            background-color: #f8fafc;
-            border-color: #cbd5e1;
-        }
-        
-        .option.selected {
-            background-color: #dbeafe;
-            border-color: var(--primary);
-        }
-        
-        .option.correct {
-            background-color: #dcfce7;
-            border-color: var(--success);
-        }
-        
-        .option.incorrect {
-            background-color: #fee2e2;
-            border-color: var(--danger);
-        }
-        
-        .option.locked {
-            cursor: not-allowed;
-        }
-        
-        .option input {
-            margin-top: 2px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-        
-        .option.locked input {
-            cursor: not-allowed;
-        }
-        
-        .visual-aid {
-            margin: 1.5rem 0;
-            padding: 1.25rem;
-            background-color: #f8fafc;
-            border-radius: var(--radius-md);
-            border-left: 4px solid var(--primary);
-        }
-        
-        .visual-aid-title {
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 1rem 0;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-            font-size: 0.9rem;
-            box-shadow: var(--shadow-sm);
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-        }
-        
-        th, td {
-            padding: 0.8rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        th {
-            background-color: #f1f5f9;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        tr:hover {
-            background-color: #f8fafc;
-        }
-        
-        /* Controls */
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 0.9rem 1.5rem;
-            border-radius: var(--radius-sm);
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        .btn-outline:hover {
-            background-color: #dbeafe;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .btn-danger:hover {
-            background-color: var(--danger-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn-danger:active {
-            transform: translateY(0);
-        }
-        
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .btn-success:hover {
-            background-color: var(--success-dark);
-        }
-        
-        .mark-btn {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            color: var(--dark);
-        }
-        
-        .mark-btn:hover {
-            background-color: #f1f5f9;
-        }
-        
-        .mark-btn.marked {
-            background-color: #fef3c7;
-            border-color: #f59e0b;
-            color: var(--dark);
-        }
-        
-        /* Results Modal */
-        .modal-overlay {
+
+        /* परमिशन स्क्रीन स्टाइल */
+        .permission-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: white;
+            display: none;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            padding: 1rem;
+            z-index: 999;
+            padding: 20px;
+            text-align: center;
         }
-        
-        .modal-overlay.active {
+
+        .permission-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .permission-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .permission-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .permission-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .permission-btn {
+            background: white;
+            color: #1e3c72;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .permission-btn:hover {
+            background: #f1f1f1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        /* निर्देश स्क्रीन स्टाइल */
+        .instructions-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 998;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .instructions-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .instructions-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .instructions-list {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        .instructions-list li {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .agree-box {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+
+        .agree-checkbox {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .agree-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .agree-btn.active {
             opacity: 1;
             pointer-events: all;
         }
-        
-        .modal-content {
-            background-color: white;
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 900px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 2rem;
-            position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            box-shadow: var(--shadow-lg);
+
+        .agree-btn:hover {
+            background: #f1f1f1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
         }
-        
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-        
-        .close-modal:hover {
-            background-color: #f1f5f9;
-            color: var(--danger);
-        }
-        
-        .result-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .result-header h2 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-        }
-        
-        .result-header p {
-            color: var(--gray);
-        }
-        
-        .score-card {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .score-item {
-            background-color: #f8fafc;
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .score-item.correct {
-            border-bottom: 3px solid var(--success);
-        }
-        
-        .score-item.incorrect {
-            border-bottom: 3px solid var(--danger);
-        }
-        
-        .score-item.unanswered {
-            border-bottom: 3px solid var(--gray);
-        }
-        
-        .score-item.percentage {
-            border-bottom: 3px solid var(--primary);
-        }
-        
-        .score-item h3 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-        
-        .score-item.correct h3 {
-            color: var(--success);
-        }
-        
-        .score-item.incorrect h3 {
-            color: var(--danger);
-        }
-        
-        .score-item.unanswered h3 {
-            color: var(--gray);
-        }
-        
-        .score-item.percentage h3 {
-            color: var(--primary);
-        }
-        
-        .score-item p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .verdict {
-            text-align: center;
-            margin: 2rem 0;
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            font-weight: 500;
-            font-size: 1.1rem;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .verdict.pass {
-            background-color: #dcfce7;
-            color: var(--success-dark);
-            border-left: 4px solid var(--success);
-        }
-        
-        .verdict.fail {
-            background-color: #fee2e2;
-            color: var(--danger-dark);
-            border-left: 4px solid var(--danger);
-        }
-        
-        .answersheet {
-            margin-top: 2rem;
-        }
-        
-        .answersheet h3 {
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 1.3rem;
-            color: var(--dark);
-        }
-        
-        .answer-item {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .answer-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
-        .answer-status {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 0.75rem;
-        }
-        
-        .answer-status.correct {
-            background-color: #dcfce7;
-            color: var(--success-dark);
-        }
-        
-        .answer-status.incorrect {
-            background-color: #fee2e2;
-            color: var(--danger-dark);
-        }
-        
-        .answer-status.unanswered {
-            background-color: #f1f5f9;
-            color: var(--gray);
-        }
-        
-        .answer-question {
-            font-weight: 500;
-            margin-bottom: 0.75rem;
-            line-height: 1.6;
-        }
-        
-        .answer-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .answer-detail {
-            background-color: #f8fafc;
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
-        }
-        
-        .answer-detail strong {
-            display: block;
-            margin-bottom: 0.25rem;
-            font-size: 0.85rem;
-            color: var(--gray);
-        }
-        
-        .answer-detail span {
-            font-weight: 500;
-            color: var(--dark);
-        }
-        
-        /* No Copy Protection */
-        .no-copy {
+
+        /* लोडिंग स्क्रीन स्टाइल */
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 49px,
-                rgba(0,0,0,0.02) 49px,
-                rgba(0,0,0,0.02) 50px
-            );
+            background: linear-gradient(135deg, #5b86e5, #36d1dc);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 997;
+            color: white;
         }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .question {
-                padding-left: 2rem;
-            }
-            
-            .question::before {
-                width: 26px;
-                height: 26px;
-                font-size: 0.8rem;
-            }
-            
-            .nav-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 0.9rem;
-            }
-            
-            .question-content {
-                padding: 1.5rem;
-            }
-            
-            .section-header {
-                padding: 1rem;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.75rem;
-            }
-            
-            .score-card {
-                grid-template-columns: 1fr 1fr;
-            }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
         }
-        
-        @media (max-width: 480px) {
-            .login-box {
-                padding: 1.75rem 1.25rem;
-            }
-            
-            .header-card {
-                padding: 1.75rem 1.25rem;
-            }
-            
-            h1 {
-                font-size: 1.7rem;
-            }
-            
-            .info-card {
-                min-width: 100%;
-            }
-            
-            .question {
-                padding-left: 0;
-            }
-            
-            .question::before {
-                position: static;
-                display: inline-flex;
-                margin-right: 0.75rem;
-                margin-bottom: 0.75rem;
-                vertical-align: middle;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .controls .btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .score-card {
-                grid-template-columns: 1fr;
-            }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Splash Screen with Login -->
+    <!-- स्प्लैश स्क्रीन -->
     <div class="splash-screen" id="splashScreen">
-        <div class="splash-content">
-            <img src="https://via.placeholder.com/180x60?text=Alpana+Group" alt="Alpana Group Logo" class="splash-logo">
-            <div class="login-box">
-                <h2 class="login-title">Managerial Aptitude Test</h2>
-                <div class="input-group">
-                    <label for="username">User ID</label>
-                    <input type="text" id="username" placeholder="Enter your user ID">
-                </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password">
-                </div>
-                <button class="login-btn" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Enter Exam Portal
-                </button>
-                <div class="error-message" id="errorMessage">
-                    <i class="fas fa-exclamation-circle"></i> Invalid credentials. Please try again.
+        <img src="https://via.placeholder.com/200x100?text=Alpana+Logo" alt="Alpana Homestay & Travels Logo" class="splash-logo">
+        <h1 class="splash-title">Alpana Homestay & Travels</h1>
+        <p class="splash-subtitle">प्रबंधकीय योग्यता परीक्षा</p>
+    </div>
+
+    <!-- परमिशन स्क्रीन -->
+    <div class="permission-screen" id="permissionScreen">
+        <div class="permission-box">
+            <h2 class="permission-title">अनुमति आवश्यक</h2>
+            <p style="margin-bottom: 25px;">परीक्षा की निगरानी के लिए निम्नलिखित अनुमतियाँ आवश्यक हैं:</p>
+            
+            <div class="permission-item">
+                <i class="fas fa-map-marker-alt permission-icon"></i>
+                <div class="permission-text">
+                    <strong>स्थान (Location)</strong><br>
+                    परीक्षा के दौरान आपके स्थान की पुष्टि के लिए
                 </div>
             </div>
+            
+            <div class="permission-item">
+                <i class="fas fa-microphone permission-icon"></i>
+                <div class="permission-text">
+                    <strong>माइक्रोफोन</strong><br>
+                    परीक्षा वातावरण की निगरानी के लिए
+                </div>
+            </div>
+            
+            <div class="permission-item">
+                <i class="fas fa-camera permission-icon"></i>
+                <div class="permission-text">
+                    <strong>कैमरा</strong><br>
+                    परीक्षा के दौरान वीडियो निगरानी के लिए
+                </div>
+            </div>
+            
+            <button class="permission-btn" id="permissionBtn">अनुमति प्रदान करें</button>
         </div>
     </div>
-    
-    <!-- No Copy Protection Layer -->
-    <div class="no-copy"></div>
-    
-    <!-- Main Exam Container -->
-    <div class="container" id="examContainer">
-        <header>
-            <div class="header-card">
-                <img src="https://via.placeholder.com/120x40?text=Alpana+Group" alt="Alpana Group Logo" class="logo">
-                <h1>Alpana Homestay & Travels</h1>
-                <p class="subtitle">Managerial Aptitude Test - August 14, 2025</p>
-                <div class="test-info">
-                    <div class="info-card">
-                        <strong>Position</strong>
-                        <span>Manager</span>
-                    </div>
-                    <div class="info-card">
-                        <strong>Total Questions</strong>
-                        <span>100</span>
-                    </div>
-                    <div class="info-card">
-                        <strong>Time Allotted</strong>
-                        <span>120 Minutes</span>
-                    </div>
-                    <div class="info-card">
-                        <strong>Passing Score</strong>
-                        <span>55/100</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-        
-        <div class="nav-container">
-            <div class="top-nav">
-                <div class="timer" id="timer">
-                    <i class="fas fa-clock"></i>
-                    <span id="timeDisplay">120:00</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-text">
-                        <span>Progress: <span id="answeredCount">0</span>/100</span>
-                        <span id="progressPercent">0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="question-nav" id="questionNav">
-                <!-- Navigation buttons will be added dynamically -->
-            </div>
-        </div>
-        
-        <div class="question-container">
-            <div class="section-header">
-                <h2 id="currentSection">Section 1: Tourist Management (Questions 1-20)</h2>
-                <div class="section-info">
-                    <span>Question <span id="currentQuestion">1</span> of 100</span>
-                </div>
+
+    <!-- निर्देश स्क्रीन -->
+    <div class="instructions-screen" id="instructionsScreen">
+        <div class="instructions-box">
+            <h2 class="instructions-title">परीक्षा निर्देश</h2>
+            
+            <ol class="instructions-list">
+                <li>परीक्षा की कुल अवधि 120 मिनट (2 घंटे) है।</li>
+                <li>परीक्षा में कुल 100 बहुविकल्पीय प्रश्न हैं।</li>
+                <li>प्रत्येक सही उत्तर के लिए 1 अंक मिलेगा और प्रत्येक गलत उत्तर के लिए 0.33 अंक काटे जाएंगे।</li>
+                <li>परीक्षा के दौरान किसी भी प्रकार की नकल करना सख्त वर्जित है।</li>
+                <li>परीक्षा के दौरान ब्राउज़र टैब बदलने या अन्य एप्लिकेशन खोलने पर परीक्षा स्वतः समाप्त हो जाएगी।</li>
+                <li>परीक्षा के दौरान आपके स्थान, माइक्रोफोन और कैमरे की निगरानी की जाएगी।</li>
+                <li>परीक्षा समाप्त होने से पहले सबमिट बटन दबाने पर ही आपके उत्तर सुरक्षित होंगे।</li>
+                <li>परीक्षा पूरी करने के बाद आपको तुरंत परिणाम प्रदर्शित किया जाएगा।</li>
+                <li>परीक्षा के दौरान किसी भी तकनीकी समस्या के लिए कृपया तुरंत संपर्क करें।</li>
+            </ol>
+            
+            <div class="agree-box">
+                <input type="checkbox" id="agreeCheckbox" class="agree-checkbox">
+                <label for="agreeCheckbox">मैं उपरोक्त सभी निर्देशों को पढ़कर समझ चुका/चुकी हूँ और परीक्षा नियमों से सहमत हूँ</label>
             </div>
             
-            <div class="question-content" id="questionDisplay">
-                <!-- Questions will be loaded here dynamically -->
-            </div>
-            
-            <div class="controls">
-                <button class="btn btn-outline" id="prevBtn">
-                    <i class="fas fa-arrow-left"></i> Previous
-                </button>
-                <div class="controls-group">
-                    <button class="btn mark-btn" id="markBtn">
-                        <i class="far fa-star"></i> Mark
-                    </button>
-                    <button class="btn btn-primary" id="nextBtn">
-                        Next <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="controls" style="justify-content: flex-end;">
-            <button class="btn btn-danger" id="submitBtn">
-                <i class="fas fa-paper-plane"></i> Submit Exam
-            </button>
+            <button class="agree-btn" id="agreeBtn">परीक्षा प्रारंभ करें</button>
         </div>
     </div>
-    
-    <!-- Results Modal -->
-    <div class="modal-overlay" id="resultModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeModal">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="result-header">
-                <h2>Exam Results</h2>
-                <p>Managerial Aptitude Test - August 14, 2025</p>
-            </div>
-            
-            <div class="score-card">
-                <div class="score-item correct">
-                    <h3 id="correctAnswers">0</h3>
-                    <p>Correct Answers</p>
-                </div>
-                <div class="score-item incorrect">
-                    <h3 id="incorrectAnswers">0</h3>
-                    <p>Incorrect Answers</p>
-                </div>
-                <div class="score-item unanswered">
-                    <h3 id="unanswered">0</h3>
-                    <p>Unanswered</p>
-                </div>
-                <div class="score-item percentage">
-                    <h3 id="percentage">0%</h3>
-                    <p>Score Percentage</p>
-                </div>
-            </div>
-            
-            <div class="verdict" id="verdict">
-                <!-- Pass/Fail verdict will be shown here -->
-            </div>
-            
-            <div class="answersheet">
-                <h3>Detailed Answer Sheet</h3>
-                <div id="answersheetContent">
-                    <!-- Answersheet will be generated here -->
-                </div>
-            </div>
-            
-            <div class="controls" style="justify-content: center; margin-top: 2rem;">
-                <button class="btn btn-success" id="downloadBtn">
-                    <i class="fas fa-download"></i> Download Results
-                </button>
-            </div>
-        </div>
+
+    <!-- लोडिंग स्क्रीन -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">परीक्षा तैयार की जा रही है...</p>
     </div>
-    
+
     <script>
-        // Correct answers key (not visible to user)
-        const answerKey = {
-            1: "b", 2: "c", 3: "d", 4: "a", 5: "b", 6: "c", 7: "d", 8: "a", 9: "b", 10: "c",
-            11: "d", 12: "a", 13: "b", 14: "c", 15: "d", 16: "a", 17: "b", 18: "c", 19: "d", 20: "a",
-            21: "b", 22: "c", 23: "d", 24: "a", 25: "b", 26: "c", 27: "d", 28: "a", 29: "b", 30: "c",
-            31: "d", 32: "a", 33: "b", 34: "c", 35: "d", 36: "a", 37: "b", 38: "c", 39: "d", 40: "a",
-            41: "b", 42: "c", 43: "d", 44: "a", 45: "b", 46: "c", 47: "d", 48: "a", 49: "b", 50: "c",
-            51: "d", 52: "a", 53: "b", 54: "c", 55: "d", 56: "a", 57: "b", 58: "c", 59: "d", 60: "a",
-            61: "b", 62: "c", 63: "d", 64: "a", 65: "b", 66: "c", 67: "d", 68: "a", 69: "b", 70: "c",
-            71: "d", 72: "a", 73: "b", 74: "c", 75: "d", 76: "a", 77: "b", 78: "c", 79: "d", 80: "a",
-            81: "b", 82: "c", 83: "d", 84: "a", 85: "b", 86: "c", 87: "d", 88: "a", 89: "b", 90: "c",
-            91: "d", 92: "a", 93: "b", 94: "c", 95: "d", 96: "a", 97: "b", 98: "c", 99: "d", 100: "a"
-        };
-        
-        // Exam questions data (100 new questions)
-        const examQuestions = [
-            // Section 1: Tourist Management (20 questions)
-            {
-                section: "Tourist Management",
-                question: "Which of the following best describes the concept of 'overtourism' in the hospitality industry?",
-                options: [
-                    "When a destination becomes too popular leading to negative impacts on quality of life and environment",
-                    "When tourists stay beyond their visa limits",
-                    "When hotels are fully booked for consecutive months",
-                    "When tourism revenue exceeds local GDP"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The 'Butler Model' of tourist area evolution suggests that destinations go through several stages. Which stage comes immediately after 'exploration'?",
-                options: [
-                    "Involvement",
-                    "Development",
-                    "Consolidation",
-                    "Stagnation"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Based on the tourism growth chart below, which year showed the highest percentage increase in international arrivals?",
-                options: [
-                    "2018",
-                    "2019",
-                    "2020",
-                    "2021"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["2017", "2018", "2019", "2020", "2021"],
-                    datasets: [{
-                        label: "International Tourist Arrivals (millions)",
-                        data: [120, 135, 150, 80, 95],
-                        backgroundColor: "rgba(59, 130, 246, 0.5)",
-                        borderColor: "rgba(59, 130, 246, 1)",
-                        borderWidth: 1
-                    }]
-                },
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "According to the table below, which region had the highest average daily expenditure per tourist in 2023?",
-                options: [
-                    "Middle East",
-                    "Asia Pacific",
-                    "Europe",
-                    "Americas"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Region", "Arrivals (millions)", "Avg. Daily Spend ($)", "Avg. Stay (nights)"],
-                    rows: [
-                        ["Asia Pacific", "350", "185", "7.2"],
-                        ["Europe", "710", "210", "5.8"],
-                        ["Americas", "220", "195", "6.5"],
-                        ["Middle East", "90", "245", "4.3"]
-                    ]
-                }
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following is NOT a characteristic of sustainable tourism development?",
-                options: [
-                    "Maximizing short-term profits without regard to environmental impact",
-                    "Ensuring economic benefits to local communities",
-                    "Preserving cultural heritage and traditions",
-                    "Minimizing environmental footprint of tourism activities"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The concept of 'carrying capacity' in tourism refers to:",
-                options: [
-                    "The maximum number of tourists a destination can accommodate without negative impacts",
-                    "The weight limit for tourist luggage on flights",
-                    "The capacity of tourist buses in a given region",
-                    "The maximum number of hotel rooms that can be built in an area"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which international organization is primarily responsible for promoting responsible, sustainable and universally accessible tourism?",
-                options: [
-                    "United Nations World Tourism Organization (UNWTO)",
-                    "World Travel and Tourism Council (WTTC)",
-                    "International Air Transport Association (IATA)",
-                    "International Civil Aviation Organization (ICAO)"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "In the context of tourism marketing, what does the 'AIDA' model stand for?",
-                options: [
-                    "Attention, Interest, Desire, Action",
-                    "Awareness, Intention, Decision, Action",
-                    "Attraction, Information, Decision, Arrival",
-                    "Analysis, Implementation, Development, Assessment"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following best describes the 'experience economy' in tourism?",
-                options: [
-                    "Creating memorable events that engage individuals in personal ways",
-                    "Economy based on experiential learning programs",
-                    "Tourism focused on volunteer experiences",
-                    "Economic model based on customer reviews and ratings"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The 'Plog's model' of tourist behavior categorizes travelers based on:",
-                options: [
-                    "Their personality and how it affects their travel choices",
-                    "Their budget and spending patterns",
-                    "Their preferred mode of transportation",
-                    "Their loyalty to specific hotel chains"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "What is the primary purpose of a 'visitor management plan' at a tourist destination?",
-                options: [
-                    "To balance visitor needs with conservation and community objectives",
-                    "To track all tourist movements using GPS technology",
-                    "To maximize revenue from visitor spending",
-                    "To restrict access to sensitive cultural sites"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following is NOT a typical characteristic of a 'mass tourism' destination?",
-                options: [
-                    "Exclusive, high-end accommodations with limited capacity",
-                    "Standardized products and services",
-                    "Large-scale transportation infrastructure",
-                    "High volume of visitors concentrated in specific areas"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The concept of 'perishability' in tourism services refers to:",
-                options: [
-                    "The inability to store unsold tourism products for future sale",
-                    "The limited shelf life of food served to tourists",
-                    "The degradation of tourist attractions over time",
-                    "The seasonal nature of tourism demand"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which tourism market segment is characterized by independent travel arrangements, preference for authentic experiences, and longer stays?",
-                options: [
-                    "Backpackers",
-                    "Package tourists",
-                    "Business travelers",
-                    "Cruise passengers"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "What is the primary objective of 'yield management' in hotel operations?",
-                options: [
-                    "Maximizing revenue through strategic pricing and inventory control",
-                    "Increasing employee productivity through better training",
-                    "Reducing operational costs through energy efficiency",
-                    "Improving customer satisfaction through personalized services"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following best describes 'dark tourism'?",
-                options: [
-                    "Travel to sites associated with death and tragedy",
-                    "Tourism activities that take place at night",
-                    "Travel to destinations during off-peak seasons",
-                    "Tourism focused on astronomy and stargazing"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "The 'Tourism Area Life Cycle (TALC) model' was developed by:",
-                options: [
-                    "Richard Butler",
-                    "Stanley Plog",
-                    "John Urry",
-                    "Dean MacCannell"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following is NOT a benefit of tourism satellite accounts?",
-                options: [
-                    "They provide real-time tracking of individual tourist movements",
-                    "They measure tourism's contribution to GDP",
-                    "They provide data on tourism employment",
-                    "They track tourism's impact on balance of payments"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "What does 'DMO' stand for in tourism management?",
-                options: [
-                    "Destination Marketing Organization",
-                    "Department of Marine Operations",
-                    "Digital Media Outreach",
-                    "Domestic Market Operations"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Tourist Management",
-                question: "Which of the following is a key characteristic of 'ecotourism'?",
-                options: [
-                    "Minimizes environmental impact and supports conservation efforts",
-                    "Focuses exclusively on natural environments",
-                    "Is always more expensive than conventional tourism",
-                    "Requires participants to engage in physical labor"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            
-            // Section 2: Hospitality Management (20 questions)
-            {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT one of the '5 Ps' of hospitality marketing?",
-                options: [
-                    "Policy",
-                    "Product",
-                    "Price",
-                    "Place"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'ARR' metric in hotel management stands for:",
-                options: [
-                    "Average Room Rate",
-                    "Annual Revenue Return",
-                    "Accommodation Reservation Ratio",
-                    "Average Restaurant Revenue"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Based on the chart below showing hotel performance metrics, which month had the highest RevPAR?",
-                options: [
-                    "July",
-                    "August",
-                    "September",
-                    "October"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["June", "July", "August", "September", "October"],
-                    datasets: [
-                        {
-                            label: "Occupancy Rate (%)",
-                            data: [72, 85, 82, 78, 65],
-                            backgroundColor: "rgba(59, 130, 246, 0.5)",
-                            borderColor: "rgba(59, 130, 246, 1)",
-                            borderWidth: 1,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: "ADR ($)",
-                            data: [150, 180, 175, 160, 140],
-                            backgroundColor: "rgba(16, 185, 129, 0.5)",
-                            borderColor: "rgba(16, 185, 129, 1)",
-                            borderWidth: 1,
-                            yAxisID: 'y1'
-                        }
-                    ]
-                },
-                chartOptions: {
-                    scales: {
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            max: 100
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const splashScreen = document.getElementById('splashScreen');
+            const permissionScreen = document.getElementById('permissionScreen');
+            const instructionsScreen = document.getElementById('instructionsScreen');
+            const loadingScreen = document.getElementById('loadingScreen');
+            const permissionBtn = document.getElementById('permissionBtn');
+            const agreeCheckbox = document.getElementById('agreeCheckbox');
+            const agreeBtn = document.getElementById('agreeBtn');
+
+            // 5 सेकंड बाद स्प्लैश स्क्रीन हटाएं और परमिशन स्क्रीन दिखाएं
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    permissionScreen.style.display = 'flex';
+                }, 1000);
+            }, 5000);
+
+            // परमिशन बटन क्लिक इवेंट
+            permissionBtn.addEventListener('click', async () => {
+                try {
+                    // स्थान (Location) की अनुमति मांगें
+                    const locationStatus = await requestLocationPermission();
+                    
+                    // माइक्रोफोन की अनुमति मांगें
+                    const micStatus = await requestMicrophonePermission();
+                    
+                    // कैमरा की अनुमति मांगें
+                    const cameraStatus = await requestCameraPermission();
+                    
+                    // सभी अनुमतियाँ मिलने पर निर्देश स्क्रीन दिखाएं
+                    if (locationStatus && micStatus && cameraStatus) {
+                        permissionScreen.style.display = 'none';
+                        instructionsScreen.style.display = 'flex';
+                    } else {
+                        alert('सभी अनुमतियाँ आवश्यक हैं। कृपया सभी अनुमतियाँ प्रदान करें।');
                     }
-                },
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "According to the table below, which department typically has the highest payroll costs as a percentage of revenue?",
-                options: [
-                    "Rooms",
-                    "Food & Beverage",
-                    "Administration",
-                    "Marketing"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Department", "Revenue (%)", "Payroll Costs (%)", "Profit Margin (%)"],
-                    rows: [
-                        ["Rooms", "65", "20", "75"],
-                        ["Food & Beverage", "25", "35", "15"],
-                        ["Administration", "5", "15", "-10"],
-                        ["Marketing", "5", "10", "-5"]
-                    ]
+                } catch (error) {
+                    console.error('Permission error:', error);
+                    alert('अनुमति प्रक्रिया में त्रुटि: ' + error.message);
                 }
-            },
-            {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a key principle of the 'Lean Hospitality' approach?",
-                options: [
-                    "Maximizing inventory levels to prevent stockouts",
-                    "Eliminating waste in all processes",
-                    "Continuous improvement through employee involvement",
-                    "Creating value from the customer's perspective"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'Upselling' technique in hospitality refers to:",
-                options: [
-                    "Encouraging guests to purchase higher-value products or services",
-                    "Selling additional products to existing customers",
-                    "Increasing prices during peak seasons",
-                    "Promoting products through upward communication channels"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Which of the following best describes the 'Moments of Truth' concept in hospitality?",
-                options: [
-                    "Critical interactions between staff and guests that shape perceptions",
-                    "Times when operational failures must be disclosed to guests",
-                    "Periods when customer feedback is collected",
-                    "Instances when revenue targets are achieved"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'Hub and Spoke' model in hospitality distribution refers to:",
-                options: [
-                    "A central reservation system with multiple distribution channels",
-                    "A hotel located at an airport with shuttle services",
-                    "A loyalty program with tiered benefits",
-                    "A food service operation with centralized production"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a typical key performance indicator (KPI) for housekeeping departments?",
-                options: [
-                    "RevPAR (Revenue per Available Room)",
-                    "Room cleaning time per occupied room",
-                    "Guest satisfaction scores for room cleanliness",
-                    "Linens replacement rate"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'Last Room Value' concept in hotel revenue management refers to:",
-                options: [
-                    "The minimum acceptable rate for selling the last available room",
-                    "The perceived value of a room booked at the last minute",
-                    "The upgrade value offered to loyal customers",
-                    "The depreciation value of unsold rooms"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a characteristic of a 'boutique hotel'?",
-                options: [
-                    "Standardized design across all properties",
-                    "Unique, distinctive character",
-                    "Small to medium size",
-                    "High level of personalized service"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The '10-5 Rule' in hospitality service refers to:",
-                options: [
-                    "Making eye contact at 10 feet and smiling at 5 feet",
-                    "Responding to guest requests within 10 minutes and resolving within 5",
-                    "Checking on guests 10 minutes after arrival and again after 5 minutes",
-                    "Offering 10% discount for 5-star reviews"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Which of the following best describes 'dynamic pricing' in hospitality?",
-                options: [
-                    "Adjusting prices in real-time based on demand and other factors",
-                    "Offering different prices to different customer segments",
-                    "Varying prices based on the time of booking",
-                    "Charging premium prices during special events"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'Guest Cycle' in hotel operations consists of four main stages. Which of the following is NOT one of them?",
-                options: [
-                    "Renovation",
-                    "Pre-arrival",
-                    "Arrival",
-                    "Departure"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a typical responsibility of a concierge in luxury hotels?",
-                options: [
-                    "Preparing financial statements for management",
-                    "Making restaurant reservations",
-                    "Arranging transportation",
-                    "Providing local information and recommendations"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'Porter's Five Forces' model is used in hospitality to analyze:",
-                options: [
-                    "Competitive intensity and profitability of an industry",
-                    "Guest satisfaction levels across five dimensions",
-                    "The five key operational areas of a hotel",
-                    "Five stages of employee career development"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Which of the following best describes 'bleisure' travel?",
-                options: [
-                    "Combining business and leisure travel",
-                    "Budget leisure travel during off-peak seasons",
-                    "Leisure travel focused on wellness activities",
-                    "Business travel with minimal leisure components"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'Hubbart Formula' is used in hospitality for:",
-                options: [
-                    "Determining room rates based on desired profit",
-                    "Calculating food and beverage costs",
-                    "Estimating staffing requirements",
-                    "Forecasting occupancy rates"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "Which of the following is NOT a common type of hotel ownership structure?",
-                options: [
-                    "Fiduciary ownership",
-                    "Franchise",
-                    "Management contract",
-                    "Timeshare"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Hospitality Management",
-                question: "The 'Service Profit Chain' model demonstrates the relationship between:",
-                options: [
-                    "Employee satisfaction, customer satisfaction, and profitability",
-                    "Service quality, pricing strategy, and market share",
-                    "Property location, amenities, and occupancy rates",
-                    "Brand recognition, advertising spend, and revenue"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            
-            // Section 3: Travel Management (20 questions)
-            {
-                section: "Travel Management",
-                question: "Which of the following is NOT a typical component of a 'Grand Tour' package?",
-                options: [
-                    "Extreme sports activities",
-                    "Cultural experiences",
-                    "Historical site visits",
-                    "Language immersion"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'Open Jaw' ticket in airline travel refers to:",
-                options: [
-                    "A ticket where the return flight leaves from a different city than the arrival",
-                    "A ticket that allows unlimited stopovers",
-                    "A last-minute discounted ticket",
-                    "A ticket with flexible dates"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Based on the chart below showing travel booking channels, which channel showed the highest growth from 2020 to 2023?",
-                options: [
-                    "Mobile Apps",
-                    "Online Travel Agencies",
-                    "Direct Hotel Websites",
-                    "Traditional Travel Agents"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["2020", "2021", "2022", "2023"],
-                    datasets: [
-                        {
-                            label: "Mobile Apps",
-                            data: [15, 25, 35, 48],
-                            backgroundColor: "rgba(59, 130, 246, 0.5)",
-                            borderColor: "rgba(59, 130, 246, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Online Travel Agencies",
-                            data: [40, 38, 42, 45],
-                            backgroundColor: "rgba(16, 185, 129, 0.5)",
-                            borderColor: "rgba(16, 185, 129, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Direct Hotel Websites",
-                            data: [30, 28, 32, 35],
-                            backgroundColor: "rgba(239, 68, 68, 0.5)",
-                            borderColor: "rgba(239, 68, 68, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Traditional Travel Agents",
-                            data: [15, 9, 7, 5],
-                            backgroundColor: "rgba(245, 158, 11, 0.5)",
-                            borderColor: "rgba(245, 158, 11, 1)",
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "According to the table below showing baggage handling performance, which airline had the highest mishandled baggage rate?",
-                options: [
-                    "Airline D",
-                    "Airline C",
-                    "Airline B",
-                    "Airline A"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Airline", "Total Baggage", "Mishandled", "Rate (%)"],
-                    rows: [
-                        ["Airline A", "1,250,000", "12,500", "1.0"],
-                        ["Airline B", "980,000", "11,760", "1.2"],
-                        ["Airline C", "1,100,000", "14,300", "1.3"],
-                        ["Airline D", "850,000", "12,750", "1.5"]
-                    ]
+            });
+
+            // चेकबॉक्स परिवर्तन इवेंट
+            agreeCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    agreeBtn.classList.add('active');
+                } else {
+                    agreeBtn.classList.remove('active');
                 }
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following is NOT a common type of travel insurance coverage?",
-                options: [
-                    "Professional liability coverage",
-                    "Trip cancellation/interruption",
-                    "Medical expenses",
-                    "Lost or delayed baggage"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'BSP' system in travel management stands for:",
-                options: [
-                    "Billing and Settlement Plan",
-                    "Business Service Provider",
-                    "Booking and Sales Platform",
-                    "Brand Standardization Program"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following best describes the 'Global Distribution System' (GDS) in travel?",
-                options: [
-                    "A network that enables transactions between travel service providers and agencies",
-                    "A worldwide system for distributing travel brochures",
-                    "An international travel regulatory body",
-                    "A global network of tourist information centers"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'IATA' airport code system uses how many letters for airport identification?",
-                options: [
-                    "3",
-                    "2",
-                    "4",
-                    "5"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following is NOT a typical component of a 'MICE' event?",
-                options: [
-                    "Leisure vacation",
-                    "Meetings",
-                    "Incentives",
-                    "Exhibitions"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'Schengen Agreement' in European travel allows for:",
-                options: [
-                    "Borderless travel between member countries",
-                    "Discounted airfares for EU residents",
-                    "Standardized hotel ratings across Europe",
-                    "Harmonized visa policies for non-EU visitors"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following best describes 'ancillary revenue' in the airline industry?",
-                options: [
-                    "Revenue from non-ticket sources like baggage fees and onboard sales",
-                    "Revenue from code-share agreements",
-                    "Revenue from government subsidies",
-                    "Revenue from frequent flyer program partnerships"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'hub-and-spoke' system in airline operations refers to:",
-                options: [
-                    "Routing passengers through central hub airports",
-                    "A loyalty program structure",
-                    "An aircraft maintenance system",
-                    "A flight crew scheduling method"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following is NOT a typical responsibility of a tour operator?",
-                options: [
-                    "Operating airport security checkpoints",
-                    "Designing tour packages",
-                    "Negotiating with suppliers",
-                    "Handling customer service for tours"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'APEX' fare in airline ticketing stands for:",
-                options: [
-                    "Advance Purchase Excursion",
-                    "Airline Passenger Exchange",
-                    "Approved Price Excursion",
-                    "Advanced Premium Experience"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following best describes 'bleisure' travel?",
-                options: [
-                    "Combining business and leisure travel",
-                    "Budget travel during off-peak seasons",
-                    "Group travel with colleagues",
-                    "Last-minute travel deals"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'WTTC' in travel industry stands for:",
-                options: [
-                    "World Travel and Tourism Council",
-                    "Worldwide Travel and Transport Committee",
-                    "World Tourism and Trade Commission",
-                    "Worldwide Travel Technology Consortium"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following is NOT a common type of cruise itinerary?",
-                options: [
-                    "Freestyle cruising with no set itinerary",
-                    "Round-trip cruising",
-                    "One-way cruising",
-                    "Open-jaw cruising"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'Duty of Care' obligation for travel managers refers to:",
-                options: [
-                    "Legal responsibility for traveler safety and well-being",
-                    "Overseeing customs declarations for travelers",
-                    "Ensuring travelers have adequate insurance",
-                    "Monitoring traveler expense reports"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following is NOT a typical feature of a 'low-cost carrier' business model?",
-                options: [
-                    "Complimentary multi-course meals on all flights",
-                    "Point-to-point routes",
-                    "Single aircraft type",
-                    "High aircraft utilization"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "The 'CRS' in travel technology stands for:",
-                options: [
-                    "Computer Reservation System",
-                    "Customer Relationship Software",
-                    "Centralized Reservation Service",
-                    "Corporate Rate System"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Travel Management",
-                question: "Which of the following best describes 'dynamic packaging' in travel?",
-                options: [
-                    "Combining separate travel components into customized packages",
-                    "Last-minute packaging of unsold inventory",
-                    "Seasonal variations in tour packages",
-                    "Packages that change based on weather conditions"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            
-            // Section 4: Managerial Aptitude (20 questions)
-            {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT one of the five functions of management identified by Henri Fayol?",
-                options: [
-                    "Staffing",
-                    "Planning",
-                    "Organizing",
-                    "Commanding"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The 'SMART' criteria for goal setting stands for:",
-                options: [
-                    "Specific, Measurable, Achievable, Relevant, Time-bound",
-                    "Strategic, Manageable, Actionable, Realistic, Timely",
-                    "Standardized, Meaningful, Attainable, Responsible, Targeted",
-                    "Systematic, Motivating, Accountable, Reliable, Trackable"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Based on the chart below showing employee satisfaction scores across departments, which department had the lowest satisfaction in Q3?",
-                options: [
-                    "Housekeeping",
-                    "Front Office",
-                    "Food & Beverage",
-                    "Maintenance"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["Q1", "Q2", "Q3", "Q4"],
-                    datasets: [
-                        {
-                            label: "Housekeeping",
-                            data: [78, 82, 75, 85],
-                            backgroundColor: "rgba(59, 130, 246, 0.5)",
-                            borderColor: "rgba(59, 130, 246, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Front Office",
-                            data: [85, 88, 84, 90],
-                            backgroundColor: "rgba(16, 185, 129, 0.5)",
-                            borderColor: "rgba(16, 185, 129, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Food & Beverage",
-                            data: [80, 83, 82, 88],
-                            backgroundColor: "rgba(239, 68, 68, 0.5)",
-                            borderColor: "rgba(239, 68, 68, 1)",
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Maintenance",
-                            data: [88, 85, 86, 92],
-                            backgroundColor: "rgba(245, 158, 11, 0.5)",
-                            borderColor: "rgba(245, 158, 11, 1)",
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "According to the table below showing project completion data, which team had the highest percentage of projects completed on time?",
-                options: [
-                    "Team D",
-                    "Team C",
-                    "Team B",
-                    "Team A"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Team", "Projects Completed", "On Time", "Percentage"],
-                    rows: [
-                        ["Team A", "25", "18", "72%"],
-                        ["Team B", "30", "23", "77%"],
-                        ["Team C", "28", "22", "79%"],
-                        ["Team D", "32", "27", "84%"]
-                    ]
-                }
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which leadership style is characterized by making decisions without consulting subordinates?",
-                options: [
-                    "Autocratic",
-                    "Democratic",
-                    "Laissez-faire",
-                    "Transformational"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The 'PDCA' cycle in quality management stands for:",
-                options: [
-                    "Plan, Do, Check, Act",
-                    "Prepare, Develop, Control, Adjust",
-                    "Process, Deliver, Correct, Assess",
-                    "Project, Design, Create, Analyze"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT one of Maslow's hierarchy of needs?",
-                options: [
-                    "Employment needs",
-                    "Physiological needs",
-                    "Safety needs",
-                    "Esteem needs"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The '80/20 Rule' in management suggests that:",
-                options: [
-                    "80% of results come from 20% of efforts",
-                    "80% of problems come from 20% of causes",
-                    "80% of revenue comes from 20% of customers",
-                    "All of the above"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which conflict resolution style involves finding a mutually acceptable solution?",
-                options: [
-                    "Collaborating",
-                    "Competing",
-                    "Compromising",
-                    "Avoiding"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The 'SWOT' analysis framework assesses:",
-                options: [
-                    "Strengths, Weaknesses, Opportunities, Threats",
-                    "Strategies, Workflows, Objectives, Tactics",
-                    "Sales, Workforce, Operations, Technology",
-                    "Service, Welfare, Organization, Training"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT a characteristic of effective teams?",
-                options: [
-                    "Uniform thinking among all members",
-                    "Clear goals",
-                    "Open communication",
-                    "Mutual accountability"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The 'KPI' in performance management stands for:",
-                options: [
-                    "Key Performance Indicator",
-                    "Key Process Improvement",
-                    "Knowledge and Performance Index",
-                    "Key Productivity Indicator"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which motivation theory suggests that employees are motivated by fairness?",
-                options: [
-                    "Equity Theory",
-                    "Expectancy Theory",
-                    "Two-Factor Theory",
-                    "Reinforcement Theory"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The 'RACI' matrix in project management defines:",
-                options: [
-                    "Roles and responsibilities",
-                    "Risk assessment criteria",
-                    "Resource allocation indicators",
-                    "Revenue and cost integration"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT a stage in Tuckman's model of group development?",
-                options: [
-                    "Evaluation",
-                    "Forming",
-                    "Storming",
-                    "Norming"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The 'Six Sigma' methodology aims to:",
-                options: [
-                    "Reduce defects to 3.4 per million opportunities",
-                    "Increase productivity by 60%",
-                    "Achieve 6% annual growth",
-                    "Implement 6 strategic objectives"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which decision-making model is based on satisficing rather than optimizing?",
-                options: [
-                    "Bounded Rationality Model",
-                    "Rational Model",
-                    "Intuitive Model",
-                    "Creative Model"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The 'Johari Window' model is used for:",
-                options: [
-                    "Understanding self-awareness and interpersonal relationships",
-                    "Analyzing market segmentation",
-                    "Evaluating financial performance",
-                    "Designing organizational structures"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which of the following is NOT a typical function of human resource management?",
-                options: [
-                    "Managing customer complaints",
-                    "Recruitment and selection",
-                    "Training and development",
-                    "Performance management"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "The 'Vroom-Yetton' model is concerned with:",
-                options: [
-                    "Decision-making participation",
-                    "Leadership styles",
-                    "Motivation techniques",
-                    "Conflict resolution"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "Managerial Aptitude",
-                question: "Which of the following best describes 'servant leadership'?",
-                options: [
-                    "Focusing on the growth and well-being of team members",
-                    "Leading through strict authority and control",
-                    "Rotating leadership responsibilities among team members",
-                    "Leading by example in customer service"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            
-            // Section 5: General Knowledge (20 questions)
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT one of the Seven Wonders of the Ancient World?",
-                options: [
-                    "The Leaning Tower of Pisa",
-                    "The Great Pyramid of Giza",
-                    "The Hanging Gardens of Babylon",
-                    "The Colossus of Rhodes"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The currency of Japan is:",
-                options: [
-                    "Yen",
-                    "Won",
-                    "Yuan",
-                    "Ringgit"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Based on the chart below showing world population growth, in which decade did the population first exceed 5 billion?",
-                options: [
-                    "1980s",
-                    "1990s",
-                    "2000s",
-                    "2010s"
-                ],
-                hasChart: true,
-                chartData: {
-                    labels: ["1950", "1960", "1970", "1980", "1990", "2000", "2010", "2020"],
-                    datasets: [{
-                        label: "World Population (billions)",
-                        data: [2.5, 3.0, 3.7, 4.4, 5.3, 6.1, 6.9, 7.8],
-                        backgroundColor: "rgba(59, 130, 246, 0.5)",
-                        borderColor: "rgba(59, 130, 246, 1)",
-                        borderWidth: 1
-                    }]
-                },
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "According to the table below showing Nobel Prize winners by country, which country has the most Nobel laureates in Literature?",
-                options: [
-                    "France",
-                    "United States",
-                    "United Kingdom",
-                    "Germany"
-                ],
-                hasChart: false,
-                hasTable: true,
-                tableData: {
-                    headers: ["Country", "Physics", "Chemistry", "Medicine", "Literature", "Peace"],
-                    rows: [
-                        ["United States", "98", "72", "102", "12", "23"],
-                        ["United Kingdom", "25", "30", "32", "11", "12"],
-                        ["Germany", "24", "30", "17", "8", "5"],
-                        ["France", "14", "10", "12", "15", "9"]
-                    ]
-                }
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a primary color in the RGB color model?",
-                options: [
-                    "Yellow",
-                    "Red",
-                    "Green",
-                    "Blue"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The chemical symbol for gold is:",
-                options: [
-                    "Au",
-                    "Ag",
-                    "Fe",
-                    "Pb"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which planet is known as the 'Red Planet'?",
-                options: [
-                    "Mars",
-                    "Jupiter",
-                    "Venus",
-                    "Saturn"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The author of 'War and Peace' is:",
-                options: [
-                    "Leo Tolstoy",
-                    "Fyodor Dostoevsky",
-                    "Anton Chekhov",
-                    "Nikolai Gogol"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a member of the G7 group of nations?",
-                options: [
-                    "China",
-                    "Canada",
-                    "Italy",
-                    "Japan"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The longest river in the world is:",
-                options: [
-                    "Nile",
-                    "Amazon",
-                    "Yangtze",
-                    "Mississippi"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a programming language?",
-                options: [
-                    "HTML",
-                    "Python",
-                    "Java",
-                    "C++"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The capital of Australia is:",
-                options: [
-                    "Canberra",
-                    "Sydney",
-                    "Melbourne",
-                    "Brisbane"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT one of the four fundamental forces of nature?",
-                options: [
-                    "Centrifugal force",
-                    "Gravitational force",
-                    "Electromagnetic force",
-                    "Strong nuclear force"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The largest ocean on Earth is:",
-                options: [
-                    "Pacific Ocean",
-                    "Atlantic Ocean",
-                    "Indian Ocean",
-                    "Arctic Ocean"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a bone in the human body?",
-                options: [
-                    "Femora",
-                    "Humerus",
-                    "Tibia",
-                    "Radius"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The inventor of the World Wide Web is:",
-                options: [
-                    "Tim Berners-Lee",
-                    "Bill Gates",
-                    "Steve Jobs",
-                    "Mark Zuckerberg"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which country is the largest by land area?",
-                options: [
-                    "Russia",
-                    "Canada",
-                    "China",
-                    "United States"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The chemical formula for water is:",
-                options: [
-                    "H₂O",
-                    "CO₂",
-                    "NaCl",
-                    "CH₄"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a primary taste sensation?",
-                options: [
-                    "Spicy",
-                    "Sweet",
-                    "Sour",
-                    "Bitter"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "The largest desert in the world is:",
-                options: [
-                    "Antarctica",
-                    "Sahara",
-                    "Arabian",
-                    "Gobi"
-                ],
-                hasChart: false,
-                hasTable: false
-            },
-            {
-                section: "General Knowledge",
-                question: "Which of the following is NOT a gas giant planet?",
-                options: [
-                    "Mars",
-                    "Jupiter",
-                    "Saturn",
-                    "Neptune"
-                ],
-                hasChart: false,
-                hasTable: false
-            }
-        ];
-        
-        
-// User data
-let userAnswers = {};
-let markedQuestions = {};
-let currentQuestion = 1;
-let timerInterval;
-let timeLeft = 120 * 60; // 120 minutes in seconds
+            });
 
-// DOM Elements
-const splashScreen = document.getElementById('splashScreen');
-const examContainer = document.getElementById('examContainer');
-const loginBtn = document.getElementById('loginBtn');
-const usernameInput = document.getElementById('username');
-const passwordInput = document.getElementById('password');
-const errorMessage = document.getElementById('errorMessage');
-const questionDisplay = document.getElementById('questionDisplay');
-const questionNav = document.getElementById('questionNav');
-const currentQuestionDisplay = document.getElementById('currentQuestion');
-const currentSectionDisplay = document.getElementById('currentSection');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const markBtn = document.getElementById('markBtn');
-const submitBtn = document.getElementById('submitBtn');
-const timerDisplay = document.getElementById('timer');
-const timeDisplay = document.getElementById('timeDisplay');
-const answeredCount = document.getElementById('answeredCount');
-const progressPercent = document.getElementById('progressPercent');
-const progressFill = document.getElementById('progressFill');
-const resultModal = document.getElementById('resultModal');
-const closeModal = document.getElementById('closeModal');
-const correctAnswersDisplay = document.getElementById('correctAnswers');
-const incorrectAnswersDisplay = document.getElementById('incorrectAnswers');
-const unansweredDisplay = document.getElementById('unanswered');
-const percentageDisplay = document.getElementById('percentage');
-const verdictDisplay = document.getElementById('verdict');
-const answersheetContent = document.getElementById('answersheetContent');
-const downloadBtn = document.getElementById('downloadBtn');
+            // सहमति बटन क्लिक इवेंट
+            agreeBtn.addEventListener('click', function() {
+                instructionsScreen.style.display = 'none';
+                loadingScreen.style.display = 'flex';
+                
+                // 5 सेकंड लोडिंग के बाद index.html पर रीडायरेक्ट
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 5000);
+            });
 
-// Login Functionality
-loginBtn.addEventListener('click', () => {
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
-    
-    if (username === "mtest@alpnagroup.com" && password === "MTAGU00615") {
-        // Correct credentials
-        errorMessage.style.display = 'none';
-        splashScreen.style.opacity = '0';
-        splashScreen.style.pointerEvents = 'none';
-        
-        setTimeout(() => {
-            splashScreen.style.display = 'none';
-            examContainer.style.display = 'block';
-            startTimer();
-            loadQuestion(currentQuestion);
-            createNavigationButtons();
-            updateProgress();
-        }, 500);
-    } else {
-        // Incorrect credentials
-        errorMessage.style.display = 'block';
-        usernameInput.value = '';
-        passwordInput.value = '';
-    }
-});
-
-// Timer Functionality
-function startTimer() {
-    updateTimerDisplay();
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-        
-        if (timeLeft <= 300) { // 5 minutes left
-            timerDisplay.classList.add('warning');
-        }
-        
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            submitExam();
-        }
-    }, 1000);
-}
-
-function updateTimerDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-}
-
-// Progress Tracking
-function updateProgress() {
-    const answered = Object.keys(userAnswers).length;
-    const percent = Math.round((answered / 100) * 100);
-    
-    answeredCount.textContent = answered;
-    progressPercent.textContent = `${percent}%`;
-    progressFill.style.width = `${percent}%`;
-}
-
-// Question Navigation
-function createNavigationButtons() {
-    questionNav.innerHTML = '';
-    
-    for (let i = 1; i <= 100; i++) {
-        const btn = document.createElement('button');
-        btn.className = 'nav-btn';
-        btn.textContent = i;
-        btn.dataset.question = i;
-        
-        if (i === 1) {
-            btn.classList.add('current');
-        }
-        
-        btn.addEventListener('click', () => {
-            navigateToQuestion(parseInt(btn.dataset.question));
-        });
-        
-        questionNav.appendChild(btn);
-    }
-}
-
-function updateNavigationButtons() {
-    const buttons = questionNav.querySelectorAll('.nav-btn');
-    
-    buttons.forEach(btn => {
-        btn.classList.remove('current', 'visited', 'answered', 'marked');
-        
-        const questionNum = parseInt(btn.dataset.question);
-        
-        if (questionNum === currentQuestion) {
-            btn.classList.add('current');
-        }
-        
-        if (markedQuestions[questionNum]) {
-            btn.classList.add('marked');
-        }
-        
-        if (userAnswers[questionNum]) {
-            btn.classList.add('answered');
-        } else if (questionNum < currentQuestion) {
-            btn.classList.add('visited');
-        }
-    });
-}
-
-function navigateToQuestion(questionNum) {
-    if (questionNum >= 1 && questionNum <= 100) {
-        currentQuestion = questionNum;
-        loadQuestion(currentQuestion);
-        updateNavigationButtons();
-        currentQuestionDisplay.textContent = currentQuestion;
-        
-        // Update section header
-        const questionData = examQuestions[currentQuestion - 1];
-        currentSectionDisplay.textContent = questionData.section;
-        
-        // Scroll to top of question
-        window.scrollTo({
-            top: questionDisplay.offsetTop - 20,
-            behavior: 'smooth'
-        });
-    }
-}
-
-// Question Loading
-function loadQuestion(questionNum) {
-    const questionData = examQuestions[questionNum - 1]; // Adjust for 0-based index
-    
-    let questionHTML = `
-        <div class="question" data-question="${questionNum}">
-            <div class="question-text">
-                ${questionData.question}
-            </div>
-    `;
-    
-    // Add visual aid if needed
-    if (questionData.hasChart) {
-        questionHTML += `
-            <div class="visual-aid">
-                <div class="visual-aid-title">Data Visualization:</div>
-                <div class="chart-container">
-                    <canvas id="chart-${questionNum}"></canvas>
-                </div>
-            </div>
-        `;
-    }
-    
-    if (questionData.hasTable) {
-        questionHTML += `
-            <div class="visual-aid">
-                <div class="visual-aid-title">Reference Table:</div>
-                <table>
-                    <thead>
-                        <tr>
-                            ${questionData.tableData.headers.map(header => `<th>${header}</th>`).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${questionData.tableData.rows.map(row => `
-                            <tr>
-                                ${row.map(cell => `<td>${cell}</td>`).join('')}
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
-    }
-    
-    // Add options
-    questionHTML += `<div class="options">`;
-    
-    const optionLetters = ['a', 'b', 'c', 'd'];
-    
-    questionData.options.forEach((option, index) => {
-        const optionLetter = optionLetters[index];
-        const isSelected = userAnswers[questionNum] === optionLetter;
-        const isLocked = userAnswers[questionNum] !== undefined;
-        
-        questionHTML += `
-            <div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" 
-                 data-option="${optionLetter}" onclick="selectOption(${questionNum}, '${optionLetter}')">
-                <input type="radio" name="q${questionNum}" id="q${questionNum}${optionLetter}" 
-                       ${isSelected ? 'checked' : ''} ${isLocked ? 'disabled' : ''}>
-                <label for="q${questionNum}${optionLetter}">${option}</label>
-            </div>
-        `;
-    });
-    
-    questionHTML += `</div></div>`;
-    
-    questionDisplay.innerHTML = questionHTML;
-    
-    // Update mark button state
-    updateMarkButton();
-    
-    // Render chart if needed
-    if (questionData.hasChart) {
-        const ctx = document.getElementById(`chart-${questionNum}`).getContext('2d');
-        new Chart(ctx, {
-            type: questionData.chartType || 'bar',
-            data: questionData.chartData,
-            options: questionData.chartOptions || {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
+            // अनुमति अनुरोध फंक्शन
+            async function requestLocationPermission() {
+                try {
+                    if (navigator.geolocation) {
+                        const status = await new Promise((resolve, reject) => {
+                            navigator.geolocation.getCurrentPosition(
+                                () => resolve(true),
+                                (error) => {
+                                    if (error.code === error.PERMISSION_DENIED) {
+                                        resolve(false);
+                                    } else {
+                                        reject(error);
+                                    }
+                                }
+                            );
+                        });
+                        return status;
                     }
+                    return false;
+                } catch (error) {
+                    console.error('Location permission error:', error);
+                    return false;
+                }
+            }
+
+            async function requestMicrophonePermission() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                        return true;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error('Microphone permission error:', error);
+                    return false;
+                }
+            }
+
+            async function requestCameraPermission() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                        return true;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error('Camera permission error:', error);
+                    return false;
                 }
             }
         });
-    }
-    
-    // Update button states
-    prevBtn.disabled = questionNum === 1;
-    nextBtn.disabled = questionNum === 100;
-}
 
-// Mark Question
-function updateMarkButton() {
-    if (markedQuestions[currentQuestion]) {
-        markBtn.innerHTML = '<i class="fas fa-star"></i> Unmark';
-        markBtn.classList.add('marked');
-    } else {
-        markBtn.innerHTML = '<i class="far fa-star"></i> Mark';
-        markBtn.classList.remove('marked');
-    }
-}
-
-markBtn.addEventListener('click', () => {
-    markedQuestions[currentQuestion] = !markedQuestions[currentQuestion];
-    updateMarkButton();
-    updateNavigationButtons();
-});
-
-// Option Selection
-window.selectOption = function(questionNum, optionLetter) {
-    if (!userAnswers[questionNum]) {
-        userAnswers[questionNum] = optionLetter;
-        
-        // Update UI
-        const options = document.querySelectorAll(`.question[data-question="${questionNum}"] .option`);
-        options.forEach(opt => {
-            opt.classList.remove('selected');
-            if (opt.dataset.option === optionLetter) {
-                opt.classList.add('selected');
+        // ब्राउज़र टैब स्विच करने या अनफोकस होने पर चेतावनी
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState !== 'visible') {
+                alert('चेतावनी: परीक्षा के दौरान ब्राउज़र टैब बदलना या अन्य एप्लिकेशन खोलना वर्जित है। इस प्रकार की किसी भी गतिविधि के परिणामस्वरूप आपकी परीक्षा समाप्त हो सकती है।');
             }
-            opt.classList.add('locked');
-            opt.querySelector('input').disabled = true;
         });
-        
-        // Update navigation and progress
-        updateNavigationButtons();
-        updateProgress();
-    }
-};
-
-// Navigation Controls
-prevBtn.addEventListener('click', () => {
-    navigateToQuestion(currentQuestion - 1);
-});
-
-nextBtn.addEventListener('click', () => {
-    navigateToQuestion(currentQuestion + 1);
-});
-
-// Keyboard Navigation
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft' && currentQuestion > 1) {
-        navigateToQuestion(currentQuestion - 1);
-    } else if (e.key === 'ArrowRight' && currentQuestion < 100) {
-        navigateToQuestion(currentQuestion + 1);
-    }
-});
-
-// Submit Exam
-submitBtn.addEventListener('click', () => {
-    if (confirm("Are you sure you want to submit your exam? You won't be able to make changes after submission.")) {
-        submitExam();
-    }
-});
-
-function submitExam() {
-    clearInterval(timerInterval);
-    calculateResults();
-    showResults();
-}
-
-// Results Calculation with Negative Marking
-function calculateResults() {
-    let correct = 0;
-    let incorrect = 0;
-    let unanswered = 0;
-    let totalScore = 0;
-    
-    for (let i = 1; i <= 100; i++) {
-        if (userAnswers[i] === undefined) {
-            unanswered++;
-        } else if (userAnswers[i] === answerKey[i]) {
-            correct++;
-            totalScore += 1; // +1 for correct answer
-        } else {
-            incorrect++;
-            totalScore -= 0.33; // -0.33 for incorrect answer
-        }
-    }
-    
-    // Ensure score doesn't go below zero
-    totalScore = Math.max(0, totalScore);
-    const percentage = Math.round((totalScore / 100) * 100);
-    const passed = totalScore >= 55;
-    
-    return {
-        correct,
-        incorrect,
-        unanswered,
-        totalScore,
-        percentage,
-        passed
-    };
-}
-
-// Show Results with Negative Marking
-function showResults() {
-    const results = calculateResults();
-    
-    correctAnswersDisplay.textContent = results.correct;
-    incorrectAnswersDisplay.textContent = results.incorrect;
-    unansweredDisplay.textContent = results.unanswered;
-    percentageDisplay.textContent = `${results.percentage}%`;
-    
-    verdictDisplay.textContent = results.passed 
-        ? `Congratulations! You have passed with a score of ${results.totalScore.toFixed(2)}/100 (Correct: ${results.correct}, Incorrect: ${results.incorrect} with -0.33 each).` 
-        : `You scored ${results.totalScore.toFixed(2)}/100 (Correct: ${results.correct}, Incorrect: ${results.incorrect} with -0.33 each). Minimum 55 required to pass.`;
-    
-    verdictDisplay.className = results.passed ? "verdict pass" : "verdict fail";
-    
-    // Generate answersheet
-    answersheetContent.innerHTML = '';
-    
-    for (let i = 1; i <= 100; i++) {
-        const questionData = examQuestions[i - 1];
-        const userAnswer = userAnswers[i];
-        const correctAnswer = answerKey[i];
-        const isCorrect = userAnswer === correctAnswer;
-        
-        const answerItem = document.createElement('div');
-        answerItem.className = 'answer-item';
-        
-        let statusClass, statusText;
-        if (userAnswer === undefined) {
-            statusClass = 'unanswered';
-            statusText = 'Unanswered';
-        } else if (isCorrect) {
-            statusClass = 'correct';
-            statusText = 'Correct (+1)';
-        } else {
-            statusClass = 'incorrect';
-            statusText = 'Incorrect (-0.33)';
-        }
-        
-        answerItem.innerHTML = `
-            <div class="answer-status ${statusClass}">
-                Question ${i}: ${statusText}
-            </div>
-            <div class="answer-question">${questionData.question}</div>
-            <div class="answer-details">
-                <div class="answer-detail">
-                    <strong>Your Answer</strong>
-                    <span>${userAnswer ? userAnswer.toUpperCase() : 'Not answered'}</span>
-                </div>
-                <div class="answer-detail">
-                    <strong>Correct Answer</strong>
-                    <span>${correctAnswer.toUpperCase()}</span>
-                </div>
-            </div>
-        `;
-        
-        answersheetContent.appendChild(answerItem);
-    }
-    
-    // Show modal
-    resultModal.classList.add('active');
-}
-
-// Close Modal
-closeModal.addEventListener('click', () => {
-    resultModal.classList.remove('active');
-});
-
-// Download Results
-downloadBtn.addEventListener('click', () => {
-    html2canvas(document.querySelector('.modal-content')).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `Alpana-Managerial-Test-Results-${new Date().toISOString().slice(0,10)}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    });
-});
-
-// Prevent copying
-document.addEventListener('copy', (e) => {
-    e.preventDefault();
-    alert('Copying content from this exam is not allowed.');
-});
-
-document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-});
-
-// Disable keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
-        e.preventDefault();
-        alert('Copying content from this exam is not allowed.');
-    }
-});
     </script>
 </body>
 </html>
