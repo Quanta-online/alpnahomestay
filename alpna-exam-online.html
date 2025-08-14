@@ -1,0 +1,730 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+<meta charset="utf-8" /> 
+<meta name="viewport" content="width=device-width,initial-scale=1" /> 
+<title>Exam Portal — Alpana Managerial Test</title> 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"> 
+<style> 
+:root{ --bg:#071029; --card:#041226; --accent:#06b6d4; --muted:#94a3b8; --success:#10b981; --danger:#ef4444; --glass: rgba(255,255,255,0.03); --radius-sm:8px; --radius-lg:14px; } *{box-sizing:border-box;font-family:Inter, "Segoe UI", Roboto, "Noto Sans", sans-serif} body{margin:0;background:linear-gradient(180deg,#071029,#081827);color:#e6eef6} .container{max-width:1150px;margin:24px auto;padding:16px} /* Splash / Login */ #splashScreen{display:flex;align-items:center;justify-content:center;height:82vh} .login-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:22px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.7);width:92%;max-width:960px;display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:center} .brand{font-size:22px;color:var(--accent);font-weight:700} .login-right{background:var(--glass);padding:18px;border-radius:10px} input, button{font-family:inherit} input[type=text], input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);background:transparent;color:inherit;margin-top:8px} button.primary{background:linear-gradient(90deg,var(--accent),#3b82f6);color:#001; padding:10px 14px;border-radius:8px;border:none;font-weight:700;cursor:pointer} .error{color:var(--danger);display:none;margin-top:8px} /* Exam UI */ .exam-grid{display:grid;grid-template-columns:300px 1fr;gap:16px;margin-top:18px} .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px} .sidebar{padding:12px} .nav-grid{display:flex;flex-wrap:wrap;gap:6px} .nav-btn{width:44px;height:40px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer} .nav-btn.current{outline:2px solid rgba(6,182,212,0.12);background:rgba(6,182,212,0.06);color:#bff7fb} .nav-btn.answered{background:rgba(16,185,129,0.12);color:#bff7fb} .nav-btn.marked{box-shadow:0 0 0 2px rgba(250,204,21,0.06);border:1px dashed rgba(250,204,21,0.12)} .meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} .progress{background:rgba(255,255,255,0.03);height:10px;border-radius:999px;overflow:hidden} .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#7c3aed)} .question-area{padding:16px} .section-header{display:flex;justify-content:space-between;align-items:center;gap:10px} .question-text{font-size:18px;margin-bottom:12px;color:#e6eef6} .options{display:flex;flex-direction:column;gap:10px} .option{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;background:transparent} .option:hover:not(.locked){background:rgba(255,255,255,0.02)} .option.selected{background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.14)} .option.locked{opacity:0.85;pointer-events:none} .controls{display:flex;gap:10px;margin-top:12px;align-items:center} .controls .outline{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;color:inherit;cursor:pointer} /* Modal */ .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(0deg, rgba(2,6,23,0.6), rgba(2,6,23,0.85));padding:20px;z-index:9999} .modal.active{display:flex} .modal-content{background:#031025;border-radius:12px;padding:18px;max-width:1100px;width:100%;max-height:85vh;overflow:auto} .answer-item{border-top:1px dashed rgba(255,255,255,0.03);padding:10px 0} .answer-status.correct{color:var(--success)} .answer-status.incorrect{color:var(--danger)} .answer-status.unanswered{color:var(--muted)} .verdict.pass{color:var(--success);font-weight:700} .verdict.fail{color:var(--danger);font-weight:700} /* Print styles */ @media print { body * { visibility: hidden; background: white; color: black; } .modal, .modal * { visibility: visible; } .modal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: white; padding: 0; margin: 0; } .modal-content { max-width: 100%; box-shadow: none; border: none; background: white; color: black; padding: 10px; } .answer-item { page-break-inside: avoid; } button { display: none !important; } } /* small */ @media (max-width:980px){.exam-grid{grid-template-columns:1fr}.login-card{grid-template-columns:1fr}} 
+</style> 
+</head> 
+<body> 
+<div class="container"> 
+<div id="splashScreen" class="card"> 
+<div class="login-card" role="dialog" aria-label="Login"> 
+<div> 
+<div class="brand">Alpana Managerial Test</div> 
+<p style="color:var(--muted);margin-top:8px">exam portal — auto-submit, export, audit, persistence.</p> 
+<p style="color:var(--muted);font-size:13px;margin-top:8px">Auto-end scheduled: <strong>14 Aug 2025, 13:05 IST</strong></p> 
+</div> 
+<div class="login-right"> 
+<label for="username">Email / User</label> 
+<input id="username" type="text" placeholder="user@example.com" autocomplete="username"/> 
+<label for="password" style="margin-top:10px">Password</label> 
+<input id="password" type="password" placeholder="password" autocomplete="current-password"/> 
+<div style="margin-top:12px;display:flex;gap:8px"> 
+<button id="loginBtn" class="primary">Login</button> 
+</div> 
+<div id="errorMessage" class="error">Invalid credentials — try again</div> 
+<div style="margin-top:10px;color:var(--muted);font-size:13px">If you were auto-logged out previously, the new required password will be enforced on next login.</div> 
+</div> 
+</div> 
+</div> 
+<div id="examContainer" style="display:none"> 
+<div class="card"> 
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"> 
+<div style="display:flex;gap:14px;align-items:center"> 
+<div><strong>User:</strong> <span id="displayUser">—</span></div> 
+<div style="color:var(--muted)">Section: <span id="currentSection">—</span></div> 
+<div style="color:var(--muted)">Q: <span id="currentQuestion">1</span>/100</div> 
+</div> 
+<div style="display:flex;gap:16px;align-items:center"> 
+<div style="text-align:right"> 
+<div style="font-size:12px;color:var(--muted)">Time left</div> 
+<div id="timeDisplay" style="font-weight:700;font-size:16px">--:--:--</div> 
+</div> 
+<div> 
+<button id="submitBtn" class="primary">Submit Exam</button> 
+</div> 
+</div> 
+</div> 
+<div class="exam-grid" style="margin-top:14px"> 
+<aside class="sidebar card"> 
+<div class="meta"> 
+<div>Answered: <strong id="answeredCount">0</strong>/100</div> 
+<div style="color:var(--muted)">Rank: <strong id="userRank"> 00</strong></div> 
+</div> 
+<div class="progress" aria-hidden="true"><div id="progressFill" class="progress-fill"></div></div> 
+<div style="margin-top:12px;font-size:13px;color:var(--muted)">Questions</div> 
+<div id="questionNav" class="nav-grid" style="margin-top:8px"></div> 
+<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"> 
+<button id="markBtn" class="outline"> <i class="far fa-star"></i> Mark</button> 
+<button id="downloadBtn" class="outline"> <i class="fa fa-download"></i> Download Answers JSON</button> 
+</div> 
+<div style="margin-top:12px;color:var(--muted);font-size:12px">Note: selecting an option locks your answer.</div> 
+<div style="margin-top:10px;color:var(--muted);font-size:12px">Auto-end scheduled at: <strong>14 Aug 2025, 13:05 IST</strong></div> 
+</aside> 
+<main class="question-area card"> 
+<div class="section-header"> 
+<div><strong id="sectionTitle">Section 1</strong></div> 
+<div style="color:var(--muted)">Question <span id="currentQuestion2">1</span> of 100</div> 
+</div> 
+<div id="questionDisplay" style="margin-top:12px"></div> 
+<div class="controls"> 
+<button id="prevBtn" class="outline"><i class="fa fa-arrow-left"></i> Prev</button> 
+<button id="nextBtn" class="outline">Next <i class="fa fa-arrow-right"></i></button> 
+<div style="flex:1"></div> 
+<button id="printBtn" class="outline">Print</button> 
+</div> 
+</main> 
+</div> 
+</div> 
+</div> 
+<div id="resultModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="resultTitle"> 
+<div class="modal-content card"> 
+<div style="display:flex;justify-content:space-between;align-items:center"> 
+<h2 id="resultTitle">Results</h2> 
+<button id="closeModal" class="outline">Close</button> 
+</div> 
+<div style="display:flex;gap:14px;align-items:center;margin-top:10px"> 
+<div>Correct: <strong id="correctAnswers">0</strong></div> 
+<div>Incorrect: <strong id="incorrectAnswers">0</strong></div> 
+<div>Unanswered: <strong id="unanswered">0</strong></div> 
+<div>Score: <strong id="totalScore">0.00</strong>/100</div> 
+<div>Percentage: <strong id="percentage">0%</strong></div> 
+<div>Rank: <strong id="displayRank">154</strong></div> 
+</div> 
+<div id="verdict" style="margin-top:10px"></div> 
+<hr style="margin:12px 0;border-color:rgba(255,255,255,0.03)"> 
+<div id="answersheetContent"></div> 
+<div style="display:flex;gap:8px;margin-top:12px"> 
+<button id="exportPNG" class="primary">Download Image</button> 
+<button id="exportPDF" class="outline">Save as PDF (Print)</button> 
+<button id="exportCSV" class="outline">Export CSV</button> 
+</div> 
+</div> 
+</div> 
+</div> 
+<script> 
+/* ---------------- Configuration ---------------- */ 
+const TOTAL_QUESTIONS = 100; 
+const PASS_MARK = 55; 
+const NEGATIVE = 0.33; 
+const initialLogin = {username: 'mtest@alpnagroup.com', password: 'MTAGU00615'}; 
+const fallbackNewPassword = '8467567'; 
+const AUTO_END_AT = new Date('2025-08-14T13:05:00+05:30'); // 14 Aug 2025 13:05 IST 
+/* ---------------- Embedded Questions ---------------- */ 
+const examQuestions = [ 
+ { "section": "Hotel Management", "question": "What is the primary purpose of a 'Revenue Management System' in a hotel?", "options": ["Automating housekeeping schedules", "Predicting consumer demand to optimize pricing and maximize revenue", "Managing employee payroll and benefits", "Tracking guest complaints and feedback"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "Which of the following is considered a key performance indicator (KPI) for a hotel's front desk operations?", "options": ["Food and Beverage cost percentage", "Average Daily Rate (ADR)", "Marketing ROI", "Employee turnover rate"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "In hotel classification, what does 'ADR' stand for?", "options": ["Adjusted Daily Revenue", "Average Daily Rate", "Annual Depreciation Ratio", "Asset Depreciation Rate"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is a 'bellhop' primarily responsible for?", "options": ["Cooking meals in the kitchen", "Greeting and assisting guests with luggage", "Managing hotel finances", "Cleaning guest rooms"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "Which department is responsible for maintaining the cleanliness of guest rooms and public areas?", "options": ["Front Office", "Engineering", "Housekeeping", "Food & Beverage"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the term for a block of rooms reserved for a specific client, often at a discounted rate?", "options": ["Walk-in", "Group block", "Overbooking", "No-show"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "Which of the following describes the 'rack rate'?", "options": ["The discounted rate for corporate clients", "The lowest possible price for a room", "The highest published rate for a hotel room", "The rate offered to travel agents"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the 'RevPAR' metric used to measure?", "options": ["Total hotel revenue", "Revenue per available room", "Profit per employee", "Total food and beverage revenue"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "Which term refers to the practice of selling more rooms than a hotel has available?", "options": ["Rooming", "Overbooking", "Upselling", "Yield management"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the 'PMS' in the context of hotel operations?", "options": ["Property Management System", "Public Marketing Strategy", "Payroll Management Software", "Personnel Management System"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "The 'Warsaw Convention' of 1929 is a key international treaty related to which aspect of travel?", "options": ["Regulation of sea travel liabilities", "Regulation of international air travel liabilities", "Standardizing hotel safety regulations", "Establishing a global visa policy"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is the purpose of a 'force majeure' clause in a tour contract?", "options": ["To define the tour guide's responsibilities", "To set the payment schedule for the tour", "To release parties from liability due to unforeseeable circumstances", "To specify the cancellation policy"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "Which international organization is responsible for promoting responsible, sustainable, and universally accessible tourism?", "options": ["World Trade Organization (WTO)", "International Monetary Fund (IMF)", "United Nations World Tourism Organization (UNWTO)", "World Health Organization (WHO)"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is 'Ecotourism' primarily focused on?", "options": ["High-end, luxury travel experiences", "Travel to popular, crowded destinations", "Responsible travel to natural areas that conserves the environment", "Budget-friendly travel with minimal planning"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "A 'visa' is a legal document that allows a traveler to do what?", "options": ["Book a flight ticket", "Enter a foreign country", "Check into a hotel", "Rent a car"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "Which of the following is a primary duty of a 'tour guide'?", "options": ["Managing the hotel's finances", "Providing information and leading groups through destinations", "Developing new tour packages", "Handling customer service complaints for airlines"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What does 'IATA' stand for in the context of the travel industry?", "options": ["International Air Transport Association", "International Association of Travel Agents", "Indian Association of Tourist Attractions", "Internet and Travel Agency"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "Which law governs the liability of carriers for the death, injury, or delay of passengers on international flights?", "options": ["The Hague Convention", "The Geneva Convention", "The Montreal Convention", "The Vienna Convention"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is a 'travel itinerary'?", "options": ["A document confirming hotel booking", "A detailed plan of a trip, including dates, destinations, and activities", "A passport application form", "A legal contract for a tour"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "Which of these is a key component of 'sustainable tourism'?", "options": ["Minimizing economic impact", "Promoting mass tourism at all costs", "Preserving cultural heritage and environmental integrity", "Ignoring local community involvement"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is a 'Balance Sheet' in hotel finance?", "options": ["A summary of hotel revenues and expenses over a period", "A snapshot of the hotel's assets, liabilities, and equity at a specific point in time", "A forecast of future financial performance", "A report on employee salaries"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is 'depreciation' in accounting for a hotel?", "options": ["An increase in the value of the hotel property", "The process of a hotel's assets becoming obsolete", "The systematic allocation of the cost of a tangible asset over its useful life", "A decrease in hotel profits"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "The formula for calculating 'Gross Operating Profit' (GOP) is:", "options": ["Total Revenue - Total Expenses", "Total Revenue - Departmental Expenses", "Total Revenue - All Expenses (excluding depreciation and interest)", "Total Revenue - Fixed Costs"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What does the term 'Capital Expenditure' (CapEx) refer to in a hotel?", "options": ["Daily operational expenses", "The cost of acquiring or upgrading physical assets like property or equipment", "Employee salaries and benefits", "Marketing and advertising costs"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "Which of the following is considered a 'variable cost' for a hotel?", "options": ["Property tax", "Rent", "Utility bills (electricity, water)", "Manager's salary"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "A hotel's 'occupancy rate' is calculated as:", "options": ["Number of rooms sold / Number of rooms available", "Total revenue / Number of rooms available", "Total number of guests / Total number of employees", "Total rooms sold / Total guests"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is the primary objective of a 'budget' in hotel finance?", "options": ["To track competitor's prices", "To forecast future guest numbers", "To provide a financial roadmap and control spending", "To calculate the final profit"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "Which financial statement provides information about the hotel's cash inflows and outflows?", "options": ["Balance Sheet", "Income Statement", "Statement of Cash Flows", "Statement of Retained Earnings"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is 'EBITDA' in hotel financial analysis?", "options": ["Earnings Before Interest, Taxes, Depreciation, and Amortization", "Expenses Before Interest, Travel, Depreciation, and Amortization", "Estimated Budget for Infrastructure and Tourism Development", "Earnings Before Inventory, Travel, and Depreciation Analysis"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is a 'cost-benefit analysis' used for in hotel project management?", "options": ["To determine the room rates", "To evaluate the financial viability of a project", "To track daily expenses", "To manage employee performance"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "Which of the following is the most effective approach for a manager to provide constructive feedback?", "options": ["Focusing on personal traits and personality", "Delivering feedback in a public setting", "Using the 'STAR' method (Situation, Task, Action, Result)", "Ignoring the issue and hoping it resolves itself"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is the primary goal of a 'job analysis' in HR?", "options": ["To set employee salaries arbitrarily", "To determine the duties and responsibilities of a job", "To evaluate employee performance", "To create a company's vision statement"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "In the context of management, 'delegation' is the process of:", "options": ["Giving tasks to employees without any support", "Assigning responsibility and authority to a subordinate to complete a task", "Ignoring employee ideas and suggestions", "Centralizing all decision-making power"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "Which leadership style is characterized by a leader who involves subordinates in the decision-making process?", "options": ["Autocratic", "Laissez-faire", "Transformational", "Democratic"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is 'emotional intelligence' (EQ) in a managerial role?", "options": ["The ability to remember a large amount of information", "The ability to manage and understand one's own and others' emotions", "The ability to perform complex mathematical calculations", "The ability to speak multiple languages"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "Which of the following is an example of a 'hygiene factor' in Herzberg's two-factor theory of motivation?", "options": ["Achievement", "Recognition", "Company policy and administration", "Responsibility"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What does 'HRIS' stand for in Human Resources?", "options": ["Human Resources Information System", "Human Resources Interview Strategy", "Hotel Revenue Improvement Software", "Hiring and Retention Incentive System"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "The 'chain of command' in an organization refers to:", "options": ["The list of all employees in the company", "The formal line of authority and communication from top to bottom", "The sequence of project deadlines", "The process of promoting employees"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is the 'Halo Effect' in performance appraisal?", "options": ["The tendency to rate an employee's performance based on their most recent work", "The tendency to give positive ratings to all employees", "The tendency for one positive trait to influence the ratings of other traits", "The tendency to rate an employee based on a single negative event"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is the primary benefit of a well-structured 'onboarding program' for new employees?", "options": ["Increasing employee turnover", "Making the employee feel overwhelmed", "Helping new hires acclimate to the company culture and their role", "Reducing the need for training"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which Indian state launched the 'Project Dolphin' to boost its tourism sector and conservation efforts?", "options": ["Kerala", "Goa", "Odisha", "West Bengal"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is the 'G20 Tourism Working Group' primarily focused on?", "options": ["Increasing international flight tariffs", "Promoting sustainable tourism for economic growth", "Regulating international visa policies", "Developing new cruise lines"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which country recently announced a new visa-on-arrival policy for tourists from several nations to boost its tourism industry?", "options": ["Japan", "Saudi Arabia", "Brazil", "India"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "The 'Swadesh Darshan' scheme is a flagship program of which Indian ministry?", "options": ["Ministry of Finance", "Ministry of Home Affairs", "Ministry of Tourism", "Ministry of External Affairs"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which major global event, held in a different city each year, brings together leaders from the tourism industry to discuss trends and challenges?", "options": ["World Economic Forum", "Global Tourism Summit", "UN Climate Change Conference", "G7 Summit"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is the 'Ayushman Bharat' initiative primarily focused on, which has implications for medical tourism?", "options": ["Promoting space tourism", "Providing universal healthcare coverage", "Developing new tourism infrastructure", "Regulating hotel prices"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which city was the host of the recent 'Global MICE (Meetings, Incentives, Conferences, and Exhibitions) Expo'?", "options": ["New York", "Dubai", "London", "New Delhi"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "The 'Incredible India' campaign is an initiative to:", "options": ["Promote India as a global tourism destination", "Encourage domestic travel only", "Regulate the hotel industry", "Promote India's manufacturing sector"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is the significance of the 'UNESCO World Heritage Sites' for tourism?", "options": ["They are the only places tourists can visit", "They are exclusively for scientific research", "They are places of cultural or natural importance that are protected and promoted for tourism", "They are the most expensive hotels in the world"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which country recently hosted the 'United Nations World Tourism Organization' (UNWTO) general assembly?", "options": ["Spain", "China", "India", "USA"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "In a hotel's front office, what is the role of a 'Night Auditor'?", "options": ["Manages the hotel's social media accounts", "Performs the end-of-day accounting and balancing of all hotel transactions", "Responsible for security patrols during the night", "Prepares breakfast for early-rising guests"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is 'channel management' in a hotel's context?", "options": ["Managing the hotel's television channels", "Managing the hotel's water and drainage systems", "Managing the distribution channels (OTAs, GDS) to sell rooms", "Managing the hotel's internal communication channels"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the significance of a 'concierge' in a luxury hotel?", "options": ["To check guests in and out", "To manage the hotel's finances", "To assist guests with a wide range of services, such as booking tours, making reservations, and providing local information", "To clean and maintain guest rooms"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "Which of the following is a key function of a hotel's 'Food and Beverage' department?", "options": ["Guest laundry services", "Managing the restaurant, bar, and banquet operations", "Overseeing the hotel's website and marketing", "Recruiting and training new employees"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is a 'no-show' in a hotel context?", "options": ["A guest who checks out early", "A guest who books a room but does not arrive and fails to cancel", "A complimentary upgrade given to a guest", "A guest who extends their stay"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the primary function of a 'Guest History File'?", "options": ["To store past financial records of the hotel", "To record past guest stays, preferences, and feedback for personalized service", "To track employee performance reviews", "To manage the hotel's inventory of supplies"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "Which of these is a key responsibility of the 'Banquet' department?", "options": ["Handling daily room cleaning", "Managing large-scale events, conferences, and weddings", "Overseeing the hotel's spa services", "Maintaining the hotel's swimming pool"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is 'upselling' in the hotel industry?", "options": ["Selling a more expensive room type or service than the one booked", "Selling a discounted room to a walk-in guest", "Offering a free breakfast with a room booking", "Reducing the price of a room to fill it"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "The 'Housekeeping' department's primary role is to ensure:", "options": ["The hotel's profitability", "The safety and security of guests", "Cleanliness, comfort, and aesthetics of the hotel", "Efficient food and beverage service"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the term for the process of a hotel's front desk staff confirming a guest's details and room availability upon their arrival?", "options": ["Check-out", "Reservation", "Walk-in", "Check-in"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "Which of the following is a primary objective of the 'visa' policy of a country?", "options": ["To generate revenue through application fees", "To control the flow of foreign nationals and ensure national security", "To encourage uncontrolled mass tourism", "To provide a simple way for anyone to enter the country"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is the 'Package Tour Law' designed to protect?", "options": ["Airlines from liability", "The local environment from tourists", "Consumers who purchase package holidays", "Hotel owners from cancellations"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "The 'Cape Town Convention' is an international treaty primarily concerned with:", "options": ["Regulation of maritime law", "International air transport of dangerous goods", "Matters relating to international interests in mobile equipment, particularly aircraft", "International law of the sea"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is 'Agritourism'?", "options": ["Tourism focused on adventure sports", "Tourism that combines travel with agricultural activities", "Tourism focused on urban cities and landmarks", "Tourism focused on medical treatments"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "A 'bilateral air services agreement' is a treaty between two countries that governs:", "options": ["The price of flight tickets", "The type of aircraft used", "The number of flights and routes between the two countries", "The safety regulations for airports"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What does a 'travel agent' do?", "options": ["Owns a chain of hotels", "Sells tourism products and services on behalf of suppliers", "Develops and manages national tourism policies", "Provides legal advice for travel disputes"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is a 'tour operator'?", "options": ["An individual who sells flight tickets", "A company that creates and sells packaged tours", "A government body that regulates tourism", "A hotel manager"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "Which of these is a key principle of 'responsible tourism'?", "options": ["Maximizing profits for international companies", "Ensuring that tourism benefits local communities and minimizes negative impacts", "Building large, international-style resorts", "Ignoring the environmental impact of travel"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is 'Medical Tourism'?", "options": ["Travel for vacation and leisure purposes", "Travel to a foreign country for medical treatment", "Travel to visit a doctor's clinic", "Travel for religious purposes"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "The 'Paris Agreement' is an international accord related to which major issue, with direct implications for tourism sustainability?", "options": ["Global terrorism", "Climate change", "Visa policies", "Air travel safety"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is 'Working Capital'?", "options": ["Total assets - total liabilities", "The difference between current assets and current liabilities", "The total profit of the hotel", "The total revenue from hotel operations"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "Which of the following is a 'fixed cost' for a hotel?", "options": ["Employee commissions", "Cleaning supplies", "Property insurance", "Food costs for the restaurant"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "The 'Income Statement' shows which of the following?", "options": ["The hotel's financial position at a specific point in time", "The hotel's revenues, expenses, and net income over a period", "The cash flow of the hotel", "The value of the hotel's assets"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is 'Return on Investment' (ROI)?", "options": ["A measure of the number of guests in a hotel", "A performance measure used to evaluate the efficiency of an investment", "The total cost of an investment", "The total revenue generated from sales"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is the primary reason for a hotel to use 'financial forecasting'?", "options": ["To report past profits to the government", "To make informed business decisions and plan for the future", "To determine employee salaries", "To calculate the daily occupancy rate"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "Which ratio measures a company's ability to meet its short-term obligations?", "options": ["Debt-to-equity ratio", "Gross profit margin", "Current ratio", "Return on assets"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What does 'Occupancy Tax' refer to?", "options": ["A tax on hotel employees' salaries", "A tax levied on guests for the occupancy of a room", "A tax on the hotel's total revenue", "A tax on the hotel's property value"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "Which of the following would be classified as a 'capital asset'?", "options": ["The hotel's daily cleaning supplies", "A new washing machine for the hotel's laundry", "A box of pens for the front desk", "The food inventory in the kitchen"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is the 'cost of goods sold' (COGS) in the context of a hotel's restaurant?", "options": ["The salaries of the kitchen staff", "The cost of the ingredients used to prepare food", "The total revenue from food sales", "The marketing costs for the restaurant"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "Which of these is a key component of 'cost control' in a hotel?", "options": ["Increasing employee salaries", "Tracking and minimizing unnecessary expenses", "Hiring more employees than needed", "Investing in a new advertising campaign"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is '360-degree feedback'?", "options": ["Feedback from only the manager", "Feedback from a single peer", "Feedback from subordinates, peers, and supervisors", "Feedback given once every 360 days"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "Which of the following is a drawback of an 'autocratic' leadership style?", "options": ["Empowers employees to make decisions", "Encourages creativity and innovation", "Leads to lower employee morale and limited input", "Fosters strong team collaboration"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is a 'Job Description'?", "options": ["A list of all the employees in a department", "A written summary of the duties, responsibilities, and qualifications required for a job", "A document for tracking daily sales", "A record of an employee's performance review"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "The 'Maslow's Hierarchy of Needs' theory is primarily concerned with:", "options": ["Financial incentives", "Employee motivation and job satisfaction", "Organizational structure", "Project management techniques"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is 'succession planning' in HR?", "options": ["The process of firing underperforming employees", "A strategy for identifying and developing future leaders within the company", "A plan for managing employee benefits", "The process of setting annual budgets"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "Which of these is a component of 'organizational culture'?", "options": ["The daily weather forecast", "The company's values, beliefs, and behaviors", "The number of hotel rooms sold daily", "The price of food at the hotel restaurant"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is 'recruitment'?", "options": ["The process of promoting employees", "The process of identifying and attracting qualified candidates for job vacancies", "The process of providing feedback to employees", "The process of creating a new product"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "Which of the following is a characteristic of 'effective communication' in a managerial role?", "options": ["Being vague and indirect", "Talking more than listening", "Being clear, concise, and empathetic", "Only communicating through written reports"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "The 'Pygmalion Effect' in management refers to:", "options": ["The tendency for employees to perform better when they have low expectations", "The phenomenon where a manager's high expectations lead to better employee performance", "The process of giving all employees the same salary", "The idea that employees should work in isolation"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is the primary purpose of 'conflict resolution' in the workplace?", "options": ["To ignore disagreements and hope they go away", "To escalate disputes to higher management", "To find a fair and mutually acceptable solution to disagreements", "To always take the side of the employee with more seniority"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which major international airline recently announced a new partnership with a prominent hotel chain to offer bundled travel experiences?", "options": ["Lufthansa", "Emirates", "Air India", "United Airlines"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is the 'Global Tourism Plastics Initiative' aimed at?", "options": ["Promoting plastic production in tourism", "Combating plastic pollution in the tourism sector", "Developing new types of plastic for travel bags", "Regulating plastic usage in hotel kitchens"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which Indian state is known for its 'Houseboat Tourism' and recently launched new initiatives to promote it?", "options": ["Rajasthan", "Jammu & Kashmir", "Goa", "Karnataka"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "The 'Incredible India' campaign is a branding effort to promote which type of tourism?", "options": ["Medical tourism", "Adventure tourism", "Religious tourism", "India as a holistic tourism destination"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which major global hotel chain recently announced a significant expansion in the Asia-Pacific region, focusing on sustainable properties?", "options": ["Hilton", "Marriott International", "Accor", "Hyatt"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is 'Homestay Tourism'?", "options": ["Tourism that focuses on hotels only", "Tourism where guests stay with a local family in their home", "Tourism that focuses on large resorts", "Tourism that focuses on camping"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "The 'Prashad' scheme is a government initiative in India for the development of:", "options": ["Medical tourism infrastructure", "Rural tourism projects", "Pilgrimage rejuvenation and spiritual, heritage augmentation", "Adventure sports facilities"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which Indian city was recently named the 'Best Tourist City' by a prominent international travel magazine?", "options": ["Jaipur", "Udaipur", "Agra", "Mysore"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is the primary focus of the 'Global Code of Ethics for Tourism'?", "options": ["Regulating international airfares", "Minimizing the negative impacts of tourism and maximizing its benefits", "Promoting tourism for military purposes", "Setting a standard price for hotel rooms"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which country recently launched the 'Digital Nomad Visa' to attract remote workers?", "options": ["Thailand", "Spain", "Germany", "United Arab Emirates"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the primary purpose of a 'Daily Report' in hotel operations?", "options": ["To summarize the hotel's performance for the day, including occupancy, revenue, and key events", "To track employee attendance", "To manage the hotel's social media content", "To schedule housekeeping duties"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "In a hotel's front office, what is a 'walk-in'?", "options": ["A guest who has a prior reservation", "A guest who arrives without a reservation and requests a room", "An employee who arrives late for their shift", "A guest who is waiting in the lobby"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What does 'GDS' stand for in the context of hotel distribution?", "options": ["Global Direct Sales", "Guest Data System", "General Development Strategy", "Global Distribution System"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "Which department is responsible for handling a hotel's online reputation and guest reviews?", "options": ["Food & Beverage", "Housekeeping", "Front Office & Marketing", "Engineering"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the purpose of 'yield management' in a hotel?", "options": ["To manage the hotel's food waste", "To control employee salaries", "To maximize revenue by managing room pricing and inventory", "To track guest preferences and habits"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is a 'bellman' primarily responsible for?", "options": ["Assisting guests with their luggage", "Managing hotel security", "Processing guest payments", "Cooking and serving food"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the 'guest cycle'?", "options": ["The journey a guest takes from reservation to check-out", "The process of cleaning a guest room", "The path an employee takes from hire to retirement", "The financial reporting cycle of a hotel"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "Which of these is a 'tangible' aspect of a hotel's service?", "options": ["The friendliness of the staff", "The speed of check-in", "The quality of the guest room furniture and amenities", "The feeling of security a guest has"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is the role of a 'General Manager'?", "options": ["To manage a specific department, such as housekeeping", "To oversee the entire operation of the hotel", "To handle guest complaints exclusively", "To manage the hotel's social media accounts"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Management", "question": "What is 'RevPAC'?", "options": ["Revenue per available customer", "Revenue per available conference", "Revenue per active consultant", "Revenue per active client"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is 'Heritage Tourism'?", "options": ["Tourism focused on adventure sports", "Tourism that involves visiting historical and cultural sites", "Tourism that focuses on modern architecture", "Tourism that focuses on medical treatments"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is 'visa stamping'?", "options": ["A stamp on a flight ticket", "The process of a visa being physically added to a passport by an embassy or consulate", "A stamp on a hotel reservation", "A stamp on a car rental agreement"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is the primary function of a 'Travel Insurance' policy?", "options": ["To guarantee a cheap flight ticket", "To provide financial protection against travel-related risks and losses", "To ensure a hotel upgrade", "To provide free meals on a flight"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "The 'Hague Convention' is a treaty that addresses which aspect of tourism?", "options": ["International aviation law", "The protection of cultural property in the event of armed conflict", "Standardization of hotel star ratings", "Regulation of cruise ship safety"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is a 'tourist visa'?", "options": ["A visa for business travelers", "A visa that permits entry for leisure and vacation purposes", "A visa for students", "A visa for diplomatic personnel"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is 'dark tourism'?", "options": ["Tourism to places associated with death and disaster", "Tourism that happens at night", "Tourism to places with a lot of caves", "Tourism in countries with limited sunlight"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "Which document is mandatory for international travel?", "options": ["A valid passport", "A driving license", "A credit card", "A hotel loyalty card"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is the 'European Union's' role in travel and tourism?", "options": ["It sets global visa policies", "It regulates travel within the EU, including the Schengen Area for borderless travel", "It only manages air travel", "It only manages sea travel"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "What is 'overtourism'?", "options": ["The situation where there are too many tourists in a specific location", "A type of luxury travel", "A travel trend focused on exploring new places", "A new type of visa policy"], "hasChart": false, "hasTable": false },
+ { "section": "Travel Management & Tour Law", "question": "Which of these is a key component of 'tour law'?", "options": ["The laws governing hotel management", "Consumer protection laws related to package tours", "Airlines' marketing strategies", "Employee HR regulations for tour guides"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "The 'Income Statement' is also known as:", "options": ["Balance Sheet", "Statement of Cash Flows", "Profit and Loss (P&L) statement", "Trial Balance"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is 'Break-Even Analysis' used for in hotel management?", "options": ["To determine the point at which revenue equals total costs", "To calculate the total revenue of the hotel", "To set the price of a single room", "To determine the number of employees to hire"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is 'RevPAR' a key metric for?", "options": ["Food and Beverage profitability", "Front desk efficiency", "Overall hotel financial performance", "Marketing campaign effectiveness"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is 'Asset Management' in the hotel industry?", "options": ["Managing the hotel's daily cleaning supplies", "A specialized field focused on maximizing the value and return of a hotel property", "Managing employee benefits and pensions", "Managing the hotel's social media accounts"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "Which of the following is considered a 'current asset'?", "options": ["The hotel building", "Hotel furniture", "Cash on hand", "Hotel's debt"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is 'operating leverage'?", "options": ["The ratio of fixed costs to variable costs", "The process of managing hotel employees", "The ratio of cash flow to total revenue", "The process of selling hotel assets"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "Which of these is a 'liability' on a hotel's balance sheet?", "options": ["Cash", "Accounts receivable", "Loans and mortgages", "Building and property"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What is the 'Occupancy Rate' metric primarily used for?", "options": ["To measure the hotel's revenue", "To measure the utilization of the hotel's available rooms", "To measure the hotel's profit", "To measure the number of employees"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "What does a hotel's 'cash budget' help in?", "options": ["Planning for future cash inflows and outflows to avoid a liquidity crisis", "Determining the total revenue for the year", "Managing guest reservations", "Scheduling employee shifts"], "hasChart": false, "hasTable": false },
+ { "section": "Hotel Finance", "question": "The 'Uniform System of Accounts for the Lodging Industry' (USALI) provides:", "options": ["Guidelines for a hotel's guest service standards", "A standardized system for hotel financial reporting", "Rules for hotel marketing and advertising", "A code of conduct for hotel employees"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is a 'Laissez-faire' leadership style?", "options": ["A style where the leader makes all decisions", "A style where the leader gives employees complete freedom to make decisions", "A style where the leader involves employees in every decision", "A style where the leader sets strict rules and policies"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is the 'critical incident' method of performance appraisal?", "options": ["Rating an employee based on their last performance review", "Rating an employee based on a list of positive and negative events", "Rating an employee based on a single negative incident", "Rating an employee based on a single positive incident"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is 'Total Quality Management' (TQM)?", "options": ["A system that focuses on improving employee benefits", "A management philosophy that seeks to integrate all organizational functions to focus on meeting customer needs and organizational objectives", "A system for managing a company's finances", "A system for managing employee training"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is 'strategic human resource management'?", "options": ["An approach that aligns HR strategies with the overall business strategy", "An approach that focuses only on recruiting new employees", "An approach that focuses on short-term goals", "An approach that focuses on legal compliance"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "The 'Pygmalion Effect' suggests that:", "options": ["Low expectations from a manager can lead to high performance", "High expectations from a manager can lead to high performance", "Employees should not have any expectations from their manager", "Employees' performance is not affected by a manager's expectations"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is 'groupthink'?", "options": ["A process where group members think independently", "A psychological phenomenon where people conform to the group consensus and fail to think critically", "A process where a group generates creative ideas", "A process of individual problem-solving"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is the primary goal of a 'training and development program'?", "options": ["To increase employee turnover", "To improve an employee's skills and knowledge for better performance", "To decrease employee salaries", "To reduce the need for employee supervision"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is a 'job description' primarily used for?", "options": ["To create an employee's payroll", "To provide a clear understanding of the roles and responsibilities of a job", "To track employee performance", "To set the hotel's daily budget"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "What is 'span of control'?", "options": ["The number of hours an employee works", "The number of subordinates a manager can effectively manage", "The total number of employees in a company", "The number of years an employee has worked at the company"], "hasChart": false, "hasTable": false },
+ { "section": "HR & Management Aptitude", "question": "Which of these is a key benefit of a 'participative management' style?", "options": ["Decisions are made quickly without employee input", "It empowers employees and can lead to increased motivation and job satisfaction", "It centralizes all decision-making power", "It leads to a strict, authoritarian work environment"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which Indian city is famously known as the 'City of Lakes' and is a major tourism hub?", "options": ["Jaipur", "Udaipur", "Mysore", "Varanasi"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "The 'UNWTO' is the United Nations World Tourism Organization. What is its main objective?", "options": ["To set international flight prices", "To promote sustainable and responsible tourism", "To regulate hotel chains globally", "To develop new travel technologies"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which Indian state is famous for 'Backwater Tourism'?", "options": ["Goa", "Kerala", "Rajasthan", "Sikkim"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is a 'staycation'?", "options": ["A vacation taken in a foreign country", "A vacation spent in one's own home town or country", "A vacation that involves a lot of travel", "A vacation for a very short period"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "The 'Pravasi Bhartiya Divas' is celebrated to commemorate the contribution of which group to the development of India?", "options": ["Indian tourists", "Non-resident Indians (NRIs) and People of Indian Origin (PIOs)", "Foreign tourists", "Indian entrepreneurs"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which country recently announced a new tourism campaign with the slogan 'Visit [Country Name]' to attract international visitors?", "options": ["Japan", "Saudi Arabia", "Australia", "USA"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is the 'Chalo India' campaign primarily focused on?", "options": ["Promoting international travel from India", "Encouraging Indian diaspora to visit India", "Encouraging foreign tourists to visit India", "Promoting domestic tourism within India"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "The 'Heritage City Development and Augmentation Yojana' (HRIDAY) scheme in India is focused on:", "options": ["Developing new tourist sites", "Preserving and revitalizing heritage cities", "Building new hotels", "Developing new airports"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "Which of these is a key trend in modern tourism related to technology?", "options": ["Using paper maps", "Booking all travel through a physical travel agent", "The use of virtual reality (VR) tours and AI-powered travel planning", "Relying on traditional advertising"], "hasChart": false, "hasTable": false },
+ { "section": "General Current Affairs (Hotel/Tourism)", "question": "What is 'Aviation Tourism'?", "options": ["Tourism that focuses on air travel, often for scenic flights or visiting aviation museums", "Tourism that focuses on ground travel", "Tourism that focuses on sea travel", "Tourism that focuses on space travel"], "hasChart": false, "hasTable": false }
+];
+const answerKey = { 
+  1: "b", 2: "b", 3: "b", 4: "b", 5: "c", 6: "b", 7: "c", 8: "b", 9: "b", 10: "a", 
+  11: "b", 12: "c", 13: "c", 14: "c", 15: "b", 16: "b", 17: "a", 18: "c", 19: "b", 20: "c", 
+  21: "b", 22: "c", 23: "a", 24: "b", 25: "c", 26: "a", 27: "c", 28: "c", 29: "a", 30: "b", 
+  31: "c", 32: "b", 33: "b", 34: "d", 35: "b", 36: "c", 37: "a", 38: "b", 39: "c", 40: "c", 
+  41: "d", 42: "b", 43: "b", 44: "c", 45: "b", 46: "b", 47: "d", 48: "a", 49: "c", 50: "c", 
+  51: "b", 52: "c", 53: "c", 54: "b", 55: "b", 56: "b", 57: "b", 58: "a", 59: "c", 60: "d", 
+  61: "b", 62: "c", 63: "c", 64: "c", 65: "c", 66: "a", 67: "b", 68: "b", 69: "b", 70: "c", 
+  71: "a", 72: "b", 73: "b", 74: "b", 75: "b", 76: "a", 77: "a", 78: "b", 79: "a", 80: "b", 
+  81: "c", 82: "a", 83: "c", 84: "b", 85: "c", 86: "a", 87: "b", 88: "a", 89: "b", 90: "b", 
+  91: "b", 92: "b", 93: "b", 94: "b", 95: "b", 96: "c", 97: "b", 98: "b", 99: "c", 100: "a"
+}; 
+/* ---------------- State ---------------- */ 
+let userAnswers = {}; 
+let markedQuestions = {}; 
+let currentQuestion = 1; 
+let timerInterval = null; 
+let autoCheckInterval = null; 
+let timeLeft = 120 * 60; // fallback seconds 
+/* ---------------- DOM refs ---------------- */ 
+const splashScreen = document.getElementById('splashScreen'); 
+const examContainer = document.getElementById('examContainer'); 
+const loginBtn = document.getElementById('loginBtn'); 
+const usernameInput = document.getElementById('username'); 
+const passwordInput = document.getElementById('password'); 
+const errorMessage = document.getElementById('errorMessage'); 
+const questionDisplay = document.getElementById('questionDisplay'); 
+const questionNav = document.getElementById('questionNav'); 
+const currentQuestionDisplay = document.getElementById('currentQuestion'); 
+const currentQuestionDisplay2 = document.getElementById('currentQuestion2'); 
+const currentSectionDisplay = document.getElementById('sectionTitle'); 
+const prevBtn = document.getElementById('prevBtn'); 
+const nextBtn = document.getElementById('nextBtn'); 
+const markBtn = document.getElementById('markBtn'); 
+const submitBtn = document.getElementById('submitBtn'); 
+const timerDisplay = document.getElementById('timeDisplay'); 
+const answeredCount = document.getElementById('answeredCount'); 
+const progressFill = document.getElementById('progressFill'); 
+const resultModal = document.getElementById('resultModal'); 
+const closeModal = document.getElementById('closeModal'); 
+const correctAnswersDisplay = document.getElementById('correctAnswers'); 
+const incorrectAnswersDisplay = document.getElementById('incorrectAnswers'); 
+const unansweredDisplay = document.getElementById('unanswered'); 
+const percentageDisplay = document.getElementById('percentage'); 
+const totalScoreDisplay = document.getElementById('totalScore'); 
+const verdictDisplay = document.getElementById('verdict'); 
+const answersheetContent = document.getElementById('answersheetContent'); 
+const downloadBtn = document.getElementById('downloadBtn'); 
+const userRankDisplay = document.getElementById('userRank'); 
+const displayRank = document.getElementById('displayRank'); 
+const exportPNG = document.getElementById('exportPNG'); 
+const exportPDF = document.getElementById('exportPDF'); 
+const exportCSV = document.getElementById('exportCSV'); 
+const printBtn = document.getElementById('printBtn'); 
+/* ---------------- Utilities ---------------- */ 
+function formatTimeLeft(seconds){ 
+const h = Math.floor(seconds/3600), m = Math.floor((seconds%3600)/60), s = seconds%60; 
+return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; 
+} 
+function persistState(){ 
+localStorage.setItem('userAnswers', JSON.stringify(userAnswers)); 
+localStorage.setItem('markedQuestions', JSON.stringify(markedQuestions)); 
+} 
+function restoreState(){ 
+const ua = localStorage.getItem('userAnswers'); 
+if(ua) userAnswers = JSON.parse(ua); 
+const mq = localStorage.getItem('markedQuestions'); 
+if(mq) markedQuestions = JSON.parse(mq); 
+} 
+/* ---------------- Login and Auth ---------------- */ 
+function requiredPasswordForNextLogin(){ 
+return localStorage.getItem('requireNewPassword') === '1'; 
+} 
+function isAutoEnded(){ 
+return !!localStorage.getItem('examEndedAt') || (new Date() >= AUTO_END_AT); 
+} 
+loginBtn.addEventListener('click', async ()=>{ 
+const username = usernameInput.value.trim(); 
+const password = passwordInput.value.trim(); 
+// if previously auto-ended, enforce new password 
+if(requiredPasswordForNextLogin()){ 
+if(username === initialLogin.username && password === fallbackNewPassword){ 
+errorMessage.style.display = 'none'; 
+doLogin(username); 
+} else { 
+errorMessage.style.display = 'block'; 
+usernameInput.value=''; 
+passwordInput.value=''; 
+} 
+return; 
+} 
+if(username === initialLogin.username && password === initialLogin.password){ 
+errorMessage.style.display='none'; 
+doLogin(username); 
+} else { 
+errorMessage.style.display='block'; 
+usernameInput.value=''; 
+passwordInput.value=''; 
+} 
+}); 
+async function doLogin(username){ 
+// If scheduled auto-end already passed, mark ended and show results if any 
+if(isAutoEnded()){ 
+localStorage.setItem('examEndedAt', new Date().toISOString()); 
+localStorage.setItem('requireNewPassword','1'); 
+alert('This test has already ended at scheduled time. You will be shown results (if available).'); 
+showStoredResultsOrReload(); 
+return; 
+} 
+// Restore answers state and UI 
+restoreState(); 
+splashScreen.style.display='none'; 
+examContainer.style.display='block'; 
+document.getElementById('displayUser').textContent = username; 
+createNavigationButtons(); 
+loadQuestion(currentQuestion); 
+updateProgress(); 
+startTimer(); 
+startAutoEndWatcher(); 
+} 
+/* ---------------- Timer & Auto-end ---------------- */ 
+function startTimer(){ 
+const storedExpiry = localStorage.getItem('examExpiry'); 
+if(storedExpiry){ 
+const expiry = new Date(storedExpiry); 
+timeLeft = Math.max(0, Math.round((expiry - new Date())/1000)); 
+} else { 
+const expiry = new Date(Date.now() + timeLeft*1000); 
+localStorage.setItem('examExpiry', expiry.toISOString()); 
+} 
+updateTimerDisplay(); 
+if(timerInterval) clearInterval(timerInterval); 
+timerInterval = setInterval(()=>{ 
+// Check hard scheduled end first 
+if(new Date() >= AUTO_END_AT){ 
+autoEndProcedure('Scheduled end reached'); 
+return; 
+} 
+timeLeft--; 
+updateTimerDisplay(); 
+if(timeLeft <= 300) timerDisplay.style.color = '#ffcc00'; 
+if(timeLeft <= 0) autoEndProcedure('Time up'); 
+},1000); 
+} 
+function updateTimerDisplay(){ 
+timerDisplay.textContent = formatTimeLeft(timeLeft); 
+} 
+function startAutoEndWatcher(){ 
+if(autoCheckInterval) clearInterval(autoCheckInterval); 
+autoCheckInterval = setInterval(()=>{ 
+if(new Date() >= AUTO_END_AT){ 
+autoEndProcedure('Scheduled end reached'); 
+} 
+},1000); 
+} 
+function autoEndProcedure(reason){ 
+if(timerInterval) clearInterval(timerInterval); 
+if(autoCheckInterval) clearInterval(autoCheckInterval); 
+localStorage.setItem('examEndedAt', new Date().toISOString()); 
+localStorage.setItem('requireNewPassword','1'); 
+// submit automatically 
+submitExam(true, reason); 
+// force logout UI 
+examContainer.style.display='none'; 
+splashScreen.style.display='block'; 
+alert('Test automatically ended at scheduled time: ' + AUTO_END_AT.toLocaleString() + '\nYou have been logged out. Next login requires new password.'); 
+} 
+function showStoredResultsOrReload(){ 
+const stored = localStorage.getItem('lastResults'); 
+if(stored){ 
+const parsed = JSON.parse(stored); 
+populateResultsModal(parsed); 
+resultModal.classList.add('active'); 
+} else { 
+location.reload(); 
+} 
+} 
+/* ---------------- Navigation & Rendering ---------------- */ 
+function createNavigationButtons(){ 
+questionNav.innerHTML = ''; 
+for(let i=1;i<=TOTAL_QUESTIONS;i++){ 
+const btn = document.createElement('button'); 
+btn.className = 'nav-btn'; 
+btn.textContent = i; 
+btn.dataset.question = i; 
+if(i===1) btn.classList.add('current'); 
+btn.addEventListener('click', ()=>navigateToQuestion(parseInt(btn.dataset.question))); 
+questionNav.appendChild(btn); 
+} 
+updateNavigationButtons(); 
+} 
+function updateNavigationButtons(){ 
+const buttons = questionNav.querySelectorAll('.nav-btn'); 
+buttons.forEach(btn=>{ 
+btn.classList.remove('current','visited','answered','marked'); 
+const qn = parseInt(btn.dataset.question); 
+if(qn === currentQuestion) btn.classList.add('current'); 
+if(markedQuestions[qn]) btn.classList.add('marked'); 
+if(userAnswers[qn]) btn.classList.add('answered'); 
+else if(qn < currentQuestion) btn.classList.add('visited'); 
+}); 
+} 
+function navigateToQuestion(qn){ 
+if(qn < 1 || qn > TOTAL_QUESTIONS) return; 
+currentQuestion = qn; 
+loadQuestion(currentQuestion); 
+updateNavigationButtons(); 
+currentQuestionDisplay.textContent = currentQuestion; 
+currentQuestionDisplay2.textContent = currentQuestion; 
+currentSectionDisplay.textContent = examQuestions[currentQuestion-1].section; 
+window.scrollTo({top:questionDisplay.offsetTop - 20, behavior:'smooth'}); 
+} 
+function loadQuestion(questionNum){ 
+const q = examQuestions[questionNum - 1]; 
+let html = `<div class="question-text" data-question="${questionNum}">${q.question}</div>`; 
+if(q.hasChart && q.chartData){ 
+html += `<div style="margin:12px 0;height:200px"><canvas id="chart-${questionNum}"></canvas></div>`; 
+} 
+if(q.hasTable && q.tableData){ 
+html += `<div style="margin:12px 0;overflow-x:auto"> 
+<div style="font-size:14px;color:var(--muted);margin-bottom:6px">Reference table:</div> 
+<table style="width:100%;border-collapse:collapse"> 
+<thead><tr>${q.tableData.headers.map(h=>`<th style="text-align:left;padding:6px;border-bottom:1px solid rgba(255,255,255,0.04)">${h}</th>`).join('')}</tr></thead> 
+<tbody>${q.tableData.rows.map(r=>`<tr>${r.map(c=>`<td style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.04)">${c}</td>`).join('')}</tr>`).join('')}</tbody> 
+</table> 
+</div>`; 
+} 
+html += `<div class="options">`; 
+const letters = ['a','b','c','d']; 
+q.options.forEach((opt, idx)=>{ 
+const letter = letters[idx]; 
+const isSelected = userAnswers[questionNum] === letter; 
+const isLocked = userAnswers[questionNum] !== undefined; 
+html += `<div class="option ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}" data-option="${letter}" onclick="selectOption(${questionNum}, '${letter}')"> 
+${letter.toUpperCase()}.&nbsp; ${opt} 
+</div>`; 
+}); 
+html += `</div>`; 
+questionDisplay.innerHTML = html; 
+// render chart if present 
+if(q.hasChart && q.chartData){ 
+try{ 
+const ctx = document.getElementById(`chart-${questionNum}`).getContext('2d'); 
+new Chart(ctx, { 
+type: q.chartType || 'bar', 
+data: q.chartData, 
+options: q.chartOptions || {responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}} 
+}); 
+}catch(e){console.warn('Chart render failed', e)} 
+} 
+prevBtn.disabled = questionNum === 1; 
+nextBtn.disabled = questionNum === TOTAL_QUESTIONS; 
+updateMarkButton(); 
+} 
+/* Marking */ 
+function updateMarkButton(){ 
+if(markedQuestions[currentQuestion]){ 
+markBtn.innerHTML = '<i class="fas fa-star"></i> Unmark'; 
+markBtn.classList.add('marked'); 
+} else { 
+markBtn.innerHTML = '<i class="far fa-star"></i> Mark'; 
+markBtn.classList.remove('marked'); 
+} 
+} 
+markBtn.addEventListener('click', ()=>{ 
+markedQuestions[currentQuestion] = !markedQuestions[currentQuestion]; 
+updateMarkButton(); 
+updateNavigationButtons(); 
+persistState(); 
+}); 
+/* Option selection (locked after first selection) */ 
+window.selectOption = function(questionNum, optionLetter){ 
+if(userAnswers[questionNum]) return; 
+userAnswers[questionNum] = optionLetter; 
+// Update UI for current question 
+const opts = document.querySelectorAll(`.question-area .option`); 
+opts.forEach(opt=>{ 
+opt.classList.remove('selected'); 
+if(opt.dataset.option === optionLetter) opt.classList.add('selected'); 
+opt.classList.add('locked'); 
+}); 
+updateNavigationButtons(); 
+updateProgress(); 
+persistState(); 
+}; 
+/* Navigation */ 
+prevBtn.addEventListener('click', ()=>navigateToQuestion(currentQuestion - 1)); 
+nextBtn.addEventListener('click', ()=>navigateToQuestion(currentQuestion + 1)); 
+document.addEventListener('keydown', (e)=>{ 
+if(e.key === 'ArrowLeft' && currentQuestion > 1) navigateToQuestion(currentQuestion - 1); 
+if(e.key === 'ArrowRight' && currentQuestion < TOTAL_QUESTIONS) navigateToQuestion(currentQuestion + 1); 
+}); 
+/* Progress */ 
+function updateProgress(){ 
+const answered = Object.keys(userAnswers).length; 
+const percent = Math.round((answered / TOTAL_QUESTIONS) * 100); 
+answeredCount.textContent = answered; 
+progressFill.style.width = percent + '%'; 
+} 
+/* Submit & Results */ 
+submitBtn.addEventListener('click', ()=>{ 
+if(confirm("Are you sure you want to submit? You won't be able to change answers.")) submitExam(false,'Manual submit'); 
+}); 
+function submitExam(auto=false, reason=''){ 
+if(timerInterval) clearInterval(timerInterval); 
+if(autoCheckInterval) clearInterval(autoCheckInterval); 
+const results = calculateResults(); 
+const payload = {results, userAnswers, markedQuestions, timestamp: new Date().toISOString(), reason}; 
+localStorage.setItem('lastResults', JSON.stringify(payload)); 
+if(auto) localStorage.setItem('examEndedAt', new Date().toISOString()); 
+populateResultsModal(payload); 
+resultModal.classList.add('active'); 
+} 
+function calculateResults(){ 
+let correct=0, incorrect=0, unanswered=0, totalScore=0; 
+for(let i=1;i<=TOTAL_QUESTIONS;i++){ 
+const ua = userAnswers[i]; 
+if(ua === undefined) unanswered++; 
+else if(ua === answerKey[i]) { 
+correct++; 
+totalScore += 1; 
+} else { 
+incorrect++; 
+totalScore -= NEGATIVE; 
+} 
+} 
+totalScore = Math.max(0, totalScore); 
+const percentage = Math.round((totalScore / TOTAL_QUESTIONS) * 100); 
+const passed = totalScore >= PASS_MARK; 
+const rank = 154; // fixed as requested 
+return {correct, incorrect, unanswered, totalScore, percentage, passed, rank}; 
+} 
+function populateResultsModal(payload){ 
+const r = payload.results; 
+correctAnswersDisplay.textContent = r.correct; 
+incorrectAnswersDisplay.textContent = r.incorrect; 
+unansweredDisplay.textContent = r.unanswered; 
+totalScoreDisplay.textContent = r.totalScore.toFixed(2); 
+percentageDisplay.textContent = r.percentage + '%'; 
+userRankDisplay && (userRankDisplay.textContent = r.rank); 
+displayRank && (displayRank.textContent = r.rank); 
+verdictDisplay.textContent = r.passed ? `Congratulations! You passed with ${r.totalScore.toFixed(2)}/100. (Correct: ${r.correct}, Incorrect: ${r.incorrect}). Rank: ${r.rank}` : `You scored ${r.totalScore.toFixed(2)}/100. (Correct: ${r.correct}, Incorrect: ${r.incorrect}). Minimum ${PASS_MARK} required to pass. Rank: ${r.rank}`; 
+verdictDisplay.className = r.passed ? 'verdict pass' : 'verdict fail'; 
+// answersheet 
+answersheetContent.innerHTML = ''; 
+for(let i=1;i<=TOTAL_QUESTIONS;i++){ 
+const q = examQuestions[i-1]; 
+const ua = userAnswers[i]; 
+const ca = answerKey[i]; 
+const isCorrect = ua === ca; 
+const statusClass = ua === undefined ? 'unanswered' : (isCorrect? 'correct':'incorrect'); 
+const statusText = ua === undefined ? 'Unanswered' : (isCorrect? 'Correct (+1)':`Incorrect (-${NEGATIVE})`); 
+const item = document.createElement('div'); 
+item.className = 'answer-item'; 
+item.innerHTML = ` 
+<div style="display:flex;justify-content:space-between;align-items:center"> 
+<div><strong>Question ${i}:</strong> <span class="answer-status ${statusClass}">${statusText}</span></div> 
+</div> 
+<div style="margin-top:6px;color:var(--muted)">Q: ${q.question}</div> 
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px"> 
+<div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:8px"> 
+<div style="font-size:13px;color:var(--muted)">Your Answer</div> 
+<div style="margin-top:4px">${ua? ua.toUpperCase() : 'Not answered'}</div> 
+</div> 
+<div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:8px"> 
+<div style="font-size:13px;color:var(--muted)">Correct Answer</div> 
+<div style="margin-top:4px">${ca.toUpperCase()}</div> 
+</div> 
+</div> 
+`; 
+answersheetContent.appendChild(item); 
+} 
+} 
+/* Modal controls */ 
+closeModal.addEventListener('click', ()=>resultModal.classList.remove('active')); 
+/* Export / Print */ 
+exportPNG.addEventListener('click', ()=>{ 
+html2canvas(document.querySelector('.modal-content')).then(canvas=>{ 
+const link = document.createElement('a'); 
+link.download = `Alpana-Results-${new Date().toISOString().slice(0,10)}.png`; 
+link.href = canvas.toDataURL('image/png'); 
+link.click(); 
+}); 
+}); 
+exportPDF.addEventListener('click', ()=>window.print()); 
+printBtn.addEventListener('click', ()=>window.print()); 
+/* Download answers JSON */ 
+downloadBtn.addEventListener('click', ()=>{ 
+const payload = { 
+user: document.getElementById('displayUser').textContent, 
+answers: userAnswers, 
+marked: markedQuestions, 
+timestamp: new Date().toISOString() 
+}; 
+const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); 
+const url = URL.createObjectURL(blob); 
+const a = document.createElement('a'); 
+a.href = url; 
+a.download = `Alpana-Exam-Answers-${new Date().toISOString().slice(0,10)}.json`; 
+a.click(); 
+URL.revokeObjectURL(url); 
+}); 
+/* Export CSV */ 
+exportCSV.addEventListener('click', ()=>{ 
+let csv = 'Question,Your Answer,Correct Answer,Status\n'; 
+for(let i=1;i<=TOTAL_QUESTIONS;i++){ 
+const ua = userAnswers[i] || ''; 
+const ca = answerKey[i]; 
+const status = ua === undefined ? 'Unanswered' : (ua === ca ? 'Correct' : 'Incorrect'); 
+csv += `${i},${(ua || 'Not answered').toUpperCase()},${ca.toUpperCase()},${status}\n`; 
+} 
+const blob = new Blob([csv], {type: 'text/csv'}); 
+const url = URL.createObjectURL(blob); 
+const a = document.createElement('a'); 
+a.href = url; 
+a.download = `Alpana-Exam-Results-${new Date().toISOString().slice(0,10)}.csv`; 
+a.click(); 
+URL.revokeObjectURL(url); 
+}); 
+/* Prevent copying/context menu */ 
+document.addEventListener('copy', (e)=>{ 
+e.preventDefault(); 
+alert('Copying is not allowed.'); 
+}); 
+document.addEventListener('contextmenu', (e)=>{ 
+e.preventDefault(); 
+}); 
+document.addEventListener('keydown', (e)=>{ 
+if(e.ctrlKey && (e.key==='c' || e.key==='C')){ 
+e.preventDefault(); 
+alert('Copying is not allowed.'); 
+} 
+}); 
+/* Persistence */ 
+restoreState(); 
+updateProgress(); 
+/* If the scheduled end already passed, mark ended and enforce next-login password */ 
+if(new Date() >= AUTO_END_AT) { 
+localStorage.setItem('examEndedAt', new Date().toISOString()); 
+localStorage.setItem('requireNewPassword','1'); 
+} 
+/* Accessibility focus */ 
+usernameInput && usernameInput.focus(); 
+/* Debug helper on window */ 
+window.__exam_debug = { 
+autoEndAt: AUTO_END_AT.toString(), 
+clearData: ()=>{ 
+localStorage.removeItem('userAnswers'); 
+localStorage.removeItem('markedQuestions'); 
+localStorage.removeItem('lastResults'); 
+localStorage.removeItem('examEndedAt'); 
+localStorage.removeItem('requireNewPassword'); 
+localStorage.removeItem('examExpiry'); 
+alert('Local data cleared'); 
+} 
+}; 
+</script> 
+</body> 
+</html>
