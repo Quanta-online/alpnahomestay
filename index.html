@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Alpana Group — Candidate Results Portal (Aug 2025)</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Optional: Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<style>
+  :root{
+    --bg-overlay: rgba(255,255,255,0.86);
+    --primary: #0f2a4d;
+    --accent: #0ea5e9;
+    --muted: #6b7280;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --card: #ffffff;
+    --radius: 14px;
+    --shadow: 0 18px 60px rgba(10,25,40,0.08);
+    --mono: 'Roboto Mono', monospace;
+    --ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:var(--ui);color:var(--primary);-webkit-font-smoothing:antialiased;background:#f6f8fb}
+  a{color:var(--accent);text-decoration:none}
+  button{font-family:inherit}
+
+  /* Full-screen blurred hotel background (Unsplash, free to use). */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:-3;
+    /* HD copyright-free hotel photo from Unsplash */
+    background-image: url('https://images.unsplash.com/photo-1501117716987-c8e2a6bf6f7b?auto=format&fit=crop&w=2400&q=80');
+    background-size:cover;background-position:center;
+    filter: blur(10px) brightness(0.7) saturate(0.9);
+    transform: scale(1.03);
+  }
+  body::after{
+    content:"";
+    position:fixed;inset:0;z-index:-2;background:linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.90));
+  }
+
+  /* SPLASH (full screen) - minimal: only logo + org name centered */
+  #splash {
+    position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.95));
+  }
+  .splash-inner {
+    display:flex;flex-direction:column;align-items:center;gap:18px;
+    pointer-events:auto;
+  }
+  .splash-inner img { height:140px; width:auto; object-fit:contain; border-radius:10px; box-shadow:0 18px 40px rgba(10,25,40,0.09); }
+  .splash-title { font-family: var(--ui); font-weight:800; color:var(--primary); font-size:1.75rem; letter-spacing:-0.4px; }
+
+  /* App container */
+  .container { max-width:1200px; margin:28px auto; padding:0 18px 60px; opacity:0; transform: translateY(8px); transition:opacity .45s ease, transform .45s ease; }
+  .container.visible { opacity:1; transform:none; }
+
+  /* NAV */
+  nav { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 0; }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .brand img { height:56px; border-radius:8px; object-fit:contain; box-shadow:0 10px 30px rgba(10,25,40,0.06); }
+  .brand .text { display:flex; flex-direction:column; line-height:1; }
+  .brand .title { font-weight:800; font-size:1rem; color:var(--primary); }
+  .brand .sub { font-size:0.82rem; color:var(--muted); }
+
+  .nav-actions { display:flex; align-items:center; gap:10px; }
+  .ghost { padding:8px 12px; border-radius:10px; background:rgba(255,255,255,0.94); border:1px solid rgba(10,25,40,0.04); cursor:pointer; font-weight:600; color:var(--primary) }
+  .primary { padding:10px 14px; border-radius:10px; background:linear-gradient(90deg,var(--primary), #163b6a); color:#fff; border:none; cursor:pointer; font-weight:800; }
+
+  /* LAYOUT */
+  main.portal { background:var(--bg-overlay); border-radius:16px; box-shadow:var(--shadow); padding:18px; }
+  .grid { display:grid; grid-template-columns: 1fr 380px; gap:20px; align-items:start; }
+  @media (max-width:980px){ .grid { grid-template-columns:1fr; } .nav-actions { gap:6px } }
+
+  /* LEFT: search & results */
+  .panel-left { display:flex; flex-direction:column; gap:12px; }
+  .search-box { display:flex; gap:8px; align-items:center; }
+  .search-box input{ flex:1; padding:14px 16px; border-radius:12px; border:1px solid rgba(10,25,40,0.06); font-size:1rem; background:#fff }
+  .search-box .btn { padding:12px 14px; border-radius:12px; border:none; background:linear-gradient(90deg,var(--primary),#163b6a); color:white; font-weight:800; cursor:pointer }
+
+  .hint { color:var(--muted); font-size:0.92rem; margin-top:6px }
+
+  .results-info { display:flex; gap:12px; flex-wrap:wrap; margin-top:10px }
+  .info-card { background:#fff; padding:12px 14px; border-radius:12px; border:1px solid #eef6fb; box-shadow: 0 8px 20px rgba(10,25,40,0.03); min-width:140px; }
+  .info-card .k { font-size:0.82rem; color:var(--muted) }
+  .info-card .v { font-weight:800; font-size:1.05rem; margin-top:6px }
+
+  /* Result card */
+  .candidate-card { display:none; gap:18px; background:#fff; border-radius:12px; padding:18px; border:1px solid #eef6fb; box-shadow:0 12px 40px rgba(10,25,40,0.04) }
+  .candidate-card.active { display:flex; align-items:flex-start; flex-wrap:wrap; }
+  .score-ring { width:116px; height:116px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:conic-gradient(var(--accent) 0deg, #eef7ff 0deg); box-shadow:0 12px 28px rgba(14,165,233,0.06) }
+  .score-ring .score { font-weight:900; font-size:1.4rem; }
+  .candidate-meta { flex:1; min-width:200px }
+  .candidate-meta h2 { margin:0; font-size:1.12rem }
+  .meta-row { margin-top:10px; display:grid; grid-template-columns: repeat(2, 1fr); gap:10px }
+  .meta { background:#fbfdff; padding:10px; border-radius:10px; border:1px solid #f1f6fb }
+  .meta .k { color:var(--muted); font-size:0.82rem }
+  .meta .v { font-weight:800; margin-top:6px }
+
+  .status-badge { display:inline-block; padding:8px 12px; border-radius:999px; font-weight:800; margin-top:10px }
+  .status-gm { background:rgba(22,163,74,0.12); color:var(--success) }
+  .status-mgr { background:rgba(49,130,206,0.08); color:var(--primary) }
+  .status-fail { background:rgba(220,38,38,0.08); color:var(--danger) }
+
+  .actions { margin-top:12px; display:flex; gap:10px; flex-wrap:wrap }
+  .actions .btn { padding:10px 12px; border-radius:10px; border:1px solid #eef6fb; background:#fff; cursor:pointer }
+
+  /* RIGHT: summary & top10 */
+  .panel-right { display:flex; flex-direction:column; gap:12px; }
+  .card { background:#fff; padding:14px; border-radius:12px; border:1px solid #eef6fb; box-shadow:0 10px 40px rgba(10,25,40,0.03) }
+  .card h4 { margin:0 0 8px 0 }
+  .stat-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #f3f7fb }
+  .top-list { margin-top:10px; display:flex; flex-direction:column; gap:8px; max-height:340px; overflow:auto }
+
+  /* subtle toast */
+  .toast { position:fixed; right:20px; bottom:24px; background:#111827;color:white;padding:12px 14px;border-radius:10px; box-shadow:0 12px 30px rgba(2,6,23,0.4); display:none; z-index:99999 }
+
+  /* modal */
+  .modal-backdrop { position:fixed; inset:0; background:rgba(3,8,18,0.45); display:none; align-items:center; justify-content:center; z-index:10010 }
+  .modal { width:420px; background:#fff; padding:18px; border-radius:12px; box-shadow:0 20px 60px rgba(10,25,40,0.2) }
+  .modal h3 { margin:0 0 8px 0 }
+  .field { margin-top:8px }
+  .field input { width:100%; padding:10px; border-radius:8px; border:1px solid #eef6fb }
+
+  /* print */
+  @media print {
+    body * { visibility:hidden }
+    .candidate-card, .candidate-card * { visibility:visible }
+    .candidate-card { position:fixed; top:0; left:0; width:100% }
+  }
+
+  /* responsive tweaks */
+  @media (max-width:640px){
+    .brand img { height:48px }
+    .splash-inner img { height:110px }
+    .score-ring { width:96px; height:96px }
+    .container { padding:0 12px }
+  }
+</style>
+</head>
+<body>
+
+  <!-- SPLASH (full screen): ONLY logo + name, for exactly 40s -->
+  <div id="splash" aria-hidden="false" role="dialog" aria-label="Splash screen">
+    <div class="splash-inner" aria-hidden="false">
+      <img src="new.png" alt="Alpana Group logo" onerror="this.src='https://via.placeholder.com/360x140?text=Alpana+Group'">
+      <div class="splash-title">Alpana Group</div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div class="container" id="app" aria-hidden="true">
+    <nav aria-label="Main navigation">
+      <div class="brand">
+        <img src="new.png" alt="Alpana Group logo" onerror="this.src='https://via.placeholder.com/170x56?text=Alpana'">
+        <div class="text">
+          <div class="title">Alpana Group</div>
+          <div class="sub">Managerial Recruitment — 2025</div>
+        </div>
+      </div>
+
+      <div class="nav-actions" role="navigation" aria-label="User actions">
+        <div id="gsi-placeholder" style="min-width:220px"></div>
+        <button class="ghost" id="contactBtn">Contact</button>
+        <button class="ghost" id="adminBtn">Admin</button>
+      </div>
+    </nav>
+
+    <main class="portal" role="main" aria-labelledby="portal-heading">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div>
+          <h2 id="portal-heading" style="margin:0">Candidate Results Portal</h2>
+          <div style="color:var(--muted);margin-top:6px;font-size:0.95rem">Sign in with Google (optional). Results unlock automatically at the scheduled time.</div>
+        </div>
+        <div style="text-align:right;color:var(--muted);font-family:var(--mono)">AGRS-2025-08-196-RESULTS-V3</div>
+      </div>
+
+      <section class="grid" aria-live="polite">
+        <!-- LEFT -->
+        <div class="panel-left">
+          <div class="search-box" role="search">
+            <input id="searchInput" type="text" placeholder="Enter application no. (ALP2025A10001) or name..." aria-label="Search application or name" />
+            <button id="searchBtn" class="btn" disabled>View Result</button>
+          </div>
+          <div class="hint" id="hint">Results locked — they will become available automatically after release time.</div>
+
+          <div class="results-info" aria-hidden="false">
+            <div class="info-card"><div class="k">Total candidates</div><div class="v" id="totalCount">—</div></div>
+            <div class="info-card"><div class="k">GM Interviews</div><div class="v" id="gmCount">—</div></div>
+            <div class="info-card"><div class="k">Manager Interviews</div><div class="v" id="mgrCount">—</div></div>
+            <div class="info-card"><div class="k">Not Qualified</div><div class="v" id="failCount">—</div></div>
+          </div>
+
+          <!-- suggestion area (hidden until release + sign-in) -->
+          <div id="suggestionBox" style="display:none;margin-top:10px;border-radius:12px;overflow:auto"></div>
+
+          <!-- Result Card -->
+          <div id="candidateCard" class="candidate-card" role="region" aria-live="polite">
+            <div class="score-ring" id="scoreRing"><div class="score">--</div></div>
+            <div class="candidate-meta">
+              <h2 id="candName">Candidate Name</h2>
+              <div style="font-family:var(--mono);color:var(--muted);margin-top:6px" id="candApp">ALP2025X00000 · Rank #—</div>
+              <div class="meta-row">
+                <div class="meta"><div class="k">Percentile</div><div class="v" id="candPct">—%</div></div>
+                <div class="meta"><div class="k">Score</div><div class="v" id="candScore">—</div></div>
+                <div class="meta"><div class="k">Status</div><div class="v" id="candStatus">—</div></div>
+                <div class="meta"><div class="k">Cutoff</div><div class="v">GM ≥ 67.90 · Mgr 55.00–67.89</div></div>
+              </div>
+
+              <div id="inviteNote" style="margin-top:10px;color:var(--muted)"></div>
+
+              <div class="actions">
+                <button class="btn" id="printBtn">Print / Save PDF</button>
+                <button class="btn" id="copyAppBtn">Copy App No.</button>
+                <button class="btn" id="downloadJsonBtn">Download JSON</button>
+                <button class="btn" id="shareBtn">Copy Share Link</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button id="showTopBtn" class="ghost">Show Top 20</button>
+            <button id="exportBtn" class="ghost">Export CSV</button>
+            <button id="helpBtn" class="ghost">Help</button>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <aside class="panel-right">
+          <div class="card">
+            <h4>Selection Summary</h4>
+            <div class="stat-row"><div>Total</div><div id="s_total">—</div></div>
+            <div class="stat-row"><div>GM Interviews</div><div id="s_gm">—</div></div>
+            <div class="stat-row"><div>Manager Interviews</div><div id="s_mgr">—</div></div>
+            <div class="stat-row"><div>Not Qualified</div><div id="s_fail">—</div></div>
+          </div>
+
+          <div class="card">
+            <h4>Top 10</h4>
+            <div id="topList" class="top-list">
+              <div style="color:var(--muted)">Top 10 will appear here after results are published.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>Notes</h4>
+            <div style="color:var(--muted);font-size:0.95rem">
+              <div>- Not Qualified candidates will not be invited for interview.</div>
+              <div style="margin-top:6px">- Final selection: Test (60%) + Interview (40%).</div>
+              <div style="margin-top:6px">- For verification: <a href="mailto:recruitment@alpnagroup.com">recruitment@alpnagroup.com</a></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer style="text-align:center;color:var(--muted);margin-top:18px;padding-bottom:20px">© Alpana Group Human Resources — 2025</footer>
+  </div>
+
+  <!-- Admin modal -->
+  <div id="modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Admin login">
+      <h3>Admin Access</h3>
+      <div style="color:var(--muted);font-size:0.95rem">Administrator sign-in (server-side verification required).</div>
+      <div class="field"><input id="adminUser" placeholder="Username"></div>
+      <div class="field"><input id="adminPass" type="password" placeholder="Password"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px">
+        <button id="adminCancel" class="ghost">Cancel</button>
+        <button id="adminLogin" class="primary">Sign in</button>
+      </div>
+      <div id="adminMsg" style="margin-top:8px;color:var(--danger);display:none"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* CONFIG */
+const RELEASE_ISO = "2025-08-15T19:00:00+05:30"; // internal only
+const RELEASE_TS = new Date(RELEASE_ISO).getTime();
+const GOOGLE_CLIENT_ID = "REPLACE_WITH_YOUR_CLIENT_ID"; // optional - replace to enable GSI
+
+/* DATASET: include top literal + deterministic append to 196 */
+const CANDIDATES = [
+  {"rank":1,"name":"Aarav Sharma","app":"ALP2025A10001","score":76.25,"percentile":100,"status":"GM Interview"},
+  {"rank":2,"name":"Zara Khan","app":"ALP2025B20034","score":74.18,"percentile":99.49,"status":"GM Interview"},
+  {"rank":3,"name":"Ishaan Patel","app":"ALP2025C30012","score":72.89,"percentile":98.98,"status":"GM Interview"},
+  {"rank":4,"name":"Ananya Singh","app":"ALP2025D40056","score":71.45,"percentile":98.47,"status":"GM Interview"},
+  {"rank":5,"name":"Ethan D'Souza","app":"ALP2025E50078","score":70.92,"percentile":97.96,"status":"GM Interview"},
+  {"rank":6,"name":"Fatima Ahmed","app":"ALP2025F60023","score":70.33,"percentile":97.44,"status":"GM Interview"},
+  {"rank":7,"name":"Arjun Reddy","app":"ALP2025G70045","score":69.87,"percentile":96.93,"status":"GM Interview"},
+  {"rank":8,"name":"Meera Nair","app":"ALP2025H80067","score":69.45,"percentile":96.42,"status":"GM Interview"},
+  {"rank":9,"name":"David Cohen","app":"ALP2025I90089","score":69.12,"percentile":95.91,"status":"GM Interview"},
+  {"rank":10,"name":"Priyanka Banerjee","app":"ALP2025J10101","score":68.95,"percentile":95.4,"status":"GM Interview"},
+  {"rank":11,"name":"Marcus Antonius","app":"ALP2025K11123","score":68.72,"percentile":94.89,"status":"GM Interview"},
+  {"rank":12,"name":"Aisha Abdullah","app":"ALP2025L12145","score":68.55,"percentile":94.38,"status":"GM Interview"},
+  {"rank":13,"name":"Kabir Das","app":"ALP2025M13167","score":68.33,"percentile":93.87,"status":"GM Interview"},
+  {"rank":14,"name":"Sophia Rodriguez","app":"ALP2025N14189","score":68.12,"percentile":93.36,"status":"GM Interview"},
+  {"rank":15,"name":"Yusuf Öztürk","app":"ALP2025O15201","score":67.95,"percentile":92.85,"status":"GM Interview"},
+  {"rank":16,"name":"Riya Chatterjee","app":"ALP2025P16223","score":67.89,"percentile":92.34,"status":"Manager Interview"},
+  {"rank":17,"name":"Aryan Khanna","app":"ALP2025Q17245","score":67.45,"percentile":91.83,"status":"Manager Interview"},
+  {"rank":18,"name":"Leyla Yılmaz","app":"ALP2025R18267","score":67.32,"percentile":91.32,"status":"Manager Interview"},
+  {"rank":19,"name":"Rohan Malhotra","app":"ALP2025S19289","score":67.18,"percentile":90.81,"status":"Manager Interview"},
+  {"rank":20,"name":"Nandini Iyer","app":"ALP2025T20301","score":66.95,"percentile":90.3,"status":"Manager Interview"},
+  {"rank":151,"name":"Neha Gupta","app":"ALP2025U21323","score":47.12,"percentile":23.47,"status":"Not Qualified"},
+  {"rank":152,"name":"Mohit Gangwar","app":"ALP2025C78945","score":46.89,"percentile":22.96,"status":"Not Qualified"},
+  {"rank":153,"name":"Thomas Fischer","app":"ALP2025V22345","score":45.67,"percentile":22.45,"status":"Not Qualified"},
+  {"rank":195,"name":"Sunil Verma","app":"ALP2025W23367","score":18.92,"percentile":1.53,"status":"Not Qualified"},
+  {"rank":196,"name":"Rajesh Kumar","app":"ALP2025X24389","score":16.66,"percentile":0.51,"status":"Not Qualified"}
+];
+
+/* deterministic append to reach 196 records (keeps file self-contained) */
+(function appendRemaining(){
+  if(CANDIDATES.length>=196) return;
+  const firsts=["Aditya","Vishal","Kavya","Sana","Ritik","Simran","Kabir","Leena","Nikhil","Priya","Dev","Sameer","Ila","Tara","Vikram","Anika","Rahul","Maya","Karan","Siddharth","Isha","Manav","Kriti","Zayn","Farah","Omar","Hina","Rakesh","Gopal","Sunita","Riya","Arnav","Irfan","Meera","Pooja","Devika","Anjali","Rohit","Shreya","Vibha","Ajay","Liam","Noah","Emma","Olivia","Sophia","Lucas","Mia"];
+  const lasts=["Sharma","Patel","Singh","Gupta","Iyer","Reddy","Nair","Chatterjee","Khan","Mehta","Malhotra","Kohli","Bose","D'Silva","Das","Fernando","Rodriguez","Kumar","Verma","Gangwar","Yadav","Joshi","Saxena","Ghosh","Bhattacharya","Rao","Sethi","Kapoor","Arora","Trivedi","Rodrigues","Öztürk","Yılmaz","Antonius","Cohen","D'Souza"];
+  function seededRandom(seed){ let a=seed|0; return function(){ a=Math.imul(a+0x6D2B79F5,1); var t=a; t=(t^(t>>>15))*(t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; } }
+  const rng = seededRandom(20250815);
+  const total=196;
+  for(let r=CANDIDATES.length+1;r<=total;r++){
+    if(CANDIDATES.find(x=>x.rank===r)) continue;
+    const f=firsts[(r*13+7)%firsts.length];
+    const l=lasts[(r*17+11)%lasts.length];
+    const name=`${f} ${l}`;
+    const base=16.66 + (76.25-16.66)*((total - r + 1)/total);
+    const jitter=(rng()-0.5)*5.5;
+    let score=Math.max(16.7,Math.min(76.24,Math.round((base+jitter)*100)/100));
+    const percentile=Math.round(100*(score-16.66)/(76.25-16.66)*100)/100;
+    let status="Not Qualified"; if(score>=67.90) status="GM Interview"; else if(score>=55.00) status="Manager Interview";
+    const app="ALP2025"+String.fromCharCode(65 + (r%26))+String(10000 + r).padStart(5,'0');
+    CANDIDATES.push({rank:r,name:name,app:app,score:score,percentile:percentile,status:status});
+  }
+})();
+
+/* Indexes & UI refs */
+const appIndex = new Map(CANDIDATES.map(c=>[c.app.toUpperCase(), c]));
+const nameIndex = new Map(CANDIDATES.map(c=>[c.name.toUpperCase(), c]));
+
+const splash = document.getElementById('splash');
+const appContainer = document.getElementById('app');
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const suggestionBox = document.getElementById('suggestionBox');
+const candidateCard = document.getElementById('candidateCard');
+const toast = document.getElementById('toast');
+
+const totalCountEl = document.getElementById('totalCount');
+const gmCountEl = document.getElementById('gmCount');
+const mgrCountEl = document.getElementById('mgrCount');
+const failCountEl = document.getElementById('failCount');
+const s_total = document.getElementById('s_total');
+const s_gm = document.getElementById('s_gm');
+const s_mgr = document.getElementById('s_mgr');
+const s_fail = document.getElementById('s_fail');
+const topList = document.getElementById('topList');
+
+/* populate summary counts */
+function refreshSummary(){
+  totalCountEl.textContent = CANDIDATES.length;
+  gmCountEl.textContent = CANDIDATES.filter(c=>c.status==='GM Interview').length;
+  mgrCountEl.textContent = CANDIDATES.filter(c=>c.status==='Manager Interview').length;
+  failCountEl.textContent = CANDIDATES.filter(c=>c.status==='Not Qualified').length;
+
+  s_total.textContent = totalCountEl.textContent;
+  s_gm.textContent = gmCountEl.textContent;
+  s_mgr.textContent = mgrCountEl.textContent;
+  s_fail.textContent = failCountEl.textContent;
+}
+refreshSummary();
+
+/* Helper functions */
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function isReleased(){ return Date.now() >= RELEASE_TS; }
+function showToast(msg, timeout=3500){
+  toast.textContent = msg; toast.style.display='block';
+  setTimeout(()=>{ toast.style.display='none'; }, timeout);
+}
+
+/* SPLASH: show exactly 40s then fade to app */
+(function manageSplash(){
+  const SPLASH_MS = 40000; // 40 seconds
+  // Keep splash visible for SPLASH_MS then fade
+  setTimeout(()=>{ splash.style.transition='opacity .8s ease'; splash.style.opacity='0'; setTimeout(()=>{ splash.style.display='none'; appContainer.classList.add('visible'); appContainer.setAttribute('aria-hidden','false'); onAppShown(); },900); }, SPLASH_MS);
+})();
+
+/* Called when app becomes visible (after splash) */
+function onAppShown(){
+  // Auto-check release status and set UI accordingly
+  updateReleaseState();
+  // initialize Google sign-in button (optional)
+  renderGoogleButton();
+  // if page already past release, show toast
+  if(isReleased()) showToast('Results are now available.');
+  else {
+    // schedule automatic unlock at release time
+    const ms = RELEASE_TS - Date.now();
+    if(ms>0){
+      setTimeout(()=>{ updateReleaseState(); showToast('Results have been published.'); }, ms+250);
+    }
+  }
+}
+
+/* Google Identity Services (optional) */
+window.handleCredentialResponse = function(response){
+  try{
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    window.signedInUser = {email:payload.email, name:payload.name, picture:payload.picture};
+    document.getElementById('gsi-placeholder').innerHTML = `<div style="display:flex;align-items:center;gap:8px"><img src="${window.signedInUser.picture||''}" style="height:34px;border-radius:999px;object-fit:cover"/><div style="font-size:0.92rem;color:var(--muted)">${escapeHtml(window.signedInUser.email)}</div></div><button id="signOut" class="ghost" style="margin-left:8px">Sign out</button>`;
+    const out = document.getElementById('signOut');
+    out && out.addEventListener('click', ()=>{
+      window.signedInUser = null;
+      document.getElementById('gsi-placeholder').innerHTML = '';
+      renderGoogleButton();
+      updateReleaseState();
+    });
+    updateReleaseState();
+  } catch(e){ console.warn('GSI decode failed', e); }
+};
+
+function renderGoogleButton(){
+  const holder = document.getElementById('gsi-placeholder');
+  if(!holder) return;
+  if(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID!=="REPLACE_WITH_YOUR_CLIENT_ID" && window.google && google.accounts && google.accounts.id){
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID, callback: handleCredentialResponse, ux_mode:'popup'});
+    google.accounts.id.renderButton(holder, {theme:'outline', size:'medium'});
+    google.accounts.id.prompt();
+  } else {
+    holder.innerHTML = '<div style="color:var(--muted);font-size:0.92rem">Google Sign-In (optional)</div>';
+  }
+}
+
+/* RELEASE STATE UI updates */
+function updateReleaseState(){
+  const released = isReleased();
+  const hint = document.getElementById('hint');
+  if(released){
+    hint.textContent = 'Results published — enter your application number or name to view your result.';
+    searchBtn.disabled = false;
+    // auto-render top list state
+    renderTopList();
+  } else {
+    hint.textContent = 'Results are locked — they will unlock automatically at the scheduled time.';
+    searchBtn.disabled = true;
+    // show countdown to release
+    startCountdown();
+  }
+}
+
+/* Countdown (optional subtle) */
+let countdownTimer = null;
+function startCountdown(){
+  const hint = document.getElementById('hint');
+  if(countdownTimer) clearInterval(countdownTimer);
+  function tick(){
+    const ms = RELEASE_TS - Date.now();
+    if(ms <= 0){ clearInterval(countdownTimer); updateReleaseState(); return; }
+    const s = Math.floor(ms/1000)%60;
+    const m = Math.floor(ms/60000)%60;
+    const h = Math.floor(ms/3600000);
+    hint.textContent = `Results unlock in ${h}h ${m}m ${s}s — results will appear automatically.`;
+  }
+  tick();
+  countdownTimer = setInterval(tick, 1000);
+}
+
+/* lookup helpers */
+function lookup(term){
+  if(!term) return null;
+  const q = term.trim().toUpperCase();
+  if(appIndex.has(q)) return appIndex.get(q);
+  if(nameIndex.has(q)) return nameIndex.get(q);
+  // fuzzy: contains
+  return CANDIDATES.find(c => c.app.toUpperCase().includes(q) || c.name.toUpperCase().includes(q)) || null;
+}
+
+/* Render candidate result card */
+function renderCandidate(c){
+  if(!c) return;
+  candidateCard.classList.add('active');
+  document.getElementById('candName').textContent = c.name;
+  document.getElementById('candApp').textContent = `${c.app} · Rank #${c.rank}`;
+  document.getElementById('candPct').textContent = `${Number(c.percentile).toFixed(2)}%`;
+  document.getElementById('candScore').textContent = Number(c.score).toFixed(2);
+  const statusEl = document.getElementById('candStatus');
+  statusEl.textContent = c.status;
+  // color badge & invite note
+  const inviteNote = document.getElementById('inviteNote');
+  let badgeClass = 'status-fail';
+  if(c.status.includes('GM')) badgeClass = 'status-gm';
+  else if(c.status.includes('Manager')) badgeClass = 'status-mgr';
+  statusEl.className = 'status-badge ' + badgeClass;
+  if(c.status === 'Not Qualified'){
+    inviteNote.innerHTML = `<strong style="color:var(--danger)">Not Qualified — will not be invited for interview.</strong>`;
+  } else {
+    inviteNote.innerHTML = `Selected for interview stage — interview invites will be sent via registered email/SMS.`;
+  }
+  // ring angle based on percentile
+  const pct = Math.max(0, Math.min(100, Number(c.percentile)||0));
+  const angle = Math.round(pct * 3.6);
+  const ring = document.getElementById('scoreRing');
+  ring.style.background = `conic-gradient(var(--accent) ${angle}deg, #eef7ff ${angle}deg)`;
+  ring.querySelector('.score').textContent = Number(c.score).toFixed(2);
+  // set actions
+  document.getElementById('copyAppBtn').onclick = ()=>{ navigator.clipboard.writeText(c.app).then(()=>showToast('Application number copied')); };
+  document.getElementById('downloadJsonBtn').onclick = ()=>{ const blob=new Blob([JSON.stringify(c,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`${c.app}_result.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); showToast('Downloaded JSON'); };
+  document.getElementById('shareBtn').onclick = ()=>{ updateUrlParam(c.app); navigator.clipboard.writeText(location.href).then(()=>showToast('Share link copied')); };
+  document.getElementById('printBtn').onclick = ()=> window.print();
+}
+
+/* Search flow */
+searchBtn.addEventListener('click', ()=>{
+  if(!isReleased()){ showToast('Results are not yet available'); return; }
+  const q = searchInput.value.trim();
+  if(!q){ showToast('Please enter application number or name'); return; }
+  const res = lookup(q);
+  if(res){ renderCandidate(res); updateUrlParam(res.app); }
+  else { showToast('No result found — verify application number or contact recruitment@alpnagroup.com'); }
+});
+
+/* Suggestions while typing (only after release) */
+searchInput.addEventListener('input', (e)=>{
+  const q = e.target.value.trim();
+  if(!q || !isReleased()) { suggestionBox.style.display='none'; return; }
+  const key = q.toUpperCase();
+  const matches = CANDIDATES.filter(c => c.app.toUpperCase().includes(key) || c.name.toUpperCase().includes(key)).slice(0,8);
+  if(matches.length===0){ suggestionBox.style.display='none'; return; }
+  suggestionBox.innerHTML = '';
+  matches.forEach(m=>{
+    const div = document.createElement('div');
+    div.style.padding='10px'; div.style.borderBottom='1px solid #f6fbff'; div.style.cursor='pointer'; div.style.display='flex'; div.style.justifyContent='space-between';
+    div.innerHTML = `<div style="font-weight:700">${escapeHtml(m.name)}</div><div style="font-family:var(--mono);color:var(--muted)">${m.app}</div>`;
+    div.addEventListener('click', ()=>{ searchInput.value = m.app; suggestionBox.style.display='none'; renderCandidate(m); updateUrlParam(m.app); });
+    suggestionBox.appendChild(div);
+  });
+  suggestionBox.style.display='block';
+});
+
+/* Top list rendering (only after release) */
+function renderTopList(){
+  if(!isReleased()){ topList.innerHTML = '<div style="color:var(--muted)">Top 10 will appear here after results are published.</div>'; return; }
+  // If signed-in, show actual names; otherwise show masked names (optional)
+  topList.innerHTML = '';
+  CANDIDATES.slice(0,10).forEach(t=>{
+    const el = document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.alignItems='center';
+    el.style.padding='8px'; el.style.borderRadius='8px';
+    el.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><strong>#${t.rank}</strong><div style="font-weight:700">${escapeHtml(t.name)}</div></div><div style="font-family:var(--mono)">${t.score.toFixed(2)}</div>`;
+    topList.appendChild(el);
+  });
+}
+
+/* Export CSV */
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  if(!isReleased()){ showToast('Results are not yet available'); return; }
+  const header = ['Rank','Name','Application No.','Score','Percentile','Status'];
+  const rows = CANDIDATES.map(c => [c.rank,c.name,c.app,c.score.toFixed(2),c.percentile.toFixed(2),c.status]);
+  const csv = [header,...rows].map(r => r.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='Alpana_Managerial_Results_Aug2025.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  showToast('CSV exported');
+});
+
+/* Show Top 20 button (searchable) */
+document.getElementById('showTopBtn').addEventListener('click', ()=>{
+  if(!isReleased()){ showToast('Results are not yet available'); return; }
+  // render a compact table inside candidateCard area
+  const rows = CANDIDATES.slice(0,20).map(r => `<tr><td style="padding:6px">${r.rank}</td><td style="padding:6px">${escapeHtml(r.name)}</td><td style="padding:6px;font-family:var(--mono)">${r.app}</td><td style="padding:6px">${r.score.toFixed(2)}</td></tr>`).join('');
+  candidateCard.classList.add('active');
+  candidateCard.innerHTML = `<div style="width:100%"><strong>Top 20</strong><div style="margin-top:8px"><table style="width:100%;border-collapse:collapse;background:#fff"><thead><tr style="text-align:left"><th>Rank</th><th>Name</th><th>Application</th><th>Score</th></tr></thead><tbody>${rows}</tbody></table></div><div style="margin-top:10px"><button class="btn" onclick="location.reload()">Close</button></div></div>`;
+});
+
+/* Admin modal interactions (client-side placeholder only) */
+const modal = document.getElementById('modal');
+document.getElementById('adminBtn').addEventListener('click',(e)=>{ modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); });
+document.getElementById('adminCancel').addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); });
+document.getElementById('adminLogin').addEventListener('click', ()=>{
+  const u = document.getElementById('adminUser').value.trim(), p = document.getElementById('adminPass').value.trim();
+  const adminMsg = document.getElementById('adminMsg');
+  if(!u||!p){ adminMsg.style.display='block'; adminMsg.textContent='Enter username & password'; return; }
+  // NOTE: production must verify server-side. This is just a placeholder
+  adminMsg.style.display='block'; adminMsg.style.color='var(--muted)'; adminMsg.textContent='Authentication request submitted (server-side required).';
+  setTimeout(()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); adminMsg.style.display='none'; }, 900);
+});
+
+/* Pre-fill search from ?app= query param */
+(function prefill(){
+  try{
+    const params = new URLSearchParams(location.search);
+    const app = params.get('app');
+    if(app) searchInput.value = app;
+  } catch(e){}
+})();
+
+/* URL update helper */
+function updateUrlParam(app){
+  try{
+    const u = new URL(location.href);
+    u.searchParams.set('app', app);
+    history.replaceState(null,'',u.toString());
+  } catch(e){}
+}
+
+/* Top list initial state */
+renderTopList();
+
+/* Auto-unlock: if page already past release when shown, enable search */
+updateReleaseState();
+
+/* Pre-bind copy/print/download buttons with empty actions until candidate rendered */
+document.getElementById('copyAppBtn').onclick = ()=>{ showToast('No application selected'); };
+document.getElementById('downloadJsonBtn').onclick = ()=>{ showToast('No application selected'); };
+document.getElementById('shareBtn').onclick = ()=>{ showToast('No application selected'); };
+document.getElementById('printBtn').onclick = ()=>{ showToast('No application selected'); };
+
+/* Accessibility: hide suggestion box on outside click */
+document.addEventListener('click', (ev)=>{ const sb = document.getElementById('suggestionBox'); if(sb && !sb.contains(ev.target) && ev.target !== searchInput) sb.style.display='none'; });
+
+</script>
+</body>
+</html>
